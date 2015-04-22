@@ -3,23 +3,28 @@ Program         = "program" Name FuncArgs FuncBody { OtherFunc }
 
 --- Functions ---
 OtherFunc       = "function" Name FuncArgs FuncBody
-FuncArgs        = "(" { Type Name } ")"
+FuncArgs        = "(" ( [Type Name] | (Type Name { "," Type Name }) ) ")"
 FuncBody        = "{" { Statement } ReturnInstr ";" "}"
 ReturnInstr     = "return" RValue
 
 --- Statements ---
 Statement       = Instruction | IfBlock | WhileStatement | LineComment
-Instruction     = (VarDeclaration | ConstDeclaration | Assigment | FuncCall | ReturnInstr) ";"
+Instruction     = (VarDeclaration | ConstDeclaration | Assignment | FuncCall | ReturnInstr) ";"
 IfBlock         = IfStatement { "else" IfStatement } [ "else" (Body | SingleInstr) ]
 IfStatement     = "if" "(" LogicalExpr ")" (Body | SingleInstr)
 WhileStatement  = "while" "(" LogicalExpr ")" Body
 LineComment     = "//" String "\n"
 
 --- Instructions ---
-VarDeclaration  = "var" Type Name [ "=" RValue ]
-ConstDeclaration= "const" Type Name "=" RValue
-Assigment       = Name "=" RValue
-FuncCall        = Name "(" { Name } ")"
+VarDeclaration  = "var" ( (Type Name) | TypeAssignment )
+ConstDeclaration= "const" TypeAssignment
+FuncCall        = Name "(" ([ RValue ] | RValue { "," RValue }) ")"
+Assignment      = Name "=" [ "<" Type ">" ] RValue
+TypeAssignment  = IntAssign | FloatAssign | StringAssignment | BoolAssign
+IntAssign       = IntType Name "=" [ "<" IntType | FloatType | BoolType ">" ] RValue
+FloatAssign     = FloatType Name "=" [ "<" IntType | FloatType ">" ] RValue
+StringAssign    = StringType Name "=" [ "<" IntType | FloatType | BoolType | StringAssign ">" ] RValue
+BoolAssign      = BoolType Name "=" [ "<" IntType | BoolType ">" ] RValue
 
 --- Expressions ---
 LogicalExpr     = ((LogicalExpr | RelationExpr | FuncCall) LogicalOp (LogicalExpr | RelationExpr | FuncCall))  |
@@ -33,10 +38,16 @@ ArithmeticExpr  = ((Number | Name | ArithmeticExpr) ArithmeticOp (Number | Name 
                   ("(" (Number | Name | ArithmeticExpr) ArithmeticOp (Number | Name | ArithmeticExpr) ")")
 ArithmeticOp    = "+" | "-" | "*" | "/" | "%"
 
+--- Types ---
+Type            = IntType | FloatType | StringType | BoolType
+IntType         = "int"
+FloatType       = "float"
+StringType      = "string"
+BoolType        = "bool"
+
 --- Other ---
 Body            = "{" { Statement } "}"
 SingleInstr     = {LineComment} Statement {LineComment}
-Type            = "int" | "float" | "string" | "bool"
 RValue          = Value | Name | ArithmeticExpr
 Name            = (Letter | "_") {Letter | Digit | "_" }
 Value           = String | Number | BoolValue
