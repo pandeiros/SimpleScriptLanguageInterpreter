@@ -1,0 +1,49 @@
+--- Program ---
+Program         = "program" Name FuncArgs FuncBody { OtherFunc }
+
+--- Functions ---
+OtherFunc       = "function" Name FuncArgs FuncBody
+FuncArgs        = "(" { Type Name } ")"
+FuncBody        = "{" { Statement } ReturnInstr ";" "}"
+ReturnInstr     = "return" RValue
+
+--- Statements ---
+Statement       = Instruction | IfBlock | WhileStatement | LineComment
+Instruction     = (VarDeclaration | ConstDeclaration | Assigment | FuncCall | ReturnInstr) ";"
+IfBlock         = IfStatement { "else" IfStatement } [ "else" (Body | SingleInstr) ]
+IfStatement     = "if" "(" LogicalExpr ")" (Body | SingleInstr)
+WhileStatement  = "while" "(" LogicalExpr ")" Body
+LineComment     = "//" String "\n"
+
+--- Instructions ---
+VarDeclaration  = "var" Type Name [ "=" RValue ]
+ConstDeclaration= "const" Type Name "=" RValue
+Assigment       = Name "=" RValue
+FuncCall        = Name "(" { Name } ")"
+
+--- Expressions ---
+LogicalExpr     = ((LogicalExpr | RelationExpr | FuncCall) LogicalOp (LogicalExpr | RelationExpr | FuncCall))  |
+                  ("(" (LogicalExpr | RelationExpr | FuncCall) LogicalOp (LogicalExpr | RelationExpr | FuncCall) ")")
+RelationExpr    = ("(" (Name | ArithmeticExpr) RelationOp RValue ")") |
+                  ((Name | ArithmeticExpr) RelationOp RValue)
+LogicalOp       = "||" | "&&"
+RelationOp      = "==" | "!=" | "<" | ">" | "<=" | ">="
+
+ArithmeticExpr  = ((Number | Name | ArithmeticExpr) ArithmeticOp (Number | Name | ArithmeticExpr))  |
+                  ("(" (Number | Name | ArithmeticExpr) ArithmeticOp (Number | Name | ArithmeticExpr) ")")
+ArithmeticOp    = "+" | "-" | "*" | "/" | "%"
+
+--- Other ---
+Body            = "{" { Statement } "}"
+SingleInstr     = {LineComment} Statement {LineComment}
+Type            = "int" | "float" | "string" | "bool"
+RValue          = Value | Name | ArithmeticExpr
+Name            = (Letter | "_") {Letter | Digit | "_" }
+Value           = String | Number | BoolValue
+String          = """ { AsciiChar } """
+Letter          = "a".."z" | "A".."Z"
+Number          = [Sign] Digit { Digit } [ "." Digit { Digit } ]
+Digit           = "0".."9"
+BoolValue       = "true" | "false"
+Sign            = [ "-" ]
+AsciiChar       = <every ASCII character>
