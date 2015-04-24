@@ -1,0 +1,85 @@
+--- Program ---
+Program             = "program" Name FuncArgs FuncBody { OtherFunc }
+
+--- Functions -----------------------------------------------
+- Return instruction at then end of the function is required
+  (due to clarity and consistency of different functions).
+-------------------------------------------------------------
+OtherFunc           = "function" Name FuncArgs FuncBody
+FuncArgs            = "(" ( [Type Name] | (Type Name { "," Type Name }) ) ")"
+FuncBody            = "{" { Statement } ReturnInstr ";" "}"
+ReturnInstr         = "return" RValue
+
+--- Statements ------------------------------------------
+- In conditional statements, implicit conversions to bool
+  are not performed and allowed.
+---------------------------------------------------------
+Statement           = Instruction | IfBlock | WhileStatement | LineComment
+Instruction         = (VarDeclaration | ConstDeclaration | Assignment | FuncCall | ReturnInstr) ";"
+IfBlock             = IfStatement { "else" IfStatement } [ "else" (Body | SingleInstr) ]
+IfStatement         = "if" "(" LogicalExpr ")" (Body | SingleInstr)
+WhileStatement      = "while" "(" LogicalExpr ")" Body
+LineComment         = "//" String "\n"
+
+--- Instructions -----------------------------------------
+- In Assignment, type conversion is checked after parsing.
+- When declaring a const or var, only explicit conversions
+  given  below are allowed.
+- However, upward conversions can be performed implicitly
+  (bool -> int -> float -> string).
+- Variable has to be explicitly declared before first use.
+----------------------------------------------------------
+VarDeclaration      = "var" ( (Type Name) | TypeAssignment )
+ConstDeclaration    = "const" TypeAssignment
+FuncCall            = Name "(" ([ RValue ] | RValue { "," RValue }) ")"
+Assignment          = Name "=" [ "<" Type ">" ] RValue
+TypeAssignment      = IntAssign | FloatAssign | StringAssignment | BoolAssign
+IntAssign           = IntType Name "=" [ "<" IntType | FloatType | BoolType ">" ] RValue
+FloatAssign         = FloatType Name "=" [ "<" IntType | FloatType ">" ] RValue
+StringAssign        = StringType Name "=" [ "<" IntType | FloatType | BoolType | StringAssign ">" ] RValue
+BoolAssign          = BoolType Name "=" [ "<" IntType | BoolType ">" ] RValue
+
+
+--- Expressions ------------------------------------------------
+- When comparing different types, implicit upward conversion
+  is performed (look above), with an exception for string type,
+  which can be implicitly casted to only in declaration.
+- Explicit conversions within Expressions are not allowed.
+----------------------------------------------------------------
+LogicalExpr         = WeakLogicalExpr
+WeakLogicalExpr     = StrongLogicalExpr { WeakLogicalOp StrongLogicalExpr }
+StrongLogicalExpr   = LogicalOperand { StrongLogicalOp LogicalOperand }
+LogicalOperand      = FuncCall | Name | ( LogicalExpr )
+StrongLogicalOp     = "&&"
+WeakLogicalOp       = "||"
+RelationExpr        = ( "(" (Name | ArithmeticExpr) RelationOp RValue ")") |
+                      (     (Name | ArithmeticExpr) RelationOp RValue    )
+RelationOp          = "==" | "!=" | "<" | ">" | "<=" | ">="
+
+ArithmeticExpr      = WeakArithmeticExpr
+WeakArithmeticExpr  = StrongArithmeticExpr { WeakArithmeticOp StrongArithmeticExpr }
+StrongArithmeticExpr= ArithmeticOperand { StrongArithmeticOp ArithmeticOperand }
+ArithmeticOperand   = Number | Name | FuncCall | ( ArithmeticExpr )
+StrongArithmeticOp  = "*" | "/" | "%"
+WeakArithmeticOp    = "+" | "-"
+
+--- Types ---
+Type                = IntType | FloatType | StringType | BoolType
+IntType             = "int"
+FloatType           = "float"
+StringType          = "string"
+BoolType            = "bool"
+
+--- Other ---
+Body                = "{" { Statement } "}"
+SingleInstr         = {LineComment} Statement {LineComment}
+RValue              = Value | Name | ArithmeticExpr | LogicalExpr
+Name                = (Letter | "_") {Letter | Digit | "_" }
+Value               = String | Number | BoolValue
+String              = """ { AsciiChar } """
+Letter              = "a".."z" | "A".."Z"
+Number              = [Sign] Digit { Digit } [ "." Digit { Digit } ]
+Digit               = "0".."9"
+BoolValue           = "true" | "false"
+Sign                = [ "-" ]
+AsciiChar           = <every ASCII character>
