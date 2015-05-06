@@ -4,7 +4,8 @@
 /**
  *
  */
-class InputManager {
+class InputManager
+{
 public:
 
 private:

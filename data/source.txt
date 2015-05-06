@@ -1,0 +1,4 @@
+program MyProgram (int a, int b) {
+	print(a + b);
+	return;
+}

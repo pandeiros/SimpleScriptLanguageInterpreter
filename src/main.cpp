@@ -5,9 +5,15 @@
 // @author Paweł Kaczyński
 // --------------------------------------
 
-#include "InputManager.h"
+#include <iostream>
+#include "Interpreter.h"
 
-int main () {
+int main (int argc, char *argv[])
+{
+    Interpreter interpreter (argc, argv);
+    interpreter.run ();
 
+    std::cout << "(Press Return to exit)";
+    std::cin.get ();
     return 0;
 }
