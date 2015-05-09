@@ -25,4 +25,6 @@ void Interpreter::run ()
 #ifdef DEBUG
     this->printParams ();
 #endif
+
+    _inputManager.setSourceFile (_sourceFile);
 }
