@@ -11,11 +11,13 @@ include_directories(
   include
 )
 
-set(GAME_SRC
+set(APP_SRC
   src/main.cpp
   src/InputManager.cpp
+  src/MessageHandler.cpp
+  src/Interpreter.cpp
 )
 
 set(APP_BIN_DIR "${CMAKE_BINARY_DIR}/bin")
 
-add_executable(${APP_NAME} ${GAME_SRC})
+add_executable(${APP_NAME} ${APP_SRC})
