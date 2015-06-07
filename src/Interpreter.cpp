@@ -1,5 +1,9 @@
 #include "Interpreter.h"
 
+#include "Lexer.h"
+#include "Parser.h"
+#include "MessageHandler.h"
+
 Interpreter::Interpreter (int argc, char* argv[]) : _argCount (argc)
 {
     if (argc > 1)
@@ -18,6 +22,10 @@ Interpreter::Interpreter (int argc, char* argv[]) : _argCount (argc)
             }
         }
     }
+    else
+    {
+        MessageHandler::error ("Input file missing!");
+    }
 }
 
 void Interpreter::run ()
@@ -26,5 +34,6 @@ void Interpreter::run ()
     this->printParams ();
 #endif
 
-    _inputManager.setSourceFile (_sourceFile);
+    Lexer lexer(_sourceFile);
+    Parser parser(lexer);
 }

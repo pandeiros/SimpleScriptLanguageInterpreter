@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Token">
+      <UniqueIdentifier>{97225698-eb93-4250-a6f3-e81c1855700f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\SyntaxTree">
+      <UniqueIdentifier>{d01fed0a-fc75-480b-aceb-24eb5804ff00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\SyntaxTree">
+      <UniqueIdentifier>{0166980b-1ed0-425a-8506-49157b580b1f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\InputManager.h">
@@ -20,6 +29,69 @@
     </ClInclude>
     <ClInclude Include="..\include\Interpreter.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MessageHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\tokens\Token.h">
+      <Filter>Header Files\Token</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\tokens\TokenType.h">
+      <Filter>Header Files\Token</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Lexer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Parser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\Node.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\Assignable.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\Assignment.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\Call.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\Condition.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\Expression.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\FunDefinition.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\IfStatement.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\LoopJump.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\Matrix.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\Program.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\ReturnStatement.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\StatementBlock.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\VarDeclaration.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\Variable.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\WhileStatement.h">
+      <Filter>Header Files\SyntaxTree</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -31,6 +103,18 @@
     </ClCompile>
     <ClCompile Include="..\src\Interpreter.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\MessageHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Lexer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Parser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\syntax_tree\Node.cpp">
+      <Filter>Source Files\SyntaxTree</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

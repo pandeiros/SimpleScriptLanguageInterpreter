@@ -1,6 +1,9 @@
 #ifndef __MESSAGE_HANDLER__
 #define __MESSAGE_HANDLER__
 
+#include <string>
+#include <iostream>
+
 /**
  *
  */

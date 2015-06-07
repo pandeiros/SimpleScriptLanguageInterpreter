@@ -44,7 +44,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\include\; $(ProjectDir)..\include\tokens\; $(ProjectDir)..\include\syntax_tree\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -58,7 +58,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\include\; $(ProjectDir)..\include\tokens\; $(ProjectDir)..\include\syntax_tree\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -69,11 +69,36 @@
   <ItemGroup>
     <ClInclude Include="..\include\InputManager.h" />
     <ClInclude Include="..\include\Interpreter.h" />
+    <ClInclude Include="..\include\Lexer.h" />
+    <ClInclude Include="..\include\MessageHandler.h" />
+    <ClInclude Include="..\include\Parser.h" />
+    <ClInclude Include="..\include\syntax_tree\Assignable.h" />
+    <ClInclude Include="..\include\syntax_tree\Assignment.h" />
+    <ClInclude Include="..\include\syntax_tree\Call.h" />
+    <ClInclude Include="..\include\syntax_tree\Condition.h" />
+    <ClInclude Include="..\include\syntax_tree\Expression.h" />
+    <ClInclude Include="..\include\syntax_tree\FunDefinition.h" />
+    <ClInclude Include="..\include\syntax_tree\IfStatement.h" />
+    <ClInclude Include="..\include\syntax_tree\LoopJump.h" />
+    <ClInclude Include="..\include\syntax_tree\Matrix.h" />
+    <ClInclude Include="..\include\syntax_tree\Node.h" />
+    <ClInclude Include="..\include\syntax_tree\Program.h" />
+    <ClInclude Include="..\include\syntax_tree\ReturnStatement.h" />
+    <ClInclude Include="..\include\syntax_tree\StatementBlock.h" />
+    <ClInclude Include="..\include\syntax_tree\VarDeclaration.h" />
+    <ClInclude Include="..\include\syntax_tree\Variable.h" />
+    <ClInclude Include="..\include\syntax_tree\WhileStatement.h" />
+    <ClInclude Include="..\include\tokens\Token.h" />
+    <ClInclude Include="..\include\tokens\TokenType.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\InputManager.cpp" />
     <ClCompile Include="..\src\Interpreter.cpp" />
+    <ClCompile Include="..\src\Lexer.cpp" />
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\MessageHandler.cpp" />
+    <ClCompile Include="..\src\Parser.cpp" />
+    <ClCompile Include="..\src\syntax_tree\Node.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

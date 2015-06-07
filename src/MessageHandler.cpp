@@ -1,24 +1,24 @@
 #include "MessageHandler.h"
 
-void MessageHandler::error(const std::string& message)
+void MessageHandler::error(const std::string & message)
 {
-    MessageHandler::printLabel(ERROR);
+    MessageHandler::printLabel (ERROR);
     MessageHandler::print(message);
 }
 
-void MessageHandler::warning(WARNING)
+void MessageHandler::warning (const std::string & message)
 {
-    MessageHandler::printLabel("Warning", "yellow");
+    MessageHandler::printLabel(WARNING);
     MessageHandler::print(message);
 }
 
-void MessageHandler::info(const std::string& message)
+void MessageHandler::info(const std::string & message)
 {
     MessageHandler::printLabel(INFO);
     MessageHandler::print(message);
 }
 
-void MessageHandler::printLabel(const Type type)
+void MessageHandler::printLabel (const Type type)
 {
     std::string label = "";
     int colorCode = 0;

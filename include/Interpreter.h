@@ -22,8 +22,6 @@ private:
     std::string _sourceFile;
     std::vector<std::string> _vecArgs;
 
-    InputManager _inputManager;
-
 #ifdef DEBUG
     void printParams ()
     {
