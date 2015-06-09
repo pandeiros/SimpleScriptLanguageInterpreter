@@ -67,6 +67,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\Executor.h" />
     <ClInclude Include="..\include\InputManager.h" />
     <ClInclude Include="..\include\intermediate\Assignable.h" />
     <ClInclude Include="..\include\intermediate\AssignmentInstr.h" />
@@ -114,6 +115,7 @@
     <ClInclude Include="..\include\tokens\TokenType.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\Executor.cpp" />
     <ClCompile Include="..\src\InputManager.cpp" />
     <ClCompile Include="..\src\Interpreter.cpp" />
     <ClCompile Include="..\src\Lexer.cpp" />

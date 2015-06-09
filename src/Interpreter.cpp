@@ -2,8 +2,9 @@
 
 #include "Lexer.h"
 #include "Parser.h"
-#include "MessageHandler.h"
 #include "SemanticChecker.h"
+#include "Executor.h"
+#include "MessageHandler.h"
 
 Interpreter::Interpreter (int argc, char* argv[]) : _argCount (argc)
 {
@@ -38,10 +39,10 @@ void Interpreter::run ()
     Lexer lexer(_sourceFile);
     Parser parser(lexer);
     SemanticChecker semCheck;
-    //Executor executor;
+    Executor executor;
 
     auto syntaxTree = parser.parse();
     auto checkResult = semCheck.check(syntaxTree);
 
-    //executor.execute(checkResult);
+    executor.execute(checkResult);
 }
