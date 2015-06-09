@@ -6,24 +6,27 @@
 /*
  *
  */
-class LoopJump : public Node
+namespace syntax
 {
-public:
-    void setType (const TokenType& type)
+    class LoopJump : public Node
     {
-        if (type == TokenType::Break)
+    public:
+        void setType(const TokenType& type)
         {
-            this->isBreak = true;
-            return;
+            if (type == TokenType::Break)
+            {
+                this->isBreak = true;
+                return;
+            }
+            this->isBreak = false;
         }
-        this->isBreak = false;
-    }
-    virtual Type getType ()
-    {
-        return Node::Type::LoopJump;
-    }
+        virtual Type getType()
+        {
+            return Node::Type::LoopJump;
+        }
 
-    bool isBreak;
-};
+        bool isBreak;
+    };
+}
 
 #endif // __LOOP_JUMP_H__

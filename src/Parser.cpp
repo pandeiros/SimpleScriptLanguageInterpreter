@@ -11,7 +11,7 @@ Parser::Parser (Lexer& lexer) :
 lexer (lexer)
 {}
 
-std::shared_ptr<Program> Parser::parse ()
+std::shared_ptr<syntax::Program> Parser::parse ()
 {
     //this->tracer.reset ();
 
@@ -19,8 +19,8 @@ std::shared_ptr<Program> Parser::parse ()
 
     Token token;
 
-    std::shared_ptr<Program> syntaxTree = std::make_shared<Program> ();
-    std::shared_ptr<FunDefinition> lastFunction;
+    std::shared_ptr<syntax::Program> syntaxTree = std::make_shared<syntax::Program> ();
+    std::shared_ptr<syntax::FunDefinition> lastFunction;
 
     //this->tracer.enter ("Starting parser tracing...");
     while ((lastFunction = this->parseFunction ()))
@@ -140,9 +140,9 @@ void Parser::resetPreviousToken ()
     this->previousToken._col = 0;
 }
 
-std::shared_ptr<FunDefinition> Parser::parseFunction ()
+std::shared_ptr<syntax::FunDefinition> Parser::parseFunction ()
 {
-    std::shared_ptr<FunDefinition> node = std::make_shared<FunDefinition> ();
+    std::shared_ptr<syntax::FunDefinition> node = std::make_shared<syntax::FunDefinition> ();
 
     //this->tracer.enter ("Parsing function");
 
@@ -194,9 +194,9 @@ std::vector<std::string> Parser::parseParameters ()
     return parametersNames;
 }
 
-std::shared_ptr<StatementBlock> Parser::parseStatementBlock ()
+std::shared_ptr<syntax::StatementBlock> Parser::parseStatementBlock()
 {
-    std::shared_ptr<StatementBlock> node = std::make_shared<StatementBlock> ();
+    std::shared_ptr<syntax::StatementBlock> node = std::make_shared<syntax::StatementBlock>();
 
     //this->tracer.enter ("Parsing statement block");
 
@@ -225,26 +225,26 @@ std::shared_ptr<StatementBlock> Parser::parseStatementBlock ()
             switch (tempToken._type)
             {
                 case TokenType::If:
-                    node->addInstruction (this->parseIfStatement ());
+                    node->addInstruction (parseIfStatement ());
                     break;
                 case TokenType::While:
-                    node->addInstruction (this->parseWhileStatement ());
+                    node->addInstruction (parseWhileStatement ());
                     break;
                 case TokenType::Return:
-                    node->addInstruction (this->parseReturnStatement ());
+                    node->addInstruction (parseReturnStatement ());
                     break;
                 case TokenType::Var:
-                    node->addInstruction (this->parseInitStatement ());
+                    node->addInstruction (parseInitStatement ());
                     break;
                 case TokenType::BracketOpen:
-                    node->addInstruction (this->parseStatementBlock ());
+                    node->addInstruction (parseStatementBlock ());
                     break;
                 case TokenType::Identifier:
-                    node->addInstruction (this->parseAssignmentOrFunCall ());
+                    node->addInstruction (parseAssignmentOrFunCall ());
                     break;
                 case TokenType::Continue:
                 case TokenType::Break:
-                    node->addInstruction (this->parseLoopJump ());
+                    node->addInstruction (parseLoopJump ());
                     break;
                 default:
                     break;
@@ -257,9 +257,9 @@ std::shared_ptr<StatementBlock> Parser::parseStatementBlock ()
     return node;
 }
 
-std::shared_ptr<IfStatement> Parser::parseIfStatement ()
+std::shared_ptr<syntax::IfStatement> Parser::parseIfStatement()
 {
-    std::shared_ptr<IfStatement> node = std::make_shared<IfStatement> ();
+    std::shared_ptr<syntax::IfStatement> node = std::make_shared<syntax::IfStatement>();
 
     //this->tracer.enter ("Parsing if statement");
 
@@ -283,9 +283,9 @@ std::shared_ptr<IfStatement> Parser::parseIfStatement ()
     return node;
 }
 
-std::shared_ptr<WhileStatement> Parser::parseWhileStatement ()
+std::shared_ptr<syntax::WhileStatement> Parser::parseWhileStatement()
 {
-    std::shared_ptr<WhileStatement> node = std::make_shared<WhileStatement> ();
+    std::shared_ptr<syntax::WhileStatement> node = std::make_shared<syntax::WhileStatement>();
 
     //this->tracer.enter ("Parsing while statement");
 
@@ -302,9 +302,9 @@ std::shared_ptr<WhileStatement> Parser::parseWhileStatement ()
     return node;
 }
 
-std::shared_ptr<ReturnStatement> Parser::parseReturnStatement ()
+std::shared_ptr<syntax::ReturnStatement> Parser::parseReturnStatement()
 {
-    std::shared_ptr<ReturnStatement> node = std::make_shared<ReturnStatement> ();
+    std::shared_ptr<syntax::ReturnStatement> node = std::make_shared<syntax::ReturnStatement>();
 
     //this->tracer.enter ("Parsing return statement");
 
@@ -318,9 +318,9 @@ std::shared_ptr<ReturnStatement> Parser::parseReturnStatement ()
     return node;
 }
 
-std::shared_ptr<VarDeclaration> Parser::parseInitStatement ()
+std::shared_ptr<syntax::VarDeclaration> Parser::parseInitStatement()
 {
-    std::shared_ptr<VarDeclaration> node = std::make_shared<VarDeclaration> ();
+    std::shared_ptr<syntax::VarDeclaration> node = std::make_shared<syntax::VarDeclaration>();
 
     //this->tracer.enter ("Parsing init statement");
 
@@ -353,7 +353,7 @@ NodePtr Parser::parseAssignmentOrFunCall ()
     node = this->parseFunCall (tempToken._value);
     if (!node)
     {
-        std::shared_ptr<Assignment> assignmentNode = std::make_shared<Assignment> ();
+        std::shared_ptr<syntax::Assignment> assignmentNode = std::make_shared<syntax::Assignment>();
 
         assignmentNode->setVariable (this->parseVariable (tempToken));
 
@@ -370,9 +370,9 @@ NodePtr Parser::parseAssignmentOrFunCall ()
     return node;
 }
 
-std::shared_ptr<LoopJump> Parser::parseLoopJump ()
+std::shared_ptr<syntax::LoopJump> Parser::parseLoopJump()
 {
-    std::shared_ptr<LoopJump> node = std::make_shared<LoopJump> ();
+    std::shared_ptr<syntax::LoopJump> node = std::make_shared<syntax::LoopJump>();
 
     //this->tracer.enter ("Parsing loop jump");
 
@@ -385,9 +385,9 @@ std::shared_ptr<LoopJump> Parser::parseLoopJump ()
     return node;
 }
 
-std::shared_ptr<Assignable> Parser::parseAssignable ()
+std::shared_ptr<syntax::Assignable> Parser::parseAssignable()
 {
-    std::shared_ptr<Assignable> node;
+    std::shared_ptr<syntax::Assignable> node;
 
     //this->tracer.enter ("Parsing assignable");
 
@@ -410,9 +410,9 @@ std::shared_ptr<Assignable> Parser::parseAssignable ()
     return node;
 }
 
-std::shared_ptr<Call> Parser::parseFunCall (const std::string& identifier)
+std::shared_ptr<syntax::Call> Parser::parseFunCall(const std::string& identifier)
 {
-    std::shared_ptr<Call> node = std::make_shared<Call> ();
+    std::shared_ptr<syntax::Call> node = std::make_shared<syntax::Call>();
 
     //this->tracer.enter ("Parsing function call");
 
@@ -456,11 +456,11 @@ std::shared_ptr<Call> Parser::parseFunCall (const std::string& identifier)
     return node;
 }
 
-std::shared_ptr<Variable> Parser::parseVariable (const Token& identifierToken)
+std::shared_ptr<syntax::Variable> Parser::parseVariable (const Token& identifierToken)
 {
-    std::shared_ptr<Variable> node = std::make_shared<Variable> ();
+    std::shared_ptr<syntax::Variable> node = std::make_shared<syntax::Variable> ();
 
-    //this->tracer.enter ("Parsing variable");
+    //this->tracer.enter ("Parsing Variable");
 
     if (identifierToken._type != TokenType::Identifier)
     {
@@ -490,9 +490,9 @@ std::shared_ptr<Variable> Parser::parseVariable (const Token& identifierToken)
     return node;
 }
 
-std::shared_ptr<Matrix> Parser::parseLiteral ()
+std::shared_ptr<syntax::Matrix> Parser::parseLiteral()
 {
-    std::shared_ptr<Matrix> node = std::make_shared<Matrix> ();
+    std::shared_ptr<syntax::Matrix> node = std::make_shared<syntax::Matrix>();
 
     ///this->tracer.enter ("Parsing literal");
 
@@ -542,9 +542,9 @@ double Parser::parseNumberLiteral ()
     return value;
 }
 
-std::shared_ptr<Matrix> Parser::parseMatrixLiteral ()
+std::shared_ptr<syntax::Matrix> Parser::parseMatrixLiteral()
 {
-    std::shared_ptr<Matrix> node = std::make_shared<Matrix> ();
+    std::shared_ptr<syntax::Matrix> node = std::make_shared<syntax::Matrix>();
 
     //this->tracer.enter ("Parsing matrix literal");
 
@@ -596,9 +596,9 @@ std::shared_ptr<Matrix> Parser::parseMatrixLiteral ()
     return node;
 }
 
-std::shared_ptr<Expression> Parser::parseExpression (const Token& firstToken)
+std::shared_ptr<syntax::Expression> Parser::parseExpression(const Token& firstToken)
 {
-    std::shared_ptr<Expression> node = std::make_shared<Expression> ();
+    std::shared_ptr<syntax::Expression> node = std::make_shared<syntax::Expression>();
 
     //this->tracer.enter ("Parsing expression");
 
@@ -616,9 +616,9 @@ std::shared_ptr<Expression> Parser::parseExpression (const Token& firstToken)
     return node;
 }
 
-std::shared_ptr<Expression> Parser::parseMultiplicativeExpression (const Token& firstToken)
+std::shared_ptr<syntax::Expression> Parser::parseMultiplicativeExpression(const Token& firstToken)
 {
-    std::shared_ptr<Expression> node = std::make_shared<Expression> ();
+    std::shared_ptr<syntax::Expression> node = std::make_shared<syntax::Expression>();
 
     //this->tracer.enter ("Parsing multiplicative expression");
 
@@ -673,9 +673,9 @@ NodePtr Parser::parsePrimaryExpression (const Token& firstToken)
     return node;
 }
 
-std::shared_ptr<Condition> Parser::parseCondition ()
+std::shared_ptr<syntax::Condition> Parser::parseCondition()
 {
-    std::shared_ptr<Condition> node = std::make_shared<Condition> ();
+    std::shared_ptr<syntax::Condition> node = std::make_shared<syntax::Condition>();
 
     //this->tracer.enter ("Parsing condition");
 
@@ -693,9 +693,9 @@ std::shared_ptr<Condition> Parser::parseCondition ()
     return node;
 }
 
-std::shared_ptr<Condition> Parser::parseAndCondition ()
+std::shared_ptr<syntax::Condition> Parser::parseAndCondition()
 {
-    std::shared_ptr<Condition> node = std::make_shared<Condition> ();
+    std::shared_ptr<syntax::Condition> node = std::make_shared<syntax::Condition>();
 
     //this->tracer.enter ("Parsing and condition");
 
@@ -713,9 +713,9 @@ std::shared_ptr<Condition> Parser::parseAndCondition ()
     return node;
 }
 
-std::shared_ptr<Condition> Parser::parseEqualityCondition ()
+std::shared_ptr<syntax::Condition> Parser::parseEqualityCondition()
 {
-    std::shared_ptr<Condition> node = std::make_shared<Condition> ();
+    std::shared_ptr<syntax::Condition> node = std::make_shared<syntax::Condition>();
 
     //this->tracer.enter ("Parsing equality condition");
 
@@ -733,9 +733,9 @@ std::shared_ptr<Condition> Parser::parseEqualityCondition ()
     return node;
 }
 
-std::shared_ptr<Condition> Parser::parseRelationalCondition ()
+std::shared_ptr<syntax::Condition> Parser::parseRelationalCondition()
 {
-    std::shared_ptr<Condition> node = std::make_shared<Condition> ();
+    std::shared_ptr<syntax::Condition> node = std::make_shared<syntax::Condition>();
 
     //this->tracer.enter ("Parsing relational condition");
 
@@ -755,7 +755,7 @@ std::shared_ptr<Condition> Parser::parseRelationalCondition ()
 
 NodePtr Parser::parsePrimaryCondition ()
 {
-    std::shared_ptr<Condition> node = std::make_shared<Condition> ();
+    std::shared_ptr<syntax::Condition> node = std::make_shared<syntax::Condition>();
 
     //this->tracer.enter ("Parsing primary condition");
 

@@ -6,40 +6,43 @@
 /*
  *
  */
-class Variable : public Node
+namespace syntax
 {
-public:
-    void setName (const std::string& name)
+    class Variable : public Node
     {
-        this->variableName = name;
-    }
+    public:
+        void setName(const std::string& name)
+        {
+            this->variableName = name;
+        }
 
-    void setIndexArg (
-        const unsigned int& indexNo,
-        const std::shared_ptr<Assignable>& argument
-        )
-    {
-        if (indexNo == 1)
+        void setIndexArg(
+            const unsigned int& indexNo,
+            const std::shared_ptr<Assignable>& argument
+            )
         {
-            this->indexArg1 = argument;
+            if (indexNo == 1)
+            {
+                this->indexArg1 = argument;
+            }
+            else if (indexNo == 2)
+            {
+                this->indexArg2 = argument;
+            }
+            else
+            {
+                // error
+            }
         }
-        else if (indexNo == 2)
+        virtual Type getType()
         {
-            this->indexArg2 = argument;
+            return Node::Type::Variable;
         }
-        else
-        {
-            // error
-        }
-    }
-    virtual Type getType ()
-    {
-        return Node::Type::Variable;
-    }
 
-    std::string variableName;
-    std::shared_ptr<Assignable> indexArg1;
-    std::shared_ptr<Assignable> indexArg2;
-};
+        std::string variableName;
+        std::shared_ptr<Assignable> indexArg1;
+        std::shared_ptr<Assignable> indexArg2;
+    };
+}
 
 #endif // __VARIABLE_H__

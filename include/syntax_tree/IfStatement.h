@@ -8,29 +8,32 @@ class StatementBlock;
 /*
  *
  */
-class IfStatement : public Node
+namespace syntax
 {
-public:
-    void setCondition (const std::shared_ptr<Condition>& conditionNode)
+    class IfStatement : public Node
     {
-        this->conditionNode = conditionNode;
-    }
-    void setTrueBlock (const std::shared_ptr<StatementBlock>& trueBlockNode)
-    {
-        this->trueBlockNode = trueBlockNode;
-    }
-    void setFalseBlock (const std::shared_ptr<StatementBlock>& falseBlockNode)
-    {
-        this->falseBlockNode = falseBlockNode;
-    }
-    virtual Type getType ()
-    {
-        return Node::Type::IfStatement;
-    }
+    public:
+        void setCondition(const std::shared_ptr<Condition>& conditionNode)
+        {
+            this->conditionNode = conditionNode;
+        }
+        void setTrueBlock(const std::shared_ptr<StatementBlock>& trueBlockNode)
+        {
+            this->trueBlockNode = trueBlockNode;
+        }
+        void setFalseBlock(const std::shared_ptr<StatementBlock>& falseBlockNode)
+        {
+            this->falseBlockNode = falseBlockNode;
+        }
+        virtual Type getType()
+        {
+            return Node::Type::IfStatement;
+        }
 
-    std::shared_ptr<Condition> conditionNode;
-    std::shared_ptr<StatementBlock> trueBlockNode;
-    std::shared_ptr<StatementBlock> falseBlockNode;
-};
+        std::shared_ptr<Condition> conditionNode;
+        std::shared_ptr<StatementBlock> trueBlockNode;
+        std::shared_ptr<StatementBlock> falseBlockNode;
+    };
+}
 
 #endif // __IF_STATEMENT_H__

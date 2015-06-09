@@ -44,7 +44,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\include\; $(ProjectDir)..\include\tokens\; $(ProjectDir)..\include\syntax_tree\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\include\; $(ProjectDir)..\include\tokens\; $(ProjectDir)..\include\syntax_tree\; $(ProjectDir)..\include\intermediate\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -58,7 +58,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\include\; $(ProjectDir)..\include\tokens\; $(ProjectDir)..\include\syntax_tree\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\include\; $(ProjectDir)..\include\tokens\; $(ProjectDir)..\include\syntax_tree\; $(ProjectDir)..\include\intermediate\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -68,10 +68,32 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\include\InputManager.h" />
+    <ClInclude Include="..\include\intermediate\Assignable.h" />
+    <ClInclude Include="..\include\intermediate\AssignmentInstr.h" />
+    <ClInclude Include="..\include\intermediate\Block.h" />
+    <ClInclude Include="..\include\intermediate\CallInstr.h" />
+    <ClInclude Include="..\include\intermediate\Condition.h" />
+    <ClInclude Include="..\include\intermediate\ConditionOperand.h" />
+    <ClInclude Include="..\include\intermediate\Executable.h" />
+    <ClInclude Include="..\include\intermediate\Expression.h" />
+    <ClInclude Include="..\include\intermediate\ExpressionOperand.h" />
+    <ClInclude Include="..\include\intermediate\Function.h" />
+    <ClInclude Include="..\include\intermediate\IfStatementInstr.h" />
+    <ClInclude Include="..\include\intermediate\Instruction.h" />
+    <ClInclude Include="..\include\intermediate\IR.h" />
+    <ClInclude Include="..\include\intermediate\Literal.h" />
+    <ClInclude Include="..\include\intermediate\LoopJumpInstr.h" />
+    <ClInclude Include="..\include\intermediate\ReturnInstr.h" />
+    <ClInclude Include="..\include\intermediate\ScopeInst.h" />
+    <ClInclude Include="..\include\intermediate\ScopeProto.h" />
+    <ClInclude Include="..\include\intermediate\Variable.h" />
+    <ClInclude Include="..\include\intermediate\WhileStatementInstr.h" />
     <ClInclude Include="..\include\Interpreter.h" />
     <ClInclude Include="..\include\Lexer.h" />
+    <ClInclude Include="..\include\Library.h" />
     <ClInclude Include="..\include\MessageHandler.h" />
     <ClInclude Include="..\include\Parser.h" />
+    <ClInclude Include="..\include\SemanticChecker.h" />
     <ClInclude Include="..\include\syntax_tree\Assignable.h" />
     <ClInclude Include="..\include\syntax_tree\Assignment.h" />
     <ClInclude Include="..\include\syntax_tree\Call.h" />
@@ -95,9 +117,11 @@
     <ClCompile Include="..\src\InputManager.cpp" />
     <ClCompile Include="..\src\Interpreter.cpp" />
     <ClCompile Include="..\src\Lexer.cpp" />
+    <ClCompile Include="..\src\Library.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\MessageHandler.cpp" />
     <ClCompile Include="..\src\Parser.cpp" />
+    <ClCompile Include="..\src\SemanticChecker.cpp" />
     <ClCompile Include="..\src\syntax_tree\Node.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

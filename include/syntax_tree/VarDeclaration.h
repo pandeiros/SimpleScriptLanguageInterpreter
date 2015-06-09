@@ -6,24 +6,27 @@
 /*
  *
  */
-class VarDeclaration : public Node
+namespace syntax
 {
-public:
-    void setName (const std::string& name)
+    class VarDeclaration : public Node
     {
-        this->name = name;
-    }
-    void setValue (const std::shared_ptr<Assignable>& assignableNode)
-    {
-        this->assignableNode = assignableNode;
-    }
-    virtual Type getType ()
-    {
-        return Node::Type::VarDeclaration;
-    }
+    public:
+        void setName(const std::string& name)
+        {
+            this->name = name;
+        }
+        void setValue(const std::shared_ptr<Assignable>& assignableNode)
+        {
+            this->assignableNode = assignableNode;
+        }
+        virtual Type getType()
+        {
+            return Node::Type::VarDeclaration;
+        }
 
-    std::string name;
-    std::shared_ptr<Assignable> assignableNode;
-};
+        std::string name;
+        std::shared_ptr<Assignable> assignableNode;
+    };
+}
 
 #endif // __VAR_DECLARATION_H__

@@ -14,7 +14,7 @@ class Parser
 public:
     Parser (Lexer& lexer);
 
-    std::shared_ptr<Program> parse ();
+    std::shared_ptr<syntax::Program> parse ();
 
 private:
     Lexer & lexer;
@@ -31,32 +31,32 @@ private:
     void resetPreviousToken ();
 
     // Decomposition procedures
-    std::shared_ptr<FunDefinition> parseFunction ();
+    std::shared_ptr<syntax::FunDefinition> parseFunction();
     std::vector<std::string> parseParameters ();
-    std::shared_ptr<StatementBlock> parseStatementBlock ();
+    std::shared_ptr<syntax::StatementBlock> parseStatementBlock();
 
-    std::shared_ptr<IfStatement> parseIfStatement ();
-    std::shared_ptr<WhileStatement> parseWhileStatement ();
-    std::shared_ptr<ReturnStatement> parseReturnStatement ();
-    std::shared_ptr<VarDeclaration> parseInitStatement ();
+    std::shared_ptr<syntax::IfStatement> parseIfStatement ();
+    std::shared_ptr<syntax::WhileStatement> parseWhileStatement();
+    std::shared_ptr<syntax::ReturnStatement> parseReturnStatement();
+    std::shared_ptr<syntax::VarDeclaration> parseInitStatement();
     NodePtr parseAssignmentOrFunCall ();
-    std::shared_ptr<LoopJump> parseLoopJump ();
+    std::shared_ptr<syntax::LoopJump> parseLoopJump();
 
-    std::shared_ptr<Assignable> parseAssignable ();
-    std::shared_ptr<Call> parseFunCall (const std::string& identifier);
-    std::shared_ptr<Variable> parseVariable (const Token& firstToken = Token (TokenType::Undefined));
-    std::shared_ptr<Matrix> parseLiteral ();
+    std::shared_ptr<syntax::Assignable> parseAssignable();
+    std::shared_ptr<syntax::Call> parseFunCall(const std::string& identifier);
+    std::shared_ptr<syntax::Variable> parseVariable(const Token& firstToken = Token(TokenType::Undefined));
+    std::shared_ptr<syntax::Matrix> parseLiteral();
     double parseNumberLiteral ();
-    std::shared_ptr<Matrix> parseMatrixLiteral ();
+    std::shared_ptr<syntax::Matrix> parseMatrixLiteral();
 
-    std::shared_ptr<Expression> parseExpression (const Token& firstToken = Token (TokenType::Undefined));
-    std::shared_ptr<Expression> parseMultiplicativeExpression (const Token& firstToken = Token (TokenType::Undefined));
+    std::shared_ptr<syntax::Expression> parseExpression(const Token& firstToken = Token(TokenType::Undefined));
+    std::shared_ptr<syntax::Expression> parseMultiplicativeExpression(const Token& firstToken = Token(TokenType::Undefined));
     NodePtr parsePrimaryExpression (const Token& firstToken = Token (TokenType::Undefined));
 
-    std::shared_ptr<Condition> parseCondition ();
-    std::shared_ptr<Condition> parseAndCondition ();
-    std::shared_ptr<Condition> parseEqualityCondition ();
-    std::shared_ptr<Condition> parseRelationalCondition ();
+    std::shared_ptr<syntax::Condition> parseCondition();
+    std::shared_ptr<syntax::Condition> parseAndCondition();
+    std::shared_ptr<syntax::Condition> parseEqualityCondition();
+    std::shared_ptr<syntax::Condition> parseRelationalCondition();
     NodePtr parsePrimaryCondition ();
 };
 

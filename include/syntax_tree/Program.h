@@ -8,19 +8,22 @@ class FunDefinition;
 /*
  *
  */
-class Program : public Node
+namespace syntax
 {
-public:
-    void addFunction (const std::shared_ptr<FunDefinition>& function)
+    class Program : public Node
     {
-        this->functions.push_back (function);
-    }
-    virtual Type getType ()
-    {
-        return Node::Type::Program;
-    }
+    public:
+        void addFunction(const std::shared_ptr<FunDefinition>& function)
+        {
+            this->functions.push_back(function);
+        }
+        virtual Type getType()
+        {
+            return Node::Type::Program;
+        }
 
-    std::vector<std::shared_ptr<FunDefinition>> functions = {};
-};
+        std::vector<std::shared_ptr<FunDefinition>> functions = {};
+    };
+}
 
 #endif // __PROGRAM_H__

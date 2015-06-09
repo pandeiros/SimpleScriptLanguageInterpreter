@@ -7,38 +7,41 @@
 /*
  *
  */
-class Condition : public Node
+namespace syntax
 {
-public:
-    void addOperand (const NodePtr& node)
+    class Condition : public Node
     {
-        this->operands.push_back (node);
-    }
-    void setOperator (const TokenType& operation)
-    {
-        this->operation = operation;
-    }
-    void setNegated ()
-    {
-        this->negated = true;
-    }
-    bool isNegated ()
-    {
-        return this->negated;
-    }
-    NodePtr& getLeftSide ()
-    {
-        return this->operands.at (0);
-    }
+    public:
+        void addOperand(const NodePtr& node)
+        {
+            this->operands.push_back(node);
+        }
+        void setOperator(const TokenType& operation)
+        {
+            this->operation = operation;
+        }
+        void setNegated()
+        {
+            this->negated = true;
+        }
+        bool isNegated()
+        {
+            return this->negated;
+        }
+        NodePtr& getLeftSide()
+        {
+            return this->operands.at(0);
+        }
 
-    virtual Type getType ()
-    {
-        return Node::Type::Condition;
-    }
+        virtual Type getType()
+        {
+            return Node::Type::Condition;
+        }
 
-    bool negated = false;
-    TokenType operation = TokenType::Undefined;
-    std::vector<NodePtr> operands;
-};
+        bool negated = false;
+        TokenType operation = TokenType::Undefined;
+        std::vector<NodePtr> operands;
+    };
+}
 
 #endif // __CONDITION_H__

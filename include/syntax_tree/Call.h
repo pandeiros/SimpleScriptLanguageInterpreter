@@ -7,24 +7,27 @@
 /*
  *
  */
-class Call : public Assignable
+namespace syntax
 {
-public:
-    void setName (const std::string& name)
+    class Call : public Assignable
     {
-        this->name = name;
-    }
-    void addArgument (const std::shared_ptr<Assignable>& assignableNode)
-    {
-        this->arguments.push_back (assignableNode);
-    }
-    virtual Type getType ()
-    {
-        return Node::Type::Call;
-    }
+    public:
+        void setName(const std::string& name)
+        {
+            this->name = name;
+        }
+        void addArgument(const std::shared_ptr<Assignable>& assignableNode)
+        {
+            this->arguments.push_back(assignableNode);
+        }
+        virtual Type getType()
+        {
+            return Node::Type::Call;
+        }
 
-    std::string name;
-    std::vector<std::shared_ptr<Assignable>> arguments;
-};
+        std::string name;
+        std::vector<std::shared_ptr<Assignable>> arguments;
+    };
+}
 
 #endif // __CALL_H__

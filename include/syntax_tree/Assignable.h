@@ -6,10 +6,13 @@
 /*
  *
  */
-class Assignable : public Node
+namespace syntax
 {
-public:
-    typedef std::shared_ptr<Assignable> ptr;
-};
+    class Assignable : public Node
+    {
+    public:
+        typedef std::shared_ptr<Assignable> ptr;
+    };
+}
 
 #endif // __ASSIGNABLE_H__

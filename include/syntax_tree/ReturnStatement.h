@@ -6,19 +6,22 @@
 /*
  *
  */
-class ReturnStatement : public Node
+namespace syntax
 {
-public:
-    void setValue (const std::shared_ptr<Assignable>& assignableNode)
+    class ReturnStatement : public Node
     {
-        this->assignableNode = assignableNode;
-    }
-    virtual Type getType ()
-    {
-        return Node::Type::ReturnStatement;
-    }
+    public:
+        void setValue(const std::shared_ptr<Assignable>& assignableNode)
+        {
+            this->assignableNode = assignableNode;
+        }
+        virtual Type getType()
+        {
+            return Node::Type::ReturnStatement;
+        }
 
-    std::shared_ptr<Assignable> assignableNode;
-};
+        std::shared_ptr<Assignable> assignableNode;
+    };
+}
 
 #endif // __RETURN_STATEMENT_H__

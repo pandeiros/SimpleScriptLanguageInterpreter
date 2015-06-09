@@ -3,31 +3,34 @@
 
 #include "Node.h"
 
-class Variable;
-class Assignable;
-
 /*
  *
  */
-class Assignment : public Node
+namespace syntax
 {
-public:
-    void setVariable (const std::shared_ptr<Variable>& variable)
-    {
-        this->variable = variable;
-    }
-    void setValue (const std::shared_ptr<Assignable>& value)
-    {
-        this->value = value;
-    }
+    class Variable;
+    class Assignable;
 
-    virtual Type getType ()
+    class Assignment : public Node
     {
-        return Node::Type::Assignment;
-    }
+    public:
+        void setVariable(const std::shared_ptr<syntax::Variable>& variable)
+        {
+            this->variable = variable;
+        }
+        void setValue(const std::shared_ptr<syntax::Assignable>& value)
+        {
+            this->value = value;
+        }
 
-    std::shared_ptr<Variable> variable;
-    std::shared_ptr<Assignable> value;
-};
+        virtual Type getType()
+        {
+            return Node::Type::Assignment;
+        }
+
+        std::shared_ptr<Variable> variable;
+        std::shared_ptr<Assignable> value;
+    };
+}
 
 #endif // __ASSIGNMENT_H__

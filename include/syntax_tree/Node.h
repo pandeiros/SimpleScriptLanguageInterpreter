@@ -3,34 +3,37 @@
 
 #include <memory>
 
-class Node
+namespace syntax
 {
-protected:
-    std::weak_ptr<Node> parent;
-
-public:
-    enum class Type
+    class Node
     {
-        Assignment,
-        Call,
-        Condition,
-        Expression,
-        FunDefinition,
-        IfStatement,
-        LoopJump,
-        Matrix,
-        Program,
-        ReturnStatement,
-        StatementBlock,
-        VarDeclaration,
-        Variable,
-        WhileStatement
+    public:
+        enum class Type
+        {
+            Assignment,
+            Call,
+            Condition,
+            Expression,
+            FunDefinition,
+            IfStatement,
+            LoopJump,
+            Matrix,
+            Program,
+            ReturnStatement,
+            StatementBlock,
+            VarDeclaration,
+            Variable,
+            WhileStatement
+        };
+
+        virtual Type getType() = 0;
+
+    protected:
+        std::weak_ptr<Node> parent;
     };
+}
 
-    virtual Type getType () = 0;
-};
-
-typedef std::shared_ptr<Node> NodePtr;
+typedef std::shared_ptr<syntax::Node> NodePtr;
 
 #include "Assignable.h"
 #include "Assignment.h"

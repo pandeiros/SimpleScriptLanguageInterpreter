@@ -6,19 +6,22 @@
 /*
  *
  */
-class StatementBlock : public Node
+namespace syntax
 {
-public:
-    void addInstruction (const NodePtr& node)
+    class StatementBlock : public Node
     {
-        this->instructions.push_back (node);
-    }
-    virtual Type getType ()
-    {
-        return Node::Type::StatementBlock;
-    }
+    public:
+        void addInstruction(const NodePtr& node)
+        {
+            this->instructions.push_back(node);
+        }
+        virtual Type getType()
+        {
+            return Node::Type::StatementBlock;
+        }
 
-    std::vector<NodePtr> instructions;
-};
+        std::vector<NodePtr> instructions;
+    };
+}
 
 #endif // __STATEMENT_BLOCK_H__

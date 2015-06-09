@@ -22,6 +22,9 @@
     <Filter Include="Source Files\SyntaxTree">
       <UniqueIdentifier>{0166980b-1ed0-425a-8506-49157b580b1f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Intermediate">
+      <UniqueIdentifier>{ee05721e-cc0f-4015-ab9f-44f571593ea1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\InputManager.h">
@@ -93,6 +96,72 @@
     <ClInclude Include="..\include\syntax_tree\WhileStatement.h">
       <Filter>Header Files\SyntaxTree</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\SemanticChecker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\Assignable.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\AssignmentInstr.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\Block.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\CallInstr.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\Condition.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\ConditionOperand.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\Executable.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\Expression.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\ExpressionOperand.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\Function.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\IfStatementInstr.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\Instruction.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\IR.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\Literal.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\LoopJumpInstr.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\ReturnInstr.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\ScopeInst.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\ScopeProto.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\Variable.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\WhileStatementInstr.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Library.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\InputManager.cpp">
@@ -115,6 +184,12 @@
     </ClCompile>
     <ClCompile Include="..\src\syntax_tree\Node.cpp">
       <Filter>Source Files\SyntaxTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\SemanticChecker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Library.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

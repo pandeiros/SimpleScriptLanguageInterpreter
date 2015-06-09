@@ -6,24 +6,27 @@
 /*
  *
  */
-class WhileStatement : public Node
+namespace syntax
 {
-public:
-    void setCondition (const std::shared_ptr<Condition>& conditionNode)
+    class WhileStatement : public Node
     {
-        this->conditionNode = conditionNode;
-    }
-    void setBlock (const std::shared_ptr<StatementBlock>& blockNode)
-    {
-        this->blockNode = blockNode;
-    }
-    virtual Type getType ()
-    {
-        return Node::Type::WhileStatement;
-    }
+    public:
+        void setCondition(const std::shared_ptr<Condition>& conditionNode)
+        {
+            this->conditionNode = conditionNode;
+        }
+        void setBlock(const std::shared_ptr<StatementBlock>& blockNode)
+        {
+            this->blockNode = blockNode;
+        }
+        virtual Type getType()
+        {
+            return Node::Type::WhileStatement;
+        }
 
-    std::shared_ptr<Condition> conditionNode;
-    std::shared_ptr<StatementBlock> blockNode;
-};
+        std::shared_ptr<Condition> conditionNode;
+        std::shared_ptr<StatementBlock> blockNode;
+    };
+}
 
 #endif // __WHILE_STATEMENT_H__
