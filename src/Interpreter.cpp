@@ -41,8 +41,13 @@ void Interpreter::run()
     SemanticChecker semCheck;
     Executor executor;
 
-    auto syntaxTree = parser.parse();
-    auto checkResult = semCheck.check(syntaxTree);
+    auto program = parser.parse();
 
-    executor.execute(checkResult);
+    if (program.get()->functions.size() > 0)
+    {
+        auto checkResult = semCheck.check(program);
+
+        if (checkResult.size() > 0)
+            executor.execute(checkResult);
+    }
 }

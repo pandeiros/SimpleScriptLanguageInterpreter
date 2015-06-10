@@ -10,24 +10,28 @@
 
 #include "Literal.h"
 
+/*
+ * Set of predefined library functions, such as print.
+ */
 struct Library
 {
-    typedef const std::vector<std::shared_ptr<inter::Literal>> ArgVec;
-    typedef std::function<std::shared_ptr<inter::Literal>(ArgVec&)> StdFun;
+    // Function arguments and function type.
+    typedef const std::vector<std::shared_ptr<inter::Literal>> Arguments;
+    typedef std::function<std::shared_ptr<inter::Literal>(Arguments &)> LibFunction;
 
-    static const std::unordered_map<std::string, std::pair<unsigned int, StdFun>>& getStandardFunctions();
-    static const StdFun& getStandardFunction(const std::string& name);
-    static unsigned int getFunctionParamsCount(const std::string& name);
-    static bool hasFunction(const std::string& name);
-    static std::shared_ptr<inter::Literal> callFunction(const std::string& name, ArgVec& arguments);
+
+    static const std::unordered_map<std::string, std::pair<unsigned int, LibFunction>> & getStandardFunctions();
+    static const LibFunction & getStandardFunction(const std::string & name);
+    static unsigned int getFunctionParamsCount(const std::string & name);
+    static bool hasFunction(const std::string & name);
+    static std::shared_ptr<inter::Literal> callFunction(const std::string& name, Arguments & arguments);
 
 private:
-    static std::shared_ptr<inter::Literal> funPrint(ArgVec& arguments);
-    static std::shared_ptr<inter::Literal> funPrintEmpty(ArgVec& arguments);
-    static std::shared_ptr<inter::Literal> funGenerate(ArgVec& arguments);
-    static std::shared_ptr<inter::Literal> funResize(ArgVec& arguments);
-    static std::shared_ptr<inter::Literal> funSize(ArgVec& arguments);
-    static std::shared_ptr<inter::Literal> funTranspose(ArgVec& arguments);
+    static std::shared_ptr<inter::Literal> funPrint(Arguments & arguments);
+    static std::shared_ptr<inter::Literal> funNewLine(Arguments & arguments);
+    static std::shared_ptr<inter::Literal> funGenerate(Arguments & arguments);  // TODO REMOVE
+
+    static std::unordered_map<std::string, std::pair<unsigned int, Library::LibFunction>> functions;
 };
 
 #endif // __LIBRARY_H__

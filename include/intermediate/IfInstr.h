@@ -1,5 +1,5 @@
-#ifndef __INTER_IF_STATEMENT_INSTR_H__
-#define __INTER_IF_STATEMENT_INSTR_H__
+#ifndef __INTER_IF_INSTR_H__
+#define __INTER_IF_INSTR_H__
 
 #include <memory>
 #include <iostream>
@@ -11,7 +11,7 @@
 
 namespace inter
 {
-    struct IfStatementInstr : public Instruction
+    struct IfInstr : public Instruction
     {
         std::shared_ptr<Condition> condition;
         std::shared_ptr<Block> trueBlock;
@@ -41,4 +41,4 @@ namespace inter
     };
 }
 
-#endif // __INTER_IF_STATEMENT_INSTR_H__
+#endif // __INTER_IF_INSTR_H__

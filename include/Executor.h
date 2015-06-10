@@ -5,10 +5,13 @@
 #include <string>
 #include "intermediate/Function.h"
 
+/*
+ * Simply: executes prepared functions.
+ */
 class Executor
 {
 public:
-    void execute(const std::vector<std::shared_ptr<inter::Function>>& functions);
+    void execute(const std::vector<std::shared_ptr<inter::Function>> & functions);
 };
 
 #endif

@@ -79,7 +79,7 @@
     <ClInclude Include="..\include\intermediate\Expression.h" />
     <ClInclude Include="..\include\intermediate\ExpressionOperand.h" />
     <ClInclude Include="..\include\intermediate\Function.h" />
-    <ClInclude Include="..\include\intermediate\IfStatementInstr.h" />
+    <ClInclude Include="..\include\intermediate\IfInstr.h" />
     <ClInclude Include="..\include\intermediate\Instruction.h" />
     <ClInclude Include="..\include\intermediate\IR.h" />
     <ClInclude Include="..\include\intermediate\Literal.h" />
@@ -88,7 +88,7 @@
     <ClInclude Include="..\include\intermediate\ScopeInstance.h" />
     <ClInclude Include="..\include\intermediate\ScopePrototype.h" />
     <ClInclude Include="..\include\intermediate\Variable.h" />
-    <ClInclude Include="..\include\intermediate\WhileStatementInstr.h" />
+    <ClInclude Include="..\include\intermediate\WhileInstr.h" />
     <ClInclude Include="..\include\Interpreter.h" />
     <ClInclude Include="..\include\Lexer.h" />
     <ClInclude Include="..\include\Library.h" />

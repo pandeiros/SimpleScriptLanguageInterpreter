@@ -14,9 +14,9 @@
 #include "Variable.h"
 #include "AssignmentInstr.h"
 #include "CallInstr.h"
-#include "IfStatementInstr.h"
+#include "IfInstr.h"
 #include "LoopJumpInstr.h"
 #include "ReturnInstr.h"
-#include "WhileStatementInstr.h"
+#include "WhileInstr.h"
 
 #endif // __IR_H__

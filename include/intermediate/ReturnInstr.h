@@ -9,7 +9,7 @@
 
 namespace inter
 {
-    struct Return: public Instruction
+    struct ReturnInstr: public Instruction
     {
         std::shared_ptr<Assignable> value;
 

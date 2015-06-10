@@ -129,9 +129,6 @@
     <ClInclude Include="..\include\intermediate\Function.h">
       <Filter>Header Files\Intermediate</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\intermediate\IfStatementInstr.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\intermediate\Instruction.h">
       <Filter>Header Files\Intermediate</Filter>
     </ClInclude>
@@ -150,9 +147,6 @@
     <ClInclude Include="..\include\intermediate\Variable.h">
       <Filter>Header Files\Intermediate</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\intermediate\WhileStatementInstr.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\Library.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -163,6 +157,12 @@
       <Filter>Header Files\Intermediate</Filter>
     </ClInclude>
     <ClInclude Include="..\include\intermediate\ScopeInstance.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\IfInstr.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\WhileInstr.h">
       <Filter>Header Files\Intermediate</Filter>
     </ClInclude>
   </ItemGroup>

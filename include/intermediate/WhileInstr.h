@@ -11,7 +11,7 @@
 
 namespace inter
 {
-    struct WhileStatement: public Instruction
+    struct WhileInstr: public Instruction
     {
         std::shared_ptr<Condition> condition;
         std::shared_ptr<Block> block;

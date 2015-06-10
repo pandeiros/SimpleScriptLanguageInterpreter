@@ -14,25 +14,30 @@ public:
     std::vector<std::shared_ptr<inter::Function>> check(const std::shared_ptr<syntax::Program>& program);
 
 private:
-    void scanFunctionDefinitions();
-    void checkMain();
+    // Preliminary checks.
+    bool scanFunctionDefinitions();
+    bool checkForProgram();
+
+    // Main check function. Traverse all functions.
     std::vector<std::shared_ptr<inter::Function>> traverseTree();
+
+    /* Other check functions. */
     std::shared_ptr<inter::Function> checkFunction(syntax::FunDefinition& functionDef);
     std::shared_ptr<inter::Block> checkBlock(inter::ScopePrototype & scopePrototype, syntax::StatementBlock& blockNode);
-
-    void checkVarDeclaration(inter::ScopePrototype & scopePrototype, const std::string& name);
     std::shared_ptr<inter::AssignmentInstr> checkAssignment(inter::ScopePrototype & scopePrototype, const std::string& variable, syntax::Assignable& assignable);
     std::shared_ptr<inter::AssignmentInstr> checkAssignment(inter::ScopePrototype & scopePrototype, syntax::Variable& variable, syntax::Assignable& assignable);
     std::shared_ptr<inter::Assignable> checkAssignable(inter::ScopePrototype & scopePrototype, syntax::Assignable& assignable);
-    std::shared_ptr<inter::Call> checkFunctionCall(inter::ScopePrototype & scopePrototype, syntax::Call& call);
+    std::shared_ptr<inter::CallInstr> checkFunctionCall(inter::ScopePrototype & scopePrototype, syntax::Call& call);
     std::shared_ptr<inter::Expression> checkExpression(inter::ScopePrototype & scopePrototype, syntax::Expression& call);
     std::shared_ptr<inter::Variable> checkVariable(inter::ScopePrototype & scopePrototype, syntax::Variable& variable);
-    std::shared_ptr<inter::Return> checkReturnStatement(inter::ScopePrototype & scopePrototype, syntax::Assignable& assignable);
-    std::shared_ptr<inter::IfStatementInstr> checkIfStatement(inter::ScopePrototype & scopePrototype, syntax::IfStatement& stmt);
-    std::shared_ptr<inter::WhileStatement> checkWhileStatement(inter::ScopePrototype & scopePrototype, syntax::WhileStatement& stmt);
+    std::shared_ptr<inter::ReturnInstr> checkReturnStatement(inter::ScopePrototype & scopePrototype, syntax::Assignable& assignable);
+    std::shared_ptr<inter::IfInstr> checkIfStatement(inter::ScopePrototype & scopePrototype, syntax::IfStatement& stmt);
+    std::shared_ptr<inter::WhileInstr> checkWhileStatement(inter::ScopePrototype & scopePrototype, syntax::WhileStatement& stmt);
     std::shared_ptr<inter::Condition> checkCondition(inter::ScopePrototype & scopePrototype, syntax::Condition& condition);
     std::shared_ptr<inter::Literal> checkMatrixLiteral(syntax::Matrix& matrixLiteral);
+    void checkVarDeclaration(inter::ScopePrototype & scopePrototype, const std::string& name);
 
+    // Members.
     syntax::Program * _syntaxTree;
     std::unordered_map<std::string, std::shared_ptr<inter::Function>> _definedFunctions;
 };

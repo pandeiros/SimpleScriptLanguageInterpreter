@@ -5,15 +5,19 @@
 
 std::vector<std::shared_ptr<inter::Function>> SemanticChecker::check(const std::shared_ptr<syntax::Program> & program)
 {
+    // Do some preliminary checks.
     _syntaxTree = program.get();
     _definedFunctions.clear();
-    this->scanFunctionDefinitions();
-    this->checkMain();      // TODO change to check for "program"
+    if (!this->scanFunctionDefinitions())
+        return std::vector<std::shared_ptr<inter::Function>>();     // Return empty vectors in case of an error.
+
+    if (!this->checkForProgram())
+        return std::vector<std::shared_ptr<inter::Function>>();
 
     return this->traverseTree();
 }
 
-void SemanticChecker::scanFunctionDefinitions()
+bool SemanticChecker::scanFunctionDefinitions()
 {
     for(auto & function : _syntaxTree->functions)
     {
@@ -21,59 +25,68 @@ void SemanticChecker::scanFunctionDefinitions()
         if (Library::hasFunction(function->name))
         {
             MessageHandler::error(std::string("Redefinition of Library function: ").append(function->name));
-            return;
+            return false;
         }
 
         // Functions have to be unique, no duplicates.
         if (this->_definedFunctions.count(function->name) == 1)
         {
             MessageHandler::error(std::string("Duplicated definition of function: ").append(function->name));
-            return;
+            return false;
         }
 
-        // Insert ne function.
+        // Insert new function.
         std::pair<std::string, std::shared_ptr<inter::Function> > newPair(function->name, std::make_shared<inter::Function>());
         this->_definedFunctions.insert(newPair);
 
+        // Prepare function.
         auto & exeFunction = this->_definedFunctions.at(function->name);
         exeFunction->name = function->name;
 
+        // Parse variables. check for duplicates.
         for (auto & variable : function->parameters)
         {
             if (!exeFunction->scopePrototype.addVariable(variable))
             {
                 MessageHandler::error(std::string("Duplicated definition of parameter \"")
                         .append(variable).append("\" of function \"").append(function->name).append("\""));
-                return;
+                return false;
             }
             exeFunction->scopePrototype.setVariableDefined(variable);
         }
     }
+
+    return true;
 }
 
-void SemanticChecker::checkMain()
+bool SemanticChecker::checkForProgram()
 {
+    // TODO change to check for "program"
+
+    // Check for main "program" function.
     if (this->_definedFunctions.count("main") == 0)
     {
         MessageHandler::error(
             std::string("No entry point (a.k.a. \"main\" function) defined")
         );
-        return;
+        return false;
     }
     if (this->_definedFunctions.at("main")->scopePrototype.variables.size() != 0)
     {
         MessageHandler::error(
             std::string("\"main\" function should not have parameters")
         );
-        return;
+        return false;
     }
+
+    return true;
 }
 
 std::vector<std::shared_ptr<inter::Function>> SemanticChecker::traverseTree()
 {
     std::vector<std::shared_ptr<inter::Function>> functions;
 
-    for(auto& function: this->_syntaxTree->functions)
+    for(auto & function: this->_syntaxTree->functions)
     {
         functions.push_back(this->checkFunction(*function));
     }
@@ -81,9 +94,11 @@ std::vector<std::shared_ptr<inter::Function>> SemanticChecker::traverseTree()
     return functions;
 }
 
+/* Other check functions. */
+
 std::shared_ptr<inter::Function> SemanticChecker::checkFunction(syntax::FunDefinition& functionDef)
 {
-    auto& function = this->_definedFunctions.at(functionDef.name);
+    auto & function = this->_definedFunctions.at(functionDef.name);
 
     function->instructions.push_back(this->checkBlock(function->scopePrototype, *(functionDef.blockNode)));
 
@@ -283,7 +298,7 @@ std::shared_ptr<inter::Assignable> SemanticChecker::checkAssignable(inter::Scope
     return nullptr;
 }
 
-std::shared_ptr<inter::Call> SemanticChecker::checkFunctionCall(inter::ScopePrototype & scopePrototype, syntax::Call& call)
+std::shared_ptr<inter::CallInstr> SemanticChecker::checkFunctionCall(inter::ScopePrototype & scopePrototype, syntax::Call& call)
 {
     if (this->_definedFunctions.count(call.name) == 0 && !Library::hasFunction(call.name))
     {
@@ -327,7 +342,7 @@ std::shared_ptr<inter::Call> SemanticChecker::checkFunctionCall(inter::ScopeProt
         }
     }
 
-    std::shared_ptr<inter::Call> obj = std::make_shared<inter::Call>();
+    std::shared_ptr<inter::CallInstr> obj = std::make_shared<inter::CallInstr>();
     obj->name = call.name;
 
     for(auto& argument: call.arguments)
@@ -416,18 +431,18 @@ std::shared_ptr<inter::Variable> SemanticChecker::checkVariable(inter::ScopeProt
     return obj;
 }
 
-std::shared_ptr<inter::Return> SemanticChecker::checkReturnStatement(inter::ScopePrototype & scopePrototype, syntax::Assignable& assignable)
+std::shared_ptr<inter::ReturnInstr> SemanticChecker::checkReturnStatement(inter::ScopePrototype & scopePrototype, syntax::Assignable& assignable)
 {
-    std::shared_ptr<inter::Return> obj = std::make_shared<inter::Return>();
+    std::shared_ptr<inter::ReturnInstr> obj = std::make_shared<inter::ReturnInstr>();
 
     obj->value = this->checkAssignable(scopePrototype, assignable);
 
     return obj;
 }
 
-std::shared_ptr<inter::IfStatementInstr> SemanticChecker::checkIfStatement(inter::ScopePrototype & scopePrototype, syntax::IfStatement & stmt)
+std::shared_ptr<inter::IfInstr> SemanticChecker::checkIfStatement(inter::ScopePrototype & scopePrototype, syntax::IfStatement & stmt)
 {
-    std::shared_ptr<inter::IfStatementInstr> obj = std::make_shared<inter::IfStatementInstr>();
+    std::shared_ptr<inter::IfInstr> obj = std::make_shared<inter::IfInstr>();
 
     obj->condition = checkCondition(scopePrototype, *(stmt.conditionNode));
 
@@ -440,9 +455,9 @@ std::shared_ptr<inter::IfStatementInstr> SemanticChecker::checkIfStatement(inter
     return obj;
 }
 
-std::shared_ptr<inter::WhileStatement> SemanticChecker::checkWhileStatement(inter::ScopePrototype & scopePrototype, syntax::WhileStatement& stmt)
+std::shared_ptr<inter::WhileInstr> SemanticChecker::checkWhileStatement(inter::ScopePrototype & scopePrototype, syntax::WhileStatement& stmt)
 {
-    std::shared_ptr<inter::WhileStatement> obj = std::make_shared<inter::WhileStatement>();
+    std::shared_ptr<inter::WhileInstr> obj = std::make_shared<inter::WhileInstr>();
 
     obj->condition = checkCondition(scopePrototype, *(stmt.conditionNode));
 
