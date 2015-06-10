@@ -100,7 +100,7 @@
     <ClInclude Include="..\include\syntax_tree\Call.h" />
     <ClInclude Include="..\include\syntax_tree\Condition.h" />
     <ClInclude Include="..\include\syntax_tree\Expression.h" />
-    <ClInclude Include="..\include\syntax_tree\FunDefinition.h" />
+    <ClInclude Include="..\include\syntax_tree\FunctionDefinition.h" />
     <ClInclude Include="..\include\syntax_tree\IfStatement.h" />
     <ClInclude Include="..\include\syntax_tree\LoopJump.h" />
     <ClInclude Include="..\include\syntax_tree\Matrix.h" />

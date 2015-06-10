@@ -3,15 +3,12 @@
 
 #include "Node.h"
 
-/*
- *
- */
 namespace syntax
 {
     class StatementBlock : public Node
     {
     public:
-        void addInstruction(const NodePtr& node)
+        void addInstruction(const NodePtr & node)
         {
             this->instructions.push_back(node);
         }

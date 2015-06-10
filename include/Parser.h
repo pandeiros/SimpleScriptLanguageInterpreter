@@ -44,7 +44,7 @@ private:
     void resetPreviousToken();
 
     /* Decomposition procedures */
-    std::shared_ptr<syntax::FunDefinition> parseFunction();
+    std::shared_ptr<syntax::FunctionDefinition> parseFunction();
     std::vector<std::string> parseParameters();
     std::shared_ptr<syntax::StatementBlock> parseStatementBlock();
 

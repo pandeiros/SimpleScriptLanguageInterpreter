@@ -19,7 +19,7 @@ std::vector<std::shared_ptr<inter::Function>> SemanticChecker::check(const std::
 
 bool SemanticChecker::scanFunctionDefinitions()
 {
-    for(auto & function : _syntaxTree->functions)
+    for (auto & function : _syntaxTree->functions)
     {
         // Function cannot redefine Library functions.
         if (Library::hasFunction(function->name))
@@ -49,7 +49,7 @@ bool SemanticChecker::scanFunctionDefinitions()
             if (!exeFunction->scopePrototype.addVariable(variable))
             {
                 MessageHandler::error(std::string("Duplicated definition of parameter \"")
-                        .append(variable).append("\" of function \"").append(function->name).append("\""));
+                                      .append(variable).append("\" of function \"").append(function->name).append("\""));
                 return false;
             }
             exeFunction->scopePrototype.setVariableDefined(variable);
@@ -68,14 +68,14 @@ bool SemanticChecker::checkForProgram()
     {
         MessageHandler::error(
             std::string("No entry point (a.k.a. \"main\" function) defined")
-        );
+            );
         return false;
     }
     if (this->_definedFunctions.at("main")->scopePrototype.variables.size() != 0)
     {
         MessageHandler::error(
             std::string("\"main\" function should not have parameters")
-        );
+            );
         return false;
     }
 
@@ -86,7 +86,7 @@ std::vector<std::shared_ptr<inter::Function>> SemanticChecker::traverseTree()
 {
     std::vector<std::shared_ptr<inter::Function>> functions;
 
-    for(auto & function: this->_syntaxTree->functions)
+    for (auto & function : this->_syntaxTree->functions)
     {
         functions.push_back(this->checkFunction(*function));
     }
@@ -96,7 +96,7 @@ std::vector<std::shared_ptr<inter::Function>> SemanticChecker::traverseTree()
 
 /* Other check functions. */
 
-std::shared_ptr<inter::Function> SemanticChecker::checkFunction(syntax::FunDefinition& functionDef)
+std::shared_ptr<inter::Function> SemanticChecker::checkFunction(syntax::FunctionDefinition& functionDef)
 {
     auto & function = this->_definedFunctions.at(functionDef.name);
 
@@ -110,9 +110,9 @@ std::shared_ptr<inter::Block> SemanticChecker::checkBlock(inter::ScopePrototype 
     std::shared_ptr<inter::Block> block = std::make_shared<inter::Block>();
     block->scopePrototype.upperScope = &scopePrototype;
 
-    for(auto& instruction: blockNode.instructions)
+    for (auto& instruction : blockNode.instructions)
     {
-        switch(instruction->getType())
+        switch (instruction->getType())
         {
             case syntax::Node::Type::VarDeclaration:
             {
@@ -134,7 +134,15 @@ std::shared_ptr<inter::Block> SemanticChecker::checkBlock(inter::ScopePrototype 
             case syntax::Node::Type::ReturnStatement:
             {
                 auto node = static_cast<syntax::ReturnStatement*>(instruction.get());
-                block->instructions.push_back(this->checkReturnStatement(block->scopePrototype, *(node->assignableNode)));
+                if (!node->isEmpty)
+                    block->instructions.push_back(this->checkReturnStatement(block->scopePrototype, *(node->assignableNode)));
+                else
+                {
+                    auto & ret = std::make_shared<inter::ReturnInstr>();
+                    ret->isEmpty = true;
+                    block->instructions.push_back(ret);
+                }
+
                 break;
             }
             case syntax::Node::Type::Call:
@@ -172,7 +180,7 @@ std::shared_ptr<inter::Block> SemanticChecker::checkBlock(inter::ScopePrototype 
             {
                 MessageHandler::error(
                     std::string("Invalid instruction node type")
-                );
+                    );
             }
         }
     }
@@ -186,8 +194,8 @@ void SemanticChecker::checkVarDeclaration(inter::ScopePrototype & scopePrototype
     {
         MessageHandler::error(
             std::string("Redeclaration of variable: ")
-                .append(name)
-        );
+            .append(name)
+            );
     }
 }
 
@@ -199,8 +207,8 @@ std::shared_ptr<inter::AssignmentInstr> SemanticChecker::checkAssignment(inter::
     {
         MessageHandler::error(
             std::string("Assignment to undefined variable: ")
-                .append(variable)
-        );
+            .append(variable)
+            );
 
         return nullptr;
     }
@@ -222,8 +230,8 @@ std::shared_ptr<inter::AssignmentInstr> SemanticChecker::checkAssignment(inter::
     {
         MessageHandler::error(
             std::string("Assignment to undefined variable: ")
-                .append(variable.variableName)
-        );
+            .append(variable.variableName)
+            );
 
         return nullptr;
     }
@@ -232,8 +240,8 @@ std::shared_ptr<inter::AssignmentInstr> SemanticChecker::checkAssignment(inter::
     {
         MessageHandler::error(
             std::string("Indexed assignment to empty variable: ")
-                .append(variable.variableName)
-        );
+            .append(variable.variableName)
+            );
 
         return nullptr;
     }
@@ -253,7 +261,7 @@ std::shared_ptr<inter::AssignmentInstr> SemanticChecker::checkAssignment(inter::
         {
             MessageHandler::error(
                 std::string("Invalid assignable value")
-            );
+                );
         }
     }
     if (variable.indexArg2)
@@ -270,7 +278,7 @@ std::shared_ptr<inter::AssignmentInstr> SemanticChecker::checkAssignment(inter::
         {
             MessageHandler::error(
                 std::string("Invalid assignable value")
-            );
+                );
         }
     }
     node->value = this->checkAssignable(scopePrototype, assignable);
@@ -293,7 +301,7 @@ std::shared_ptr<inter::Assignable> SemanticChecker::checkAssignable(inter::Scope
 
     MessageHandler::error(
         std::string("Invalid assignable value")
-    );
+        );
 
     return nullptr;
 }
@@ -304,8 +312,8 @@ std::shared_ptr<inter::CallInstr> SemanticChecker::checkFunctionCall(inter::Scop
     {
         MessageHandler::error(
             std::string("Call to undefined function: ")
-                .append(call.name)
-        );
+            .append(call.name)
+            );
         return nullptr;
     }
 
@@ -316,12 +324,12 @@ std::shared_ptr<inter::CallInstr> SemanticChecker::checkFunctionCall(inter::Scop
         {
             MessageHandler::error(
                 std::string("Invalid arguments count for function \"")
-                    .append(call.name)
-                    .append("\", expected ")
-                    .append(std::to_string(functionDef->scopePrototype.variables.size()))
-                    .append(", got ")
-                    .append(std::to_string(call.arguments.size()))
-            );
+                .append(call.name)
+                .append("\", expected ")
+                .append(std::to_string(functionDef->scopePrototype.variables.size()))
+                .append(", got ")
+                .append(std::to_string(call.arguments.size()))
+                );
             return nullptr;
         }
     }
@@ -332,12 +340,12 @@ std::shared_ptr<inter::CallInstr> SemanticChecker::checkFunctionCall(inter::Scop
         {
             MessageHandler::error(
                 std::string("Invalid arguments count for function \"")
-                    .append(call.name)
-                    .append("\", expected ")
-                    .append(std::to_string(requiredArgs))
-                    .append(", got ")
-                    .append(std::to_string(call.arguments.size()))
-            );
+                .append(call.name)
+                .append("\", expected ")
+                .append(std::to_string(requiredArgs))
+                .append(", got ")
+                .append(std::to_string(call.arguments.size()))
+                );
             return nullptr;
         }
     }
@@ -345,7 +353,7 @@ std::shared_ptr<inter::CallInstr> SemanticChecker::checkFunctionCall(inter::Scop
     std::shared_ptr<inter::CallInstr> obj = std::make_shared<inter::CallInstr>();
     obj->name = call.name;
 
-    for(auto& argument: call.arguments)
+    for (auto& argument : call.arguments)
     {
         obj->arguments.push_back(this->checkAssignable(scopePrototype, *argument));
     }
@@ -359,7 +367,7 @@ std::shared_ptr<inter::Expression> SemanticChecker::checkExpression(inter::Scope
 
     obj->operations = expression.operations;
 
-    for(auto& operand: expression.operands)
+    for (auto& operand : expression.operands)
     {
         if (operand->getType() == syntax::Node::Type::Matrix)
         {
@@ -377,7 +385,7 @@ std::shared_ptr<inter::Expression> SemanticChecker::checkExpression(inter::Scope
         {
             MessageHandler::error(
                 std::string("Invalid expression operand")
-            );
+                );
         }
     }
 
@@ -392,8 +400,8 @@ std::shared_ptr<inter::Variable> SemanticChecker::checkVariable(inter::ScopeProt
     {
         MessageHandler::error(
             std::string("Usage of undefined variable: ")
-                .append(variable.variableName)
-        );
+            .append(variable.variableName)
+            );
 
         return nullptr;
     }
@@ -402,8 +410,8 @@ std::shared_ptr<inter::Variable> SemanticChecker::checkVariable(inter::ScopeProt
     {
         MessageHandler::error(
             std::string("Usage of empty variable: ")
-                .append(variable.variableName)
-        );
+            .append(variable.variableName)
+            );
 
         return nullptr;
     }
@@ -412,8 +420,8 @@ std::shared_ptr<inter::Variable> SemanticChecker::checkVariable(inter::ScopeProt
     {
         MessageHandler::error(
             std::string("Indexed usage of empty variable: ")
-                .append(variable.variableName)
-        );
+            .append(variable.variableName)
+            );
 
         return nullptr;
     }
@@ -446,7 +454,7 @@ std::shared_ptr<inter::IfInstr> SemanticChecker::checkIfStatement(inter::ScopePr
 
     obj->condition = checkCondition(scopePrototype, *(stmt.conditionNode));
 
-    obj->trueBlock =checkBlock(scopePrototype, *(stmt.trueBlockNode));
+    obj->trueBlock = checkBlock(scopePrototype, *(stmt.trueBlockNode));
     if (stmt.falseBlockNode)
     {
         obj->falseBlock = checkBlock(scopePrototype, *(stmt.falseBlockNode));
@@ -473,7 +481,7 @@ std::shared_ptr<inter::Condition> SemanticChecker::checkCondition(inter::ScopePr
     obj->operation = condition.operation;
     obj->negated = condition.negated;
 
-    for(auto& operand: condition.operands)
+    for (auto& operand : condition.operands)
     {
         if (operand->getType() == syntax::Node::Type::Matrix)
         {
@@ -491,7 +499,7 @@ std::shared_ptr<inter::Condition> SemanticChecker::checkCondition(inter::ScopePr
         {
             MessageHandler::error(
                 std::string("Invalid condition operand")
-            );
+                );
         }
     }
 
@@ -504,13 +512,13 @@ std::shared_ptr<inter::Literal> SemanticChecker::checkMatrixLiteral(syntax::Matr
 
     unsigned int lastRowSize = matrixLiteral.data.at(0).size();
 
-    for(auto it = matrixLiteral.data.begin() + 1; it != matrixLiteral.data.end(); ++it)
+    for (auto it = matrixLiteral.data.begin() + 1; it != matrixLiteral.data.end(); ++it)
     {
         if (it->size() != lastRowSize)
         {
             MessageHandler::error(
                 std::string("Invalid matrix literal definition")
-            );
+                );
         }
     }
 

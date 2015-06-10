@@ -18,6 +18,9 @@ namespace inter
             std::unordered_map<std::string, std::shared_ptr<Function>>& functions
         )
         {
+            if (isEmpty)
+                return std::make_shared<inter::Literal>();
+
             return this->value->execute(scope, functions);
         }
 
@@ -25,6 +28,8 @@ namespace inter
         {
             return true;
         }
+
+        bool isEmpty = false;
     };
 }
 

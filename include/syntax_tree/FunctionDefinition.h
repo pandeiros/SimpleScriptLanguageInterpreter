@@ -1,16 +1,13 @@
-#ifndef __FUN_DEFINITION_H__
-#define __FUN_DEFINITION_H__
+#ifndef __FUNCTION_DEFINITION_H__
+#define __FUNCTION_DEFINITION_H__
 
 #include "Node.h"
 
-/*
- *
- */
 namespace syntax
 {
     class StatementBlock;
 
-    class FunDefinition : public Node
+    class FunctionDefinition : public Node
     {
     public:
         void setName(const std::string& name)
@@ -27,7 +24,7 @@ namespace syntax
         }
         virtual Type getType()
         {
-            return Node::Type::FunDefinition;
+            return Node::Type::FunctionDefinition;
         }
 
         std::string name;
@@ -36,4 +33,4 @@ namespace syntax
     };
 }
 
-#endif // __FUN_DEFINITION_H__
+#endif // __FUNCTION_DEFINITION_H__

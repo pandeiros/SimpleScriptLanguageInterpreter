@@ -3,9 +3,6 @@
 
 #include "Node.h"
 
-/*
- *
- */
 namespace syntax
 {
     class ReturnStatement : public Node
@@ -20,6 +17,7 @@ namespace syntax
             return Node::Type::ReturnStatement;
         }
 
+        bool isEmpty;
         std::shared_ptr<Assignable> assignableNode;
     };
 }

@@ -3,17 +3,14 @@
 
 #include "Node.h"
 
-class FunDefinition;
+class FunctionDefinition;
 
-/*
- *
- */
 namespace syntax
 {
     class Program : public Node
     {
     public:
-        void addFunction(const std::shared_ptr<FunDefinition>& function)
+        void addFunction(const std::shared_ptr<FunctionDefinition>& function)
         {
             this->functions.push_back(function);
         }
@@ -22,7 +19,7 @@ namespace syntax
             return Node::Type::Program;
         }
 
-        std::vector<std::shared_ptr<FunDefinition>> functions = {};
+        std::vector<std::shared_ptr<FunctionDefinition>> functions = {};
     };
 }
 

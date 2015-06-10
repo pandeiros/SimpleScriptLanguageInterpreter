@@ -1,14 +1,14 @@
 --- Program ---
-Program             = "program" Name FuncArgs FuncBody { OtherFunc }
+Program             = "program" Name FuncArgs FuncBody { Function }
 
 --- Functions -----------------------------------------------
 - Return instruction at then end of the function is required
   (due to clarity and consistency of different functions).
 -------------------------------------------------------------
-OtherFunc           = "function" Name FuncArgs FuncBody
+Function           = "function" Name FuncArgs FuncBody
 FuncArgs            = "(" ( [Type Name] | (Type Name { "," Type Name }) ) ")"
 FuncBody            = "{" { Statement } ReturnInstr ";" "}"
-ReturnInstr         = "return" RValue
+ReturnInstr         = "return" [ RValue ]
 
 --- Statements ------------------------------------------
 - In conditional statements, implicit conversions to bool

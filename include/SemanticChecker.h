@@ -22,7 +22,7 @@ private:
     std::vector<std::shared_ptr<inter::Function>> traverseTree();
 
     /* Other check functions. */
-    std::shared_ptr<inter::Function> checkFunction(syntax::FunDefinition& functionDef);
+    std::shared_ptr<inter::Function> checkFunction(syntax::FunctionDefinition& functionDef);
     std::shared_ptr<inter::Block> checkBlock(inter::ScopePrototype & scopePrototype, syntax::StatementBlock& blockNode);
     std::shared_ptr<inter::AssignmentInstr> checkAssignment(inter::ScopePrototype & scopePrototype, const std::string& variable, syntax::Assignable& assignable);
     std::shared_ptr<inter::AssignmentInstr> checkAssignment(inter::ScopePrototype & scopePrototype, syntax::Variable& variable, syntax::Assignable& assignable);

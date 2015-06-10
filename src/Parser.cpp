@@ -12,7 +12,7 @@ std::shared_ptr<syntax::Program> Parser::parse()
     // Main Program token and its functions.
     Token token;
     std::shared_ptr<syntax::Program> program = std::make_shared<syntax::Program>();
-    std::shared_ptr<syntax::FunDefinition> function;
+    std::shared_ptr<syntax::FunctionDefinition> function;
 
     // Parse all available functions.
     while ((function = this->parseFunction()))
@@ -114,9 +114,9 @@ void Parser::resetPreviousToken()
 
 /* Decomposition procedures */
 
-std::shared_ptr<syntax::FunDefinition> Parser::parseFunction()
+std::shared_ptr<syntax::FunctionDefinition> Parser::parseFunction()
 {
-    std::shared_ptr<syntax::FunDefinition> node = std::make_shared<syntax::FunDefinition>();
+    std::shared_ptr<syntax::FunctionDefinition> node = std::make_shared<syntax::FunctionDefinition>();
 
     auto token = this->accept({TokenType::Function, TokenType::EndOfFile});
 
@@ -276,6 +276,13 @@ std::shared_ptr<syntax::ReturnStatement> Parser::parseReturnStatement()
     //this->tracer.enter ("Parsing return statement");
 
     this->accept({TokenType::Return});
+
+    if (this->peek({TokenType::Semicolon}))
+    {
+        this->accept({TokenType::Semicolon});
+        node->isEmpty = true;
+        return node;
+    }
 
     node->setValue(this->parseAssignable());
 
@@ -478,7 +485,7 @@ std::shared_ptr<syntax::Matrix> Parser::parseLiteral()
 
 double Parser::parseNumberLiteral()
 {
-    double value;
+    double value = 0;
     bool negative = false;
 
     //this->tracer.enter ("Parsing number literal");
@@ -495,7 +502,7 @@ double Parser::parseNumberLiteral()
     {
         value = std::numeric_limits<double>::infinity();
     }
-    else
+    else if (tempToken._value != "")
     {
         value = std::stod(tempToken._value);
     }

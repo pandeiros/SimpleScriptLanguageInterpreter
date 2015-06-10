@@ -14,7 +14,6 @@ const std::unordered_map<std::string, std::pair<unsigned int, Library::LibFuncti
     if (functions.size() == 0)
     {
         static const std::unordered_map<std::string, std::pair<unsigned int, Library::LibFunction>> list = {
-            {"generate", {3, Library::LibFunction(&Library::funGenerate)}},
             {"print", {1, Library::LibFunction(&Library::funPrint)}},
             {"nl", {0, Library::LibFunction(&Library::funNewLine)}}
         };

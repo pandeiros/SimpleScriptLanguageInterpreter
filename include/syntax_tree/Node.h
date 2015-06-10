@@ -14,7 +14,7 @@ namespace syntax
             Call,
             Condition,
             Expression,
-            FunDefinition,
+            FunctionDefinition,
             IfStatement,
             LoopJump,
             Matrix,
@@ -40,7 +40,7 @@ typedef std::shared_ptr<syntax::Node> NodePtr;
 #include "Call.h"
 #include "Condition.h"
 #include "Expression.h"
-#include "FunDefinition.h"
+#include "FunctionDefinition.h"
 #include "IfStatement.h"
 #include "LoopJump.h"
 #include "Matrix.h"

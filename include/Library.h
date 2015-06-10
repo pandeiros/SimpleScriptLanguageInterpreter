@@ -29,7 +29,6 @@ struct Library
 private:
     static std::shared_ptr<inter::Literal> funPrint(Arguments & arguments);
     static std::shared_ptr<inter::Literal> funNewLine(Arguments & arguments);
-    static std::shared_ptr<inter::Literal> funGenerate(Arguments & arguments);  // TODO REMOVE
 
     static std::unordered_map<std::string, std::pair<unsigned int, Library::LibFunction>> functions;
 };
