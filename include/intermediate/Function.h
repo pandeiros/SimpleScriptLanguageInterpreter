@@ -37,12 +37,18 @@ namespace inter
         {
             auto thisScope = this->scopePrototype.instantiate(scope);
             unsigned int argIdx = 0;
-            for(auto& argument: arguments)
+            for(auto & argument: arguments)
             {
                 std::shared_ptr<inter::Literal> copy = std::make_shared<inter::Literal>();
                 copy->data = argument->data;
 
-                thisScope.variables.at(thisScope.varOrder.at(argIdx)) = copy;
+                std::string name = thisScope.varOrder.at(argIdx);
+
+                for (auto & var : thisScope.variables)
+                {
+                    if (var.first.name == name)
+                        var.second = copy;
+                }
                 argIdx++;
             }
 

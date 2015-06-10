@@ -44,15 +44,16 @@ bool SemanticChecker::scanFunctionDefinitions()
         exeFunction->name = function->name;
 
         // Parse variables. check for duplicates.
-        for (auto & variable : function->parameters)
+        for (unsigned int i = 0; i < function->names.size(); ++i)
+        //for (auto & variable : function->names)
         {
-            if (!exeFunction->scopePrototype.addVariable(variable))
+            if (!exeFunction->scopePrototype.addVariable(function->types[i], function->names[i]))
             {
                 MessageHandler::error(std::string("Duplicated definition of parameter \"")
-                                      .append(variable).append("\" of function \"").append(function->name).append("\""));
+                                      .append(function->names[i]).append("\" of function \"").append(function->name).append("\""));
                 return false;
             }
-            exeFunction->scopePrototype.setVariableDefined(variable);
+            exeFunction->scopePrototype.setVariableDefined(function->names[i]);
         }
     }
 
@@ -61,23 +62,22 @@ bool SemanticChecker::scanFunctionDefinitions()
 
 bool SemanticChecker::checkForProgram()
 {
-    // TODO change to check for "program"
-
     // Check for main "program" function.
-    if (this->_definedFunctions.count("main") == 0)
+    if (this->_definedFunctions.count("program") == 0)
     {
         MessageHandler::error(
-            std::string("No entry point (a.k.a. \"main\" function) defined")
+            std::string("No entry point (a.k.a. \"program\" function) defined")
             );
         return false;
     }
-    if (this->_definedFunctions.at("main")->scopePrototype.variables.size() != 0)
+    // TODO change it.
+   /* if (this->_definedFunctions.at("program")->scopePrototype.variables.size() != 0)
     {
         MessageHandler::error(
-            std::string("\"main\" function should not have parameters")
+            std::string("\"program\" function should not have parameters")
             );
         return false;
-    }
+    }*/
 
     return true;
 }
@@ -117,7 +117,7 @@ std::shared_ptr<inter::Block> SemanticChecker::checkBlock(inter::ScopePrototype 
             case syntax::Node::Type::VarDeclaration:
             {
                 auto node = static_cast<syntax::VarDeclaration*>(instruction.get());
-                this->checkVarDeclaration(block->scopePrototype, node->name);
+                this->checkVarDeclaration(block->scopePrototype, node->name, node->type);
 
                 if (node->assignableNode)
                 {
@@ -188,9 +188,9 @@ std::shared_ptr<inter::Block> SemanticChecker::checkBlock(inter::ScopePrototype 
     return block;
 }
 
-void SemanticChecker::checkVarDeclaration(inter::ScopePrototype & scopePrototype, const std::string& name)
+void SemanticChecker::checkVarDeclaration(inter::ScopePrototype & scopePrototype, const std::string & type, const std::string & name)
 {
-    if (!scopePrototype.addVariable(name))
+    if (!scopePrototype.addVariable(type, name))
     {
         MessageHandler::error(
             std::string("Redeclaration of variable: ")

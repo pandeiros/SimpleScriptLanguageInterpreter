@@ -14,21 +14,27 @@ namespace syntax
         {
             this->name = name;
         }
-        void setParameters(const std::vector<std::string>& parameters)
+
+        void setParameters(const std::vector<std::string> & types, 
+                           const std::vector<std::string> & names)
         {
-            this->parameters = parameters;
+            this->names = names;
+            this->types = types;
         }
+
         void setBlock(const std::shared_ptr<StatementBlock>& blockNode)
         {
             this->blockNode = blockNode;
         }
+
         virtual Type getType()
         {
             return Node::Type::FunctionDefinition;
         }
 
         std::string name;
-        std::vector<std::string> parameters;
+        std::vector<std::string> types;
+        std::vector<std::string> names;
         std::shared_ptr<StatementBlock> blockNode;
     };
 }

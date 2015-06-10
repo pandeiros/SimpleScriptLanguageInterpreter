@@ -118,49 +118,76 @@ std::shared_ptr<syntax::FunctionDefinition> Parser::parseFunction()
 {
     std::shared_ptr<syntax::FunctionDefinition> node = std::make_shared<syntax::FunctionDefinition>();
 
-    auto token = this->accept({TokenType::Function, TokenType::EndOfFile});
+    auto token = this->accept({TokenType::MainProgram, TokenType::Function, TokenType::EndOfFile});
 
     if (token._type == TokenType::EndOfFile)
     {
         return nullptr;
     }
 
-    token = this->accept({TokenType::Identifier});
-    node->setName(token._value);
-    node->setParameters(this->parseParameters());
+    auto idToken = this->accept({TokenType::Identifier});
+    if (token._type == TokenType::MainProgram)
+        node->setName("program");
+
+    std::vector<std::string> types;
+    std::vector<std::string> names;
+    if (this->parseParameters(types, names))
+        node->setParameters(types, names);
     node->setBlock(this->parseStatementBlock());
 
     return node;
 }
 
-std::vector<std::string> Parser::parseParameters()
+bool Parser::parseParameters(std::vector<std::string> & types, std::vector<std::string> & names)
 {
-    std::vector<std::string> parametersNames;
-
-
-    Token tempToken;
+    Token token;
 
     this->accept({TokenType::ParenthOpen});
 
-    tempToken = this->accept({TokenType::ParenthClose, TokenType::Identifier});
-    if (tempToken._type != TokenType::ParenthClose)
+    token = this->accept({TokenType::ParenthClose, TokenType::Integer, TokenType::String,
+                         TokenType::Bool, TokenType::Float});
+
+    if (token._type == TokenType::Undefined)
+        return false;
+
+    if (token._type != TokenType::ParenthClose)
     {
-        parametersNames.push_back(tempToken._value);
+        if (this->peek({TokenType::Identifier}))
+        {
+            types.push_back(token._value);
+            token = this->accept({TokenType::Identifier});
+            names.push_back(token._value);
+        }
+        else
+            return false;
 
         while (true)
         {
-            tempToken = this->accept({TokenType::ParenthClose, TokenType::Comma});
-            if (tempToken._type == TokenType::ParenthClose)
+            token = this->accept({TokenType::ParenthClose, TokenType::Comma});
+
+            if (token._type == TokenType::Undefined)
+                return false;
+
+            if (token._type == TokenType::ParenthClose)
             {
                 break;
             }
-            tempToken = this->accept({TokenType::Identifier});
 
-            parametersNames.push_back(tempToken._value);
+            token = this->accept({TokenType::Integer, TokenType::String,
+                                 TokenType::Bool, TokenType::Float});
+
+            if (this->peek({TokenType::Identifier}))
+            {
+                types.push_back(token._value);
+                token = this->accept({TokenType::Identifier});
+                names.push_back(token._value);
+            }
+            else
+                return false;
         }
     }
 
-    return parametersNames;
+    return true;
 }
 
 std::shared_ptr<syntax::StatementBlock> Parser::parseStatementBlock()

@@ -11,19 +11,27 @@ namespace syntax
     class VarDeclaration : public Node
     {
     public:
-        void setName(const std::string& name)
+        void setName(const std::string & name)
         {
             this->name = name;
         }
-        void setValue(const std::shared_ptr<Assignable>& assignableNode)
+
+        void setType(const std::string & type)
+        {
+            this->type = type;
+        }
+
+        void setValue(const std::shared_ptr<Assignable> & assignableNode)
         {
             this->assignableNode = assignableNode;
         }
+
         virtual Type getType()
         {
             return Node::Type::VarDeclaration;
         }
 
+        std::string type;
         std::string name;
         std::shared_ptr<Assignable> assignableNode;
     };

@@ -2,6 +2,7 @@
 #define __INTER_SCOPE_PROTO_H__
 
 #include <unordered_map>
+#include <map>
 #include <string>
 #include <memory>
 #include <vector>
@@ -12,28 +13,28 @@ namespace inter
 {
     struct ScopePrototype
     {
-        ScopePrototype* upperScope = nullptr;
-        std::unordered_map<std::string, bool> variables;
+        ScopePrototype * upperScope = nullptr;
+        std::map<Var, bool> variables;
         std::vector<std::string> varOrder;
 
-        bool addVariable(const std::string& name)
+        bool addVariable(const std::string & type, const std::string & name)
         {
             if (this->hasVariable(name))
             {
                 return false;
             }
-            std::pair<std::string, bool> newPair(name, false);
+            std::pair<Var, bool> newPair(Var(type, name), false);
             this->variables.insert(newPair);
             this->varOrder.push_back(name);
             return true;
         }
 
-        bool* getVariable(const std::string& name)
+        bool * getVariable(const std::string & name)
         {
-            auto it = this->variables.find(name);
-            if (it != this->variables.end())
+            for (auto & var : variables)
             {
-                return &(it->second);
+                if (var.first.name == name)
+                    return &(var.second);
             }
 
             if (this->upperScope != nullptr)
@@ -44,7 +45,7 @@ namespace inter
             return nullptr;
         }
 
-        void setVariableDefined(const std::string& name)
+        void setVariableDefined(const std::string & name)
         {
             auto variable = this->getVariable(name);
 
@@ -53,15 +54,19 @@ namespace inter
                 return;
             }
 
-            (*variable) = true;
+            for (auto & var : variables)
+            {
+                if (var.first.name == name)
+                    var.second = true;
+            }
         }
 
-        bool hasVariable(const std::string& name)
+        bool hasVariable(const std::string & name)
         {
             return this->getVariable(name) != nullptr;
         }
 
-        bool isVariableDefined(const std::string& name)
+        bool isVariableDefined(const std::string & name)
         {
             auto variable = this->getVariable(name);
 
@@ -70,18 +75,22 @@ namespace inter
                 return false;
             }
 
-            return (*variable);
+            for (auto & var : variables)
+            {
+                if (var.first.name == name)
+                    var.second = true;
+            }
         }
 
-        ScopeInstance instantiate(ScopeInstance* upperScope)
+        ScopeInstance instantiate(ScopeInstance * upperScope)
         {
             auto instance = ScopeInstance();
             instance.upperScope = upperScope;
             instance.varOrder = this->varOrder;
 
-            for(auto& it: this->variables)
+            for(auto & it : this->variables)
             {
-                std::pair<std::string, std::shared_ptr<Literal>> newPair(it.first, std::make_shared<inter::Literal>());
+                std::pair<Var, std::shared_ptr<Literal>> newPair(it.first, std::make_shared<inter::Literal>());
                 instance.variables.insert(newPair);
             }
 

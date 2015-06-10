@@ -1,12 +1,25 @@
 #ifndef __INTER_SCOPE_INST_H__
 #define __INTER_SCOPE_INST_H__
 
-#include <unordered_map>
+#include <map>
 #include <string>
 #include <memory>
 #include <vector>
 
 #include "MessageHandler.h"
+
+typedef std::pair<std::string, std::string> VarType;
+
+class Var : public std::string
+{
+public:
+    Var() = default;
+    Var(std::string type, std::string name) : name(name), type(type)
+    {}
+
+    std::string type;
+    std::string name;
+};
 
 namespace inter
 {
@@ -15,15 +28,15 @@ namespace inter
     struct ScopeInstance
     {
         ScopeInstance* upperScope = nullptr;
-        std::unordered_map<std::string, std::shared_ptr<Literal>> variables;
+        std::map<Var, std::shared_ptr<Literal>> variables;
         std::vector<std::string> varOrder;
 
-        std::shared_ptr<Literal> getVariable(const std::string& name)
+        std::shared_ptr<Literal> getVariable(const std::string & name)
         {
-            auto it = this->variables.find(name);
-            if (it != this->variables.end())
+            for (auto & var : variables)
             {
-                return it->second;
+                if (var.first.name == name)
+                    return var.second;
             }
 
             if (this->upperScope != nullptr)
@@ -34,13 +47,15 @@ namespace inter
             return nullptr;
         }
 
-        void setVariable(const std::string& name, std::shared_ptr<Literal> literal)
+        void setVariable(const std::string & name, std::shared_ptr<Literal> literal)
         {
-            auto it = this->variables.find(name);
-            if (it != this->variables.end())
+            for (auto & var : variables)
             {
-                it->second = literal;
-                return;
+                if (var.first.name == name)
+                {
+                    var.second = literal;
+                    return;
+                }
             }
 
             if (this->upperScope != nullptr)
@@ -49,10 +64,7 @@ namespace inter
                 return;
             }
 
-            MessageHandler::error(
-                std::string("Setting undefined variable")
-            );
-            return ;
+            MessageHandler::error(std::string("Setting undefined variable"));
         }
     };
 }

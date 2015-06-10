@@ -55,6 +55,7 @@ WeakLogicalOp       = "||"
 RelationExpr        = ( "(" (Name | ArithmeticExpr) RelationOp RValue ")") |
                       (     (Name | ArithmeticExpr) RelationOp RValue    )
 RelationOp          = "==" | "!=" | "<" | ">" | "<=" | ">="
+AssignmentOp        = "="
 
 ArithmeticExpr      = WeakArithmeticExpr
 WeakArithmeticExpr  = StrongArithmeticExpr { WeakArithmeticOp StrongArithmeticExpr }

@@ -45,7 +45,7 @@ private:
 
     /* Decomposition procedures */
     std::shared_ptr<syntax::FunctionDefinition> parseFunction();
-    std::vector<std::string> parseParameters();
+    bool parseParameters(std::vector<std::string> & types, std::vector<std::string> & names);
     std::shared_ptr<syntax::StatementBlock> parseStatementBlock();
 
     std::shared_ptr<syntax::IfStatement> parseIfStatement();
