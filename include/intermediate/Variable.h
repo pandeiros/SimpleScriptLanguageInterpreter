@@ -8,7 +8,7 @@
 #include "ConditionOperand.h"
 #include "ExpressionOperand.h"
 
-#include "ScopeInst.h"
+#include "ScopeInstance.h"
 
 namespace inter
 {
@@ -19,7 +19,7 @@ namespace inter
         std::shared_ptr<Assignable> indexArg2;
 
         virtual std::shared_ptr<Literal> execute(
-            ScopeInst* scope,
+            ScopeInstance* scope,
             std::unordered_map<std::string, std::shared_ptr<Function>>& functions
         )
         {

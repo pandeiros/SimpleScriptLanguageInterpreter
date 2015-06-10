@@ -6,7 +6,7 @@
 #include <iostream>
 
 #include "Executable.h"
-#include "ScopeProto.h"
+#include "ScopePrototype.h"
 #include "Instruction.h"
 #include "Literal.h"
 
@@ -14,15 +14,15 @@ namespace inter
 {
     struct Block: public Instruction
     {
-        ScopeProto scopeProto;
+        ScopePrototype scopePrototype;
         std::vector<std::shared_ptr<Instruction>> instructions;
 
         virtual std::shared_ptr<Literal> execute(
-            ScopeInst* scope,
+            ScopeInstance * scope,
             std::unordered_map<std::string, std::shared_ptr<Function>>& functions
         )
         {
-            auto thisScope = this->scopeProto.instantiate(scope);
+            auto thisScope = this->scopePrototype.instantiate(scope);
 
             for(auto& it: this->instructions)
             {

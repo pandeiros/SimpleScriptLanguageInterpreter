@@ -10,7 +10,7 @@
 #include "Function.h"
 #include "Instruction.h"
 #include "Literal.h"
-#include "ScopeProto.h"
+#include "ScopePrototype.h"
 #include "Variable.h"
 #include "AssignmentInstr.h"
 #include "CallInstr.h"

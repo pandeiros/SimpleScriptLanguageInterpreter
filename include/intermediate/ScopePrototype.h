@@ -6,13 +6,13 @@
 #include <memory>
 #include <vector>
 
-#include "ScopeInst.h"
+#include "ScopeInstance.h"
 
 namespace inter
 {
-    struct ScopeProto
+    struct ScopePrototype
     {
-        ScopeProto* upperScope = nullptr;
+        ScopePrototype* upperScope = nullptr;
         std::unordered_map<std::string, bool> variables;
         std::vector<std::string> varOrder;
 
@@ -73,9 +73,9 @@ namespace inter
             return (*variable);
         }
 
-        ScopeInst instantiate(ScopeInst* upperScope)
+        ScopeInstance instantiate(ScopeInstance* upperScope)
         {
-            auto instance = ScopeInst();
+            auto instance = ScopeInstance();
             instance.upperScope = upperScope;
             instance.varOrder = this->varOrder;
 

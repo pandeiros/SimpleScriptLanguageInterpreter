@@ -18,7 +18,7 @@ namespace inter
         std::shared_ptr<Block> falseBlock;
 
         virtual std::shared_ptr<Literal> execute(
-            ScopeInst* scope,
+            ScopeInstance* scope,
             std::unordered_map<std::string, std::shared_ptr<Function>>& functions
         )
         {

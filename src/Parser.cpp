@@ -23,12 +23,14 @@ std::shared_ptr<syntax::Program> Parser::parse()
     return program;
 }
 
-bool Parser::isAcceptable(const Token& token, const std::initializer_list<TokenType>& acceptable) const
+/* Parser tools for managing received tokens. */
+
+bool Parser::isAcceptable(const Token & token, const std::initializer_list<TokenType> & acceptableTokens) const
 {
     // Iterate through acceptable tokens to check.
-    for (auto& it : acceptable)
+    for (auto & acceptable : acceptableTokens)
     {
-        if (token._type == it)
+        if (token._type == acceptable)
         {
             return true;
         }
@@ -37,7 +39,7 @@ bool Parser::isAcceptable(const Token& token, const std::initializer_list<TokenT
     return false;
 }
 
-Token Parser::accept(const std::initializer_list<TokenType>& acceptable)
+Token Parser::accept(const std::initializer_list<TokenType> & acceptableTokens)
 {
     Token token;
 
@@ -54,7 +56,7 @@ Token Parser::accept(const std::initializer_list<TokenType>& acceptable)
     }
 
     // If accepted, return it. Otherwise print error message.
-    if (this->isAcceptable(token, acceptable))
+    if (this->isAcceptable(token, acceptableTokens))
     {
         return token;
     }
@@ -65,14 +67,14 @@ Token Parser::accept(const std::initializer_list<TokenType>& acceptable)
     }
 }
 
-bool Parser::peek(const std::initializer_list<TokenType>& acceptable)
+bool Parser::peek(const std::initializer_list<TokenType> & acceptableTokens)
 {
     if (!this->hasBufferedToken())
     {
         this->_previousToken = this->_lexer.nextToken();
     }
 
-    return this->isAcceptable(this->_previousToken, acceptable);
+    return this->isAcceptable(this->_previousToken, acceptableTokens);
 }
 
 Token Parser::getPeeked()
@@ -87,7 +89,7 @@ Token Parser::getPeeked()
 
 void Parser::peekFail()
 {
-    Token& token = this->_previousToken;
+    Token & token = this->_previousToken;
 
     PRINT_UNEXP;
 }
@@ -110,18 +112,21 @@ void Parser::resetPreviousToken()
     this->_previousToken._col = 0;
 }
 
+/* Decomposition procedures */
+
 std::shared_ptr<syntax::FunDefinition> Parser::parseFunction()
 {
     std::shared_ptr<syntax::FunDefinition> node = std::make_shared<syntax::FunDefinition>();
 
-    auto tempToken = this->accept({TokenType::Function, TokenType::EndOfFile});
-    if (tempToken._type == TokenType::EndOfFile)
+    auto token = this->accept({TokenType::Function, TokenType::EndOfFile});
+
+    if (token._type == TokenType::EndOfFile)
     {
         return nullptr;
     }
 
-    tempToken = this->accept({TokenType::Identifier});
-    node->setName(tempToken._value);
+    token = this->accept({TokenType::Identifier});
+    node->setName(token._value);
     node->setParameters(this->parseParameters());
     node->setBlock(this->parseStatementBlock());
 

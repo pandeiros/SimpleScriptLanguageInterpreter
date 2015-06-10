@@ -12,9 +12,9 @@ namespace inter
 {
     struct Literal;
 
-    struct ScopeInst
+    struct ScopeInstance
     {
-        ScopeInst* upperScope = nullptr;
+        ScopeInstance* upperScope = nullptr;
         std::unordered_map<std::string, std::shared_ptr<Literal>> variables;
         std::vector<std::string> varOrder;
 

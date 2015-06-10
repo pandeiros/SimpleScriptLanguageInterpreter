@@ -4,12 +4,12 @@
 namespace inter
 {
     struct Literal;
-    struct ScopeInst;
+    struct ScopeInstance;
     struct Function;
 
     struct Executable
     {
-        virtual std::shared_ptr<Literal> execute(ScopeInst* scope,
+        virtual std::shared_ptr<Literal> execute(ScopeInstance* scope,
             std::unordered_map<std::string, std::shared_ptr<Function>>& functions) = 0;
     };
 }

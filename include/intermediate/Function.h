@@ -19,7 +19,7 @@ namespace inter
         std::string name;
 
         virtual std::shared_ptr<Literal> execute(
-            ScopeInst* scope,
+            ScopeInstance * scope,
             std::unordered_map<std::string, std::shared_ptr<Function>>& functions
         )
         {
@@ -30,12 +30,12 @@ namespace inter
         }
 
         virtual std::shared_ptr<Literal> execute(
-            ScopeInst* scope,
+            ScopeInstance * scope,
             std::unordered_map<std::string, std::shared_ptr<Function>>& functions,
             std::vector<std::shared_ptr<inter::Literal>> arguments
         )
         {
-            auto thisScope = this->scopeProto.instantiate(scope);
+            auto thisScope = this->scopePrototype.instantiate(scope);
             unsigned int argIdx = 0;
             for(auto& argument: arguments)
             {

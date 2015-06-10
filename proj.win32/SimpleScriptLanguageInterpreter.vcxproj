@@ -85,8 +85,8 @@
     <ClInclude Include="..\include\intermediate\Literal.h" />
     <ClInclude Include="..\include\intermediate\LoopJumpInstr.h" />
     <ClInclude Include="..\include\intermediate\ReturnInstr.h" />
-    <ClInclude Include="..\include\intermediate\ScopeInst.h" />
-    <ClInclude Include="..\include\intermediate\ScopeProto.h" />
+    <ClInclude Include="..\include\intermediate\ScopeInstance.h" />
+    <ClInclude Include="..\include\intermediate\ScopePrototype.h" />
     <ClInclude Include="..\include\intermediate\Variable.h" />
     <ClInclude Include="..\include\intermediate\WhileStatementInstr.h" />
     <ClInclude Include="..\include\Interpreter.h" />

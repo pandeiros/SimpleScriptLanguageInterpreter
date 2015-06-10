@@ -147,12 +147,6 @@
     <ClInclude Include="..\include\intermediate\ReturnInstr.h">
       <Filter>Header Files\Intermediate</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\intermediate\ScopeInst.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\intermediate\ScopeProto.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\intermediate\Variable.h">
       <Filter>Header Files\Intermediate</Filter>
     </ClInclude>
@@ -164,6 +158,12 @@
     </ClInclude>
     <ClInclude Include="..\include\Executor.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\ScopePrototype.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\ScopeInstance.h">
+      <Filter>Header Files\Intermediate</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

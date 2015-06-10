@@ -25,22 +25,25 @@ public:
     std::shared_ptr<syntax::Program> parse();
 
 private:
-    //// Parser tools for managing received tokens.
+    /* Parser tools for managing received tokens. */
 
     // Check, whether token received is acceptable (is on the acceptable list).
-    bool isAcceptable(const Token & token, const std::initializer_list<TokenType>& acceptable) const;
-    Token accept(const std::initializer_list<TokenType>& acceptable);
+    bool isAcceptable(const Token & token, const std::initializer_list<TokenType> & acceptableTokens) const;
+    Token accept(const std::initializer_list<TokenType> & acceptableTokens);
 
-
-    bool peek(const std::initializer_list<TokenType>& acceptable);
+    // Token peeking.
+    bool peek(const std::initializer_list<TokenType> & acceptableTokens);
     Token getPeeked();
     void peekFail();
+
+    // Return "^" character to indicate place where the error occurs.
     const std::string getErrorIndicator(const unsigned int & pos);
 
+    // Some buffer managing methods.
     bool hasBufferedToken() const;
     void resetPreviousToken();
 
-    // Decomposition procedures
+    /* Decomposition procedures */
     std::shared_ptr<syntax::FunDefinition> parseFunction();
     std::vector<std::string> parseParameters();
     std::shared_ptr<syntax::StatementBlock> parseStatementBlock();
@@ -69,7 +72,10 @@ private:
     std::shared_ptr<syntax::Condition> parseRelationalCondition();
     NodePtr parsePrimaryCondition();
 
+    // Lexer for receiving tokens.
     Lexer & _lexer;
+
+    // Saved previous token.
     Token _previousToken;
 };
 
