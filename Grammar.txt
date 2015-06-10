@@ -49,7 +49,7 @@ BoolAssign          = BoolType Name "=" [ "<" IntType | BoolType ">" ] RValue
 LogicalExpr         = WeakLogicalExpr
 WeakLogicalExpr     = StrongLogicalExpr { WeakLogicalOp StrongLogicalExpr }
 StrongLogicalExpr   = LogicalOperand { StrongLogicalOp LogicalOperand }
-LogicalOperand      = FuncCall | Name | ( LogicalExpr )
+LogicalOperand      = FuncCall | Name | RelationExpr | ( LogicalExpr )
 StrongLogicalOp     = "&&"
 WeakLogicalOp       = "||"
 RelationExpr        = ( "(" (Name | ArithmeticExpr) RelationOp RValue ")") |

@@ -8,7 +8,7 @@
 
 
 Parser::Parser (Lexer& lexer) :
-lexer (lexer)
+_lexer (lexer)
 {}
 
 std::shared_ptr<syntax::Program> Parser::parse ()
@@ -51,12 +51,12 @@ Token Parser::accept (const std::initializer_list<TokenType>& acceptable)
 
     if (this->hasBufferedToken ())
     {
-        token = this->previousToken;
+        token = this->_previousToken;
         this->resetPreviousToken ();
     }
     else
     {
-        token = this->lexer.nextToken ();
+        token = this->_lexer.nextToken ();
     }
 
     if (this->isAcceptable (token, acceptable))
@@ -74,7 +74,7 @@ Token Parser::accept (const std::initializer_list<TokenType>& acceptable)
             .append (std::to_string (token._col))
             .append (")")
             .append ("\n")
-            .append (this->lexer.getLine (token._lineStart))
+            .append (this->_lexer.getLine (token._lineStart))
             .append ("\n")
             .append (this->makeErrorMarker (token._col))
             );
@@ -87,10 +87,10 @@ bool Parser::peek (const std::initializer_list<TokenType>& acceptable)
 {
     if (!this->hasBufferedToken ())
     {
-        this->previousToken = this->lexer.nextToken ();
+        this->_previousToken = this->_lexer.nextToken ();
     }
 
-    return this->isAcceptable (this->previousToken, acceptable);
+    return this->isAcceptable (this->_previousToken, acceptable);
 }
 
 Token Parser::getPeeked ()
@@ -100,12 +100,12 @@ Token Parser::getPeeked ()
         MessageHandler::error (std::string ("Nothing peeked"));
     }
 
-    return this->previousToken;
+    return this->_previousToken;
 }
 
 void Parser::peekFail ()
 {
-    Token& token = this->previousToken;
+    Token& token = this->_previousToken;
 
     MessageHandler::error (
         std::string ("Unexpected token: ")
@@ -116,7 +116,7 @@ void Parser::peekFail ()
         .append (std::to_string (token._col))
         .append (")")
         .append ("\n")
-        .append (this->lexer.getLine (token._lineStart))
+        .append (this->_lexer.getLine (token._lineStart))
         .append ("\n")
         .append (this->makeErrorMarker (token._col))
         );
@@ -129,15 +129,15 @@ const std::string Parser::makeErrorMarker (const unsigned int& pos)
 
 bool Parser::hasBufferedToken () const
 {
-    return this->previousToken._type != TokenType::Undefined;
+    return this->_previousToken._type != TokenType::Undefined;
 }
 
 void Parser::resetPreviousToken ()
 {
-    this->previousToken._type = TokenType::Undefined;
-    this->previousToken._value = "";
-    this->previousToken._line = 0;
-    this->previousToken._col = 0;
+    this->_previousToken._type = TokenType::Undefined;
+    this->_previousToken._value = "";
+    this->_previousToken._line = 0;
+    this->_previousToken._col = 0;
 }
 
 std::shared_ptr<syntax::FunDefinition> Parser::parseFunction ()

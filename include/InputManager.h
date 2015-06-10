@@ -5,22 +5,27 @@
 #include <fstream>
 
 /**
- *
+ * Reads characters from stream.
  */
 class InputManager
 {
 public:
     InputManager () = default;
-    //InputManager (const std::string& file);
 
-    const char nextSign ();
-    void rewind ();
+    // Input controllers.
+    const char nextCharacter();
+    void rewind();              // TODO REMOVE,  USE BUFFER
+
+    // Getters.
     const bool hasFinished () const;
     const unsigned int & getCurrentLineNo () const;
     const unsigned int & getCurrentSignPos () const;
     const std::streampos getCurrentLinePos () const;
+
+    // Get line, whether character occured.
     const std::string getLine (const std::streampos & linePos);
 
+    // Setter for source file path.
     inline void setSourceFile (const std::string sourceFile)
     {
         this->_sourceFile = sourceFile;
@@ -28,13 +33,19 @@ public:
     }
 
 private:
+    // Input file handler
     std::ifstream _handler;
 
+    // Line and position indicators.
     unsigned int _currentLineNo = 1;
     unsigned int _currentSignPos = 0;
     std::streampos _currentLinePos;
-    char _previousSign = 0;
 
+    // Signs read from buffer.
+    char _previousSign = 0;
+    char sign = ' ';
+
+    // Path to source file.
     std::string _sourceFile;
 };
 

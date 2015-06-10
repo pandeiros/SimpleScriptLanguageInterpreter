@@ -13,13 +13,9 @@ class Parser
 {
 public:
     Parser (Lexer& lexer);
-
     std::shared_ptr<syntax::Program> parse ();
 
 private:
-    Lexer & lexer;
-    Token previousToken;
-
     bool isAcceptable (const Token& token, const std::initializer_list<TokenType>& acceptable) const;
     Token accept (const std::initializer_list<TokenType>& acceptable);
     bool peek (const std::initializer_list<TokenType>& acceptable);
@@ -58,6 +54,9 @@ private:
     std::shared_ptr<syntax::Condition> parseEqualityCondition();
     std::shared_ptr<syntax::Condition> parseRelationalCondition();
     NodePtr parsePrimaryCondition ();
+
+    Lexer & _lexer;
+    Token _previousToken;
 };
 
 #endif // __PARSER_H__

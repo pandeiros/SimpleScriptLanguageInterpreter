@@ -4,23 +4,24 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "InputManager.h"
 
 /**
- *
+ * Main program class. Controls flow of the interpreter itself.
+ * Also acquire parameters of the 'main' function.
  */
 class Interpreter
 {
 public:
-
     Interpreter (int argc, char * argv[]);
 
     void run ();
 
 private:
+    // Parameters control members.
     unsigned int _argCount;
     std::string _sourceFile;
     std::vector<std::string> _vecArgs;
+
 
 #ifdef DEBUG
     void printParams ()
