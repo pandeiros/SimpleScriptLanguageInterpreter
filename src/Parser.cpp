@@ -228,7 +228,7 @@ std::shared_ptr<syntax::StatementBlock> Parser::parseStatementBlock()
                     node->addInstruction(parseReturnStatement());
                     break;
                 case TokenType::Var:
-                    node->addInstruction(parseInitStatement());
+                    node->addInstruction(parseVarDeclaration());
                     break;
                 case TokenType::BracketOpen:
                     node->addInstruction(parseStatementBlock());
@@ -249,6 +249,254 @@ std::shared_ptr<syntax::StatementBlock> Parser::parseStatementBlock()
 
     //this->tracer.leave ();
     return node;
+}
+
+std::shared_ptr<syntax::ReturnStatement> Parser::parseReturnStatement()
+{
+    std::shared_ptr<syntax::ReturnStatement> node = std::make_shared<syntax::ReturnStatement>();
+
+    this->accept({TokenType::Return});
+
+    if (this->peek({TokenType::Semicolon}))
+    {
+        this->accept({TokenType::Semicolon});
+        node->isEmpty = true;
+        return node;
+    }
+
+    node->setValue(this->parseAssignable());
+    this->accept({TokenType::Semicolon});
+
+    return node;
+}
+
+std::shared_ptr<syntax::VarDeclaration> Parser::parseVarDeclaration()
+{
+    std::shared_ptr<syntax::VarDeclaration> node = std::make_shared<syntax::VarDeclaration>();
+
+    this->accept({TokenType::Var});
+
+    auto typeToken = this->accept({TokenType::Integer, TokenType::String,
+                                  TokenType::Bool, TokenType::Float});
+
+    auto nameToken = this->accept({TokenType::Identifier});
+
+    node->setName(nameToken._value);
+    node->setType(typeToken._value);
+
+    if (this->peek({TokenType::Assignment}))
+    {
+        this->accept({TokenType::Assignment});
+
+        node->setValue(this->parseAssignable());
+    }
+
+    this->accept({TokenType::Semicolon});
+
+    return node;
+}
+
+std::shared_ptr<syntax::Assignable> Parser::parseAssignable()
+{
+    std::shared_ptr<syntax::Assignable> node;
+
+    if (this->peek({TokenType::Identifier}))
+    {
+        auto token = this->accept({TokenType::Identifier});
+
+        node = this->parseFunCall(token._value);
+        if (!node)
+        {
+            node = this->parseExpression(token);
+        }
+    }
+    else
+    {
+        node = this->parseExpression();
+    }
+
+    return node;
+}
+
+std::shared_ptr<syntax::Call> Parser::parseFunCall(const std::string & identifier)
+{
+    std::shared_ptr<syntax::Call> node = std::make_shared<syntax::Call>();
+
+    if (!this->peek({TokenType::ParenthOpen}))
+    {
+        return nullptr;
+    }
+
+    node->setName(identifier);
+    this->accept({TokenType::ParenthOpen});
+
+    if (this->peek({TokenType::ParenthClose}))
+    {
+        this->accept({TokenType::ParenthClose});
+        return node;
+    }
+
+    while (true)
+    {
+        node->addArgument(this->parseAssignable());
+
+        if (this->peek({TokenType::ParenthClose}))
+        {
+            this->accept({TokenType::ParenthClose});
+            break;
+        }
+        if (this->peek({TokenType::Comma}))
+        {
+            this->accept({TokenType::Comma});
+            continue;
+        }
+
+        this->peekFail();
+    }
+
+    return node;
+}
+
+std::shared_ptr<syntax::Expression> Parser::parseExpression(const Token & firstToken)
+{
+    std::shared_ptr<syntax::Expression> node = std::make_shared<syntax::Expression>();
+
+    node->addOperand(this->parseMultiplicativeExpression(firstToken));
+
+    while (this->peek({TokenType::Plus, TokenType::Minus}))
+    {
+        auto tempToken = this->accept({TokenType::Plus, TokenType::Minus});
+        node->addOperator(tempToken._type);
+
+        node->addOperand(this->parseMultiplicativeExpression());
+    }
+
+    return node;
+}
+
+std::shared_ptr<syntax::Expression> Parser::parseMultiplicativeExpression(const Token& firstToken)
+{
+    std::shared_ptr<syntax::Expression> node = std::make_shared<syntax::Expression>();
+
+    node->addOperand(this->parsePrimaryExpression(firstToken));
+
+    while (this->peek({TokenType::Multiply, TokenType::Divide, TokenType::Modulo}))
+    {
+        auto tempToken = this->accept({TokenType::Multiply, TokenType::Divide, TokenType::Modulo});
+        node->addOperator(tempToken._type);
+
+        node->addOperand(this->parsePrimaryExpression());
+    }
+
+    return node;
+}
+
+
+NodePtr Parser::parsePrimaryExpression(const Token& firstToken)
+{
+    if (firstToken._type != TokenType::Undefined)
+    {
+        auto node = this->parseVariable(firstToken);
+
+        return node;
+    }
+
+    if (this->peek({TokenType::ParenthOpen}))
+    {
+        this->accept({TokenType::ParenthOpen});
+        auto node = this->parseExpression();
+        this->accept({TokenType::ParenthClose});
+
+        return node;
+    }
+
+    if (this->peek({TokenType::Identifier}))
+    {
+        auto node = this->parseVariable();
+
+        return node;
+    }
+
+    auto node = this->parseLiteral();
+
+    return node;
+}
+
+std::shared_ptr<syntax::Variable> Parser::parseVariable(const Token& identifierToken)
+{
+    std::shared_ptr<syntax::Variable> node = std::make_shared<syntax::Variable>();
+
+    if (identifierToken._type != TokenType::Identifier)
+    {
+        auto tempToken = this->accept({TokenType::Identifier});
+        node->setName(tempToken._value);
+    }
+    else
+    {
+        node->setName(identifierToken._value);
+    }
+
+    if (this->peek({TokenType::SquareBracketOpen}))
+    {
+        this->accept({TokenType::SquareBracketOpen});
+        node->setIndexArg(1, this->parseAssignable());
+        this->accept({TokenType::SquareBracketClose});
+
+        if (this->peek({TokenType::SquareBracketOpen}))
+        {
+            this->accept({TokenType::SquareBracketOpen});
+            node->setIndexArg(2, this->parseAssignable());
+            this->accept({TokenType::SquareBracketClose});
+        }
+    }
+
+    return node;
+}
+
+
+NodePtr Parser::parseLiteral()
+{
+    std::shared_ptr<syntax::Literal> node = std::make_shared<syntax::Literal>();
+
+    if (this->peek({TokenType::Quotation}))
+    {
+        node = this->parseString();
+    }
+    else if (this->peek({TokenType::True, TokenType::False}))
+    {
+        node = this->parseBool();
+    }
+    else
+        node->pushValue(this->parseNumber());
+
+
+    return node;
+}
+
+double Parser::parseNumber()
+{
+    double value = 0;
+    bool negative = false;
+
+    if (this->peek({TokenType::Minus}))
+    {
+        this->accept({TokenType::Minus});
+
+        negative = true;
+    }
+
+    auto tempToken = this->accept({TokenType::NumberLiteral});
+    if (tempToken._value != "")
+    {
+        value = std::stod(tempToken._value);
+    }
+
+    if (negative)
+    {
+        value *= -1;
+    }
+
+    return value;
 }
 
 std::shared_ptr<syntax::IfStatement> Parser::parseIfStatement()
@@ -281,8 +529,6 @@ std::shared_ptr<syntax::WhileStatement> Parser::parseWhileStatement()
 {
     std::shared_ptr<syntax::WhileStatement> node = std::make_shared<syntax::WhileStatement>();
 
-    //this->tracer.enter ("Parsing while statement");
-
     this->accept({TokenType::While});
     this->accept({TokenType::ParenthOpen});
 
@@ -292,56 +538,9 @@ std::shared_ptr<syntax::WhileStatement> Parser::parseWhileStatement()
 
     node->setBlock(this->parseStatementBlock());
 
-    //this->tracer.leave ();
     return node;
 }
 
-std::shared_ptr<syntax::ReturnStatement> Parser::parseReturnStatement()
-{
-    std::shared_ptr<syntax::ReturnStatement> node = std::make_shared<syntax::ReturnStatement>();
-
-    //this->tracer.enter ("Parsing return statement");
-
-    this->accept({TokenType::Return});
-
-    if (this->peek({TokenType::Semicolon}))
-    {
-        this->accept({TokenType::Semicolon});
-        node->isEmpty = true;
-        return node;
-    }
-
-    node->setValue(this->parseAssignable());
-
-    this->accept({TokenType::Semicolon});
-
-    //this->tracer.leave ();
-    return node;
-}
-
-std::shared_ptr<syntax::VarDeclaration> Parser::parseInitStatement()
-{
-    std::shared_ptr<syntax::VarDeclaration> node = std::make_shared<syntax::VarDeclaration>();
-
-    //this->tracer.enter ("Parsing init statement");
-
-    this->accept({TokenType::Var});
-
-    auto nameToken = this->accept({TokenType::Identifier});
-    node->setName(nameToken._value);
-
-    if (this->peek({TokenType::Assignment}))
-    {
-        this->accept({TokenType::Assignment});
-
-        node->setValue(this->parseAssignable());
-    }
-
-    this->accept({TokenType::Semicolon});
-
-    // this->tracer.leave ();
-    return node;
-}
 
 NodePtr Parser::parseAssignmentOrFunCall()
 {
@@ -367,7 +566,6 @@ NodePtr Parser::parseAssignmentOrFunCall()
 
     this->accept({TokenType::Semicolon});
 
-    //this->tracer.leave ();
     return node;
 }
 
@@ -375,304 +573,14 @@ std::shared_ptr<syntax::LoopJump> Parser::parseLoopJump()
 {
     std::shared_ptr<syntax::LoopJump> node = std::make_shared<syntax::LoopJump>();
 
-    //this->tracer.enter ("Parsing loop jump");
-
     auto token = this->accept({TokenType::Continue, TokenType::Break});
     node->setType(token._type);
 
     this->accept({TokenType::Semicolon});
 
-    //this->tracer.leave ();
     return node;
 }
 
-std::shared_ptr<syntax::Assignable> Parser::parseAssignable()
-{
-    std::shared_ptr<syntax::Assignable> node;
-
-    //this->tracer.enter ("Parsing assignable");
-
-    if (this->peek({TokenType::Identifier}))
-    {
-        auto tempToken = this->accept({TokenType::Identifier});
-
-        node = this->parseFunCall(tempToken._value);
-        if (!node)
-        {
-            node = this->parseExpression(tempToken);
-        }
-    }
-    else
-    {
-        node = this->parseExpression();
-    }
-
-    //this->tracer.leave ();
-    return node;
-}
-
-std::shared_ptr<syntax::Call> Parser::parseFunCall(const std::string& identifier)
-{
-    std::shared_ptr<syntax::Call> node = std::make_shared<syntax::Call>();
-
-    //this->tracer.enter ("Parsing function call");
-
-    if (!this->peek({TokenType::ParenthOpen}))
-    {
-        //this->tracer.leave ("  - not a function call");
-        return nullptr;
-    }
-
-    node->setName(identifier);
-
-    this->accept({TokenType::ParenthOpen});
-
-    if (this->peek({TokenType::ParenthClose}))
-    {
-        this->accept({TokenType::ParenthClose});
-
-        //this->tracer.leave ("  + function call");
-        return node;
-    }
-
-    while (true)
-    {
-        node->addArgument(this->parseAssignable());
-
-        if (this->peek({TokenType::ParenthClose}))
-        {
-            this->accept({TokenType::ParenthClose});
-            break;
-        }
-        if (this->peek({TokenType::Comma}))
-        {
-            this->accept({TokenType::Comma});
-            continue;
-        }
-
-        this->peekFail();
-    }
-
-    //this->tracer.leave ("  + function call");
-    return node;
-}
-
-std::shared_ptr<syntax::Variable> Parser::parseVariable(const Token& identifierToken)
-{
-    std::shared_ptr<syntax::Variable> node = std::make_shared<syntax::Variable>();
-
-    //this->tracer.enter ("Parsing Variable");
-
-    if (identifierToken._type != TokenType::Identifier)
-    {
-        auto tempToken = this->accept({TokenType::Identifier});
-        node->setName(tempToken._value);
-    }
-    else
-    {
-        node->setName(identifierToken._value);
-    }
-
-    if (this->peek({TokenType::SquareBracketOpen}))
-    {
-        this->accept({TokenType::SquareBracketOpen});
-        node->setIndexArg(1, this->parseAssignable());
-        this->accept({TokenType::SquareBracketClose});
-
-        if (this->peek({TokenType::SquareBracketOpen}))
-        {
-            this->accept({TokenType::SquareBracketOpen});
-            node->setIndexArg(2, this->parseAssignable());
-            this->accept({TokenType::SquareBracketClose});
-        }
-    }
-
-    //this->tracer.leave ();
-    return node;
-}
-
-std::shared_ptr<syntax::Matrix> Parser::parseLiteral()
-{
-    std::shared_ptr<syntax::Matrix> node = std::make_shared<syntax::Matrix>();
-
-    ///this->tracer.enter ("Parsing literal");
-
-    if (this->peek({TokenType::SquareBracketOpen}))
-    {
-        node = this->parseMatrixLiteral();
-    }
-    else
-    {
-        node->pushValue(this->parseNumberLiteral());
-    }
-
-    //this->tracer.leave ();
-    return node;
-}
-
-double Parser::parseNumberLiteral()
-{
-    double value = 0;
-    bool negative = false;
-
-    //this->tracer.enter ("Parsing number literal");
-
-    if (this->peek({TokenType::Minus}))
-    {
-        this->accept({TokenType::Minus});
-
-        negative = true;
-    }
-
-    auto tempToken = this->accept({TokenType::Infinity, TokenType::NumberLiteral});
-    if (tempToken._type == TokenType::Infinity)
-    {
-        value = std::numeric_limits<double>::infinity();
-    }
-    else if (tempToken._value != "")
-    {
-        value = std::stod(tempToken._value);
-    }
-
-    if (negative)
-    {
-        value *= -1;
-    }
-
-    //this->tracer.leave ();
-    return value;
-}
-
-std::shared_ptr<syntax::Matrix> Parser::parseMatrixLiteral()
-{
-    std::shared_ptr<syntax::Matrix> node = std::make_shared<syntax::Matrix>();
-
-    //this->tracer.enter ("Parsing matrix literal");
-
-    this->accept({TokenType::SquareBracketOpen});
-
-    node->pushValue(this->parseNumberLiteral());
-
-    while (!this->peek({TokenType::SquareBracketClose}))
-    {
-        if (this->peek({TokenType::Comma}))
-        {
-            this->accept({TokenType::Comma});
-
-            node->pushValue(this->parseNumberLiteral());
-        }
-        else if (this->peek({TokenType::Semicolon}))
-        {
-            this->accept({TokenType::Semicolon});
-
-            node->nextLevel();
-
-            node->pushValue(this->parseNumberLiteral());
-        }
-        else
-        {
-            this->peekFail();
-        }
-    }
-
-    while (!this->peek({TokenType::SquareBracketClose}))
-    {
-        while (!this->peek({TokenType::Semicolon}))
-        {
-            this->accept({TokenType::Comma});
-
-            node->pushValue(this->parseNumberLiteral());
-        }
-        this->accept({TokenType::Semicolon});
-
-        node->pushValue(this->parseNumberLiteral());
-
-        node->nextLevel();
-
-        node->pushValue(this->parseNumberLiteral());
-    }
-    this->accept({TokenType::SquareBracketClose});
-
-    //this->tracer.leave ();
-    return node;
-}
-
-std::shared_ptr<syntax::Expression> Parser::parseExpression(const Token& firstToken)
-{
-    std::shared_ptr<syntax::Expression> node = std::make_shared<syntax::Expression>();
-
-    //this->tracer.enter ("Parsing expression");
-
-    node->addOperand(this->parseMultiplicativeExpression(firstToken));
-
-    while (this->peek({TokenType::Plus, TokenType::Minus}))
-    {
-        auto tempToken = this->accept({TokenType::Plus, TokenType::Minus});
-        node->addOperator(tempToken._type);
-
-        node->addOperand(this->parseMultiplicativeExpression());
-    }
-
-    //this->tracer.leave ();
-    return node;
-}
-
-std::shared_ptr<syntax::Expression> Parser::parseMultiplicativeExpression(const Token& firstToken)
-{
-    std::shared_ptr<syntax::Expression> node = std::make_shared<syntax::Expression>();
-
-    //this->tracer.enter ("Parsing multiplicative expression");
-
-    node->addOperand(this->parsePrimaryExpression(firstToken));
-
-    while (this->peek({TokenType::Multiply, TokenType::Divide, TokenType::Modulo}))
-    {
-        auto tempToken = this->accept({TokenType::Multiply, TokenType::Divide, TokenType::Modulo});
-        node->addOperator(tempToken._type);
-
-        node->addOperand(this->parsePrimaryExpression());
-    }
-
-    //this->tracer.leave ();
-    return node;
-}
-
-NodePtr Parser::parsePrimaryExpression(const Token& firstToken)
-{
-    //this->tracer.enter ("Parsing primary expression");
-    //this->tracer.info (std::string ("First Token type = ").append (getTokenTypeName (firstToken._type)));
-
-    if (firstToken._type != TokenType::Undefined)
-    {
-        auto node = this->parseVariable(firstToken);
-
-        //this->tracer.leave ();
-        return node;
-    }
-
-    if (this->peek({TokenType::ParenthOpen}))
-    {
-        this->accept({TokenType::ParenthOpen});
-        auto node = this->parseExpression();
-        this->accept({TokenType::ParenthClose});
-
-        //this->tracer.leave ();
-        return node;
-    }
-
-    if (this->peek({TokenType::Identifier}))
-    {
-        auto node = this->parseVariable();
-
-        //this->tracer.leave ();
-        return node;
-    }
-
-    auto node = this->parseLiteral();
-
-    //this->tracer.leave ();
-    return node;
-}
 
 std::shared_ptr<syntax::Condition> Parser::parseCondition()
 {

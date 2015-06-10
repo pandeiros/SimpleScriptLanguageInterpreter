@@ -165,6 +165,15 @@
     <ClInclude Include="..\include\syntax_tree\FunctionDefinition.h">
       <Filter>Header Files\SyntaxTree</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\Literal.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\Bool.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\String.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\InputManager.cpp">

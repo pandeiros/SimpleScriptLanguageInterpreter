@@ -11,16 +11,18 @@ namespace syntax
         enum class Type
         {
             Assignment,
+            Bool,
             Call,
             Condition,
             Expression,
             FunctionDefinition,
             IfStatement,
             LoopJump,
-            Matrix,
+            Number,
             Program,
             ReturnStatement,
             StatementBlock,
+            String,
             VarDeclaration,
             Variable,
             WhileStatement
@@ -43,7 +45,7 @@ typedef std::shared_ptr<syntax::Node> NodePtr;
 #include "FunctionDefinition.h"
 #include "IfStatement.h"
 #include "LoopJump.h"
-#include "Matrix.h"
+#include "Literal.h"
 #include "Program.h"
 #include "ReturnStatement.h"
 #include "StatementBlock.h"

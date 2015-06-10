@@ -51,16 +51,16 @@ private:
     std::shared_ptr<syntax::IfStatement> parseIfStatement();
     std::shared_ptr<syntax::WhileStatement> parseWhileStatement();
     std::shared_ptr<syntax::ReturnStatement> parseReturnStatement();
-    std::shared_ptr<syntax::VarDeclaration> parseInitStatement();
+    std::shared_ptr<syntax::VarDeclaration> parseVarDeclaration();
     NodePtr parseAssignmentOrFunCall();
     std::shared_ptr<syntax::LoopJump> parseLoopJump();
 
     std::shared_ptr<syntax::Assignable> parseAssignable();
     std::shared_ptr<syntax::Call> parseFunCall(const std::string& identifier);
     std::shared_ptr<syntax::Variable> parseVariable(const Token& firstToken = Token(TokenType::Undefined));
-    std::shared_ptr<syntax::Matrix> parseLiteral();
-    double parseNumberLiteral();
-    std::shared_ptr<syntax::Matrix> parseMatrixLiteral();
+    NodePtr parseLiteral();
+    double parseNumber();
+    //std::shared_ptr<syntax::Matrix> parseMatrixLiteral(); TODO REMOVE
 
     std::shared_ptr<syntax::Expression> parseExpression(const Token& firstToken = Token(TokenType::Undefined));
     std::shared_ptr<syntax::Expression> parseMultiplicativeExpression(const Token& firstToken = Token(TokenType::Undefined));

@@ -24,6 +24,9 @@ enum class TokenType
     Bool,
     Identifier,
     Type,
+    Quotation,
+    True,
+    False,
 
     Comma,
     If,
@@ -73,6 +76,9 @@ const std::unordered_map<TokenType, std::string> tokenTypeNames =
     {TokenType::String, "String"},
     {TokenType::Identifier, "Identifier"},      // TODO Change to "Name"
     {TokenType::Comma, "Comma"},
+    {TokenType::Quotation, "Quotation"},
+    {TokenType::True, "True"},
+    {TokenType::False, "False"},
    // {TokenType::Type, "Type"},
 
     {TokenType::SquareBracketOpen, "SquareBracketOpen"},
@@ -116,6 +122,8 @@ static const std::unordered_map<std::string, TokenType> & keywords =
     {"bool", TokenType::Bool},
     {"string", TokenType::String },
     {"float", TokenType::Float},
+    {"true", TokenType::True},
+    {"false", TokenType::False},
 
     {"if", TokenType::If},
     {"while", TokenType::While},
@@ -143,7 +151,8 @@ static const std::unordered_map<char, TokenType> & simpleSigns =
     {'*', TokenType::Multiply},
     {'/', TokenType::Divide},
     {'%', TokenType::Modulo},
-    {'.', TokenType::Dot}
+    {'.', TokenType::Dot},
+    {"\"", TokenType::Quotation}
 };
 
 
