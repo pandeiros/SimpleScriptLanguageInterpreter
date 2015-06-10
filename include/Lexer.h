@@ -11,14 +11,14 @@
 class Lexer
 {
 public:
-    Lexer (const std::string & file);
+    Lexer(const std::string & file);
 
     // Returns next token generated from input.
     // Default returned token is of type Invalid, in case of no match.
-    const Token nextToken ();
+    const Token nextToken();
 
     // Return line where the token occured.
-    const std::string getLine (const std::streampos& linePos);
+    const std::string getLine(const std::streampos& linePos);
 
 private:
     // Class providing input characters.

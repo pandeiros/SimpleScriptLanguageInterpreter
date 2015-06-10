@@ -122,9 +122,9 @@ static const std::unordered_map<char, TokenType> & simpleSigns =
 };
 
 
-inline const std::string getTokenTypeName (const TokenType & tokenType)
+inline const std::string getTokenTypeName(const TokenType & tokenType)
 {
-    return tokenTypeNames.at (tokenType);
+    return tokenTypeNames.at(tokenType);
 };
 
 #endif // __TOKEN_TYPE_H__

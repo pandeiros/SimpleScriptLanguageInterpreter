@@ -11,9 +11,9 @@
 class Token
 {
 public:
-    Token () = default;
+    Token() = default;
 
-    Token (const TokenType & type) : _type (type)
+    Token(const TokenType & type) : _type(type)
     {}
 
     // Default options in case of no match.

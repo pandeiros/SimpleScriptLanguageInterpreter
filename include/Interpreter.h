@@ -12,9 +12,9 @@
 class Interpreter
 {
 public:
-    Interpreter (int argc, char * argv[]);
+    Interpreter(int argc, char * argv[]);
 
-    void run ();
+    void run();
 
 private:
     // Parameters control members.
@@ -23,8 +23,8 @@ private:
     std::vector<std::string> _vecArgs;
 
 
-#ifdef DEBUG
-    void printParams ()
+#ifdef _DEBUG
+    void printParams()
     {
         std::cout << "      --- INPUT ---\n" << "==========================\n";
         std::cout << "Source file: " << _sourceFile << "\n";

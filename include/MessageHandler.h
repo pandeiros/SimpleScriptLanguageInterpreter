@@ -13,6 +13,10 @@ public:
     static void error(const std::string & message);
     static void warning(const std::string & message);
     static void info(const std::string & message);
+    static void debug(const std::string & message);
+    static void unexpectedToken(const std::string name, const std::string line,
+                                const std::string pos, const std::string lineOcc,
+                                const std::string marker);
     static void print(const std::string & message);
 
 private:
@@ -20,7 +24,8 @@ private:
     {
         INFO,
         WARNING,
-        ERROR
+        ERROR,
+        DEBUG
     };
 
     static void printLabel(const Type type);

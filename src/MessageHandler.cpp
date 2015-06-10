@@ -2,11 +2,11 @@
 
 void MessageHandler::error(const std::string & message)
 {
-    MessageHandler::printLabel (ERROR);
+    MessageHandler::printLabel(ERROR);
     MessageHandler::print(message);
 }
 
-void MessageHandler::warning (const std::string & message)
+void MessageHandler::warning(const std::string & message)
 {
     MessageHandler::printLabel(WARNING);
     MessageHandler::print(message);
@@ -18,7 +18,24 @@ void MessageHandler::info(const std::string & message)
     MessageHandler::print(message);
 }
 
-void MessageHandler::printLabel (const Type type)
+void MessageHandler::debug(const std::string & message)
+{
+    MessageHandler::printLabel(DEBUG);
+    MessageHandler::print(message);
+}
+
+void MessageHandler::unexpectedToken(const std::string name, const std::string line,
+                                     const std::string pos, const std::string lineOcc,
+                                     const std::string marker)
+{
+    MessageHandler::error(std::string("Unexpected token: ").append(name)
+                          .append(" (Line: ").append(line)
+                          .append(", Pos: ").append(pos)
+                          .append(")").append("\n").append(lineOcc)
+                          .append("\n").append(marker));
+}
+
+void MessageHandler::printLabel(const Type type)
 {
     std::string label = "";
     int colorCode = 0;
@@ -36,6 +53,10 @@ void MessageHandler::printLabel (const Type type)
         case ERROR:
             colorCode = 31;
             label = "ERROR";
+            break;
+        case DEBUG:
+            colorCode = 31;
+            label = "DEBUG";
             break;
         default:
             colorCode = 36;

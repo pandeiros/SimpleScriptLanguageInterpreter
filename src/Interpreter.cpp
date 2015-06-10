@@ -6,12 +6,12 @@
 #include "Executor.h"
 #include "MessageHandler.h"
 
-Interpreter::Interpreter (int argc, char* argv[]) : _argCount (argc)
+Interpreter::Interpreter(int argc, char* argv[]) : _argCount(argc)
 {
     if (argc > 1)
     {
         // First parameter should be source file.
-        std::string strSource (argv[1]);
+        std::string strSource(argv[1]);
         this->_sourceFile = strSource;
 
         if (argc > 2)
@@ -19,21 +19,21 @@ Interpreter::Interpreter (int argc, char* argv[]) : _argCount (argc)
             // Process the rest of parameters for program arguments.
             for (int i = 2; i < argc; ++i)
             {
-                std::string strArg (argv[i]);
-                _vecArgs.push_back (strArg);
+                std::string strArg(argv[i]);
+                _vecArgs.push_back(strArg);
             }
         }
     }
     else
     {
-        MessageHandler::error ("Input file missing!");
+        MessageHandler::error("Input file missing!");
     }
 }
 
-void Interpreter::run ()
+void Interpreter::run()
 {
-#ifdef DEBUG
-    this->printParams ();
+#ifdef _DEBUG
+    this->printParams();
 #endif
 
     Lexer lexer(_sourceFile);

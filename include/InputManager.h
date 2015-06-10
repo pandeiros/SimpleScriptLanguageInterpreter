@@ -10,23 +10,23 @@
 class InputManager
 {
 public:
-    InputManager () = default;
+    InputManager() = default;
 
     // Input controllers.
     const char nextCharacter();
     void rewind();              // TODO REMOVE,  USE BUFFER
 
     // Getters.
-    const bool hasFinished () const;
-    const unsigned int & getCurrentLineNo () const;
-    const unsigned int & getCurrentSignPos () const;
-    const std::streampos getCurrentLinePos () const;
+    const bool hasFinished() const;
+    const unsigned int & getCurrentLineNo() const;
+    const unsigned int & getCurrentSignPos() const;
+    const std::streampos getCurrentLinePos() const;
 
     // Get line, whether character occured.
-    const std::string getLine (const std::streampos & linePos);
+    const std::string getLine(const std::streampos & linePos);
 
     // Setter for source file path.
-    inline void setSourceFile (const std::string sourceFile)
+    inline void setSourceFile(const std::string sourceFile)
     {
         this->_sourceFile = sourceFile;
         _handler = std::ifstream(sourceFile);
