@@ -247,7 +247,7 @@ std::shared_ptr<syntax::StatementBlock> Parser::parseStatementBlock()
                 node->addInstruction(parseStatementBlock());
                 break;
             case TokenType::Name:
-                node->addInstruction(parseAssignmentOrFunCall());
+                node->addInstruction(parseAssignmentOrFunctionCall());
                 break;
             default:
                 break;
@@ -300,7 +300,6 @@ std::shared_ptr<syntax::VarDeclaration> Parser::parseVarDeclaration()
     if (this->peek({TokenType::Assignment}))
     {
         this->accept({TokenType::Assignment});
-
         node->setValue(this->parseAssignable());
     }
 
@@ -432,7 +431,6 @@ std::shared_ptr<syntax::Assignable> Parser::parseExpression(const Token & initTo
     return node;
 }
 
-
 std::shared_ptr<syntax::Assignable> Parser::parseLogicalExpression(const Token & initToken)
 {
     std::shared_ptr<syntax::LogicalExpression> node = std::make_shared<syntax::LogicalExpression>();
@@ -561,6 +559,7 @@ NodePtr Parser::parseArithmeticOperand(const Token & initToken)
 }
 
 
+
 std::shared_ptr<syntax::LogicalExpression> Parser::parseStrongLogicalExpression(const Token & initToken)
 {
     std::shared_ptr<syntax::LogicalExpression> node = std::make_shared<syntax::LogicalExpression>();
@@ -666,32 +665,67 @@ NodePtr Parser::parseLogicalOperand(const Token & initToken)
 
 
 
-std::shared_ptr<syntax::Variable> Parser::parseVariable(const Token& identifierToken)
+std::shared_ptr<syntax::IfStatement> Parser::parseIfStatement()
+{
+    std::shared_ptr<syntax::IfStatement> node = std::make_shared<syntax::IfStatement>();
+
+    // Start IF statement
+    this->accept({TokenType::If});
+    this->accept({TokenType::ParenthOpen});
+
+    // Parse first logical expression
+    node->setCondition(std::dynamic_pointer_cast<syntax::LogicalExpression>(this->parseLogicalExpression()));
+
+    // Close if condition set block for true condition.
+    this->accept({TokenType::ParenthClose});
+    node->setTrueBlock(this->parseStatementBlock());    // TODO Add parseSingleInstruction
+                                                        // when peek for bracket is false
+
+    // Parse optional 'else' statement.
+    // TODO Add 'else if' block
+    if (this->peek({TokenType::Else}))
+    {
+        this->accept({TokenType::Else});
+        node->setFalseBlock(this->parseStatementBlock());
+    }
+
+    return node;
+}
+
+std::shared_ptr<syntax::WhileStatement> Parser::parseWhileStatement()
+{
+    std::shared_ptr<syntax::WhileStatement> node = std::make_shared<syntax::WhileStatement>();
+
+    // Start WHILE statement.
+    this->accept({TokenType::While});
+    this->accept({TokenType::ParenthOpen});
+
+    // Parse its logical expression.
+    node->setCondition(std::dynamic_pointer_cast<syntax::LogicalExpression>(this->parseLogicalExpression()));
+
+    // Close it and update instruction block.
+    // TODO Check for single instruction instead of block.
+    this->accept({TokenType::ParenthClose});
+    node->setBlock(this->parseStatementBlock());
+
+    return node;
+}
+
+
+
+std::shared_ptr<syntax::Variable> Parser::parseVariable(const Token & identifierToken)
 {
     std::shared_ptr<syntax::Variable> node = std::make_shared<syntax::Variable>();
 
+    // If there was nothing to assing, get new token.
     if (identifierToken._type != TokenType::Name)
     {
-        auto tempToken = this->accept({TokenType::Name});
-        node->setName(tempToken._value);
+        auto token = this->accept({TokenType::Name});
+        node->setName(token._value);
     }
     else
     {
         node->setName(identifierToken._value);
-    }
-
-    if (this->peek({TokenType::SquareBracketOpen}))
-    {
-        this->accept({TokenType::SquareBracketOpen});
-        node->setIndexArg(1, this->parseAssignable());
-        this->accept({TokenType::SquareBracketClose});
-
-        if (this->peek({TokenType::SquareBracketOpen}))
-        {
-            this->accept({TokenType::SquareBracketOpen});
-            node->setIndexArg(2, this->parseAssignable());
-            this->accept({TokenType::SquareBracketClose});
-        }
     }
 
     return node;
@@ -701,6 +735,7 @@ NodePtr Parser::parseLiteral()
 {
     std::shared_ptr<syntax::Literal> node = std::make_shared<syntax::Literal>();
 
+    // Simple choice: string, bool or number.
     if (this->peek({TokenType::StringLiteral}))
     {
         node = this->parseString();
@@ -720,6 +755,7 @@ std::shared_ptr<syntax::Literal> Parser::parseString()
 {
     auto token = this->accept({TokenType::StringLiteral});
 
+    // Parse token and get its value to the node.
     std::shared_ptr<syntax::String> node = std::make_shared<syntax::String>();
     node->_value = token._value;
 
@@ -730,6 +766,7 @@ std::shared_ptr<syntax::Literal> Parser::parseBool()
 {
     auto token = this->accept({TokenType::True, TokenType::False});
 
+    // Parse token and get its value to the node.
     std::shared_ptr<syntax::Bool> node = std::make_shared<syntax::Bool>();
     node->_value = token._value == "true" ? true : false;
 
@@ -743,93 +780,52 @@ std::shared_ptr<syntax::Literal> Parser::parseNumber()
     double value = 0;
     bool negative = false;
 
+    // Negative number.
     if (this->peek({TokenType::Minus}))
     {
         this->accept({TokenType::Minus});
-
         negative = true;
     }
 
-    auto tempToken = this->accept({TokenType::NumberLiteral});
-    if (tempToken._value != "")
+    // Get value and convert it from string.
+    auto token = this->accept({TokenType::NumberLiteral});
+    if (token._value != "")
     {
-        value = std::stod(tempToken._value);
+        value = std::stod(token._value);
     }
 
+    // If negative, change the sign.
     if (negative)
     {
         value *= -1;
     }
 
+    // Assign the value.
     node->_value = value;
     return node;
 }
 
-std::shared_ptr<syntax::IfStatement> Parser::parseIfStatement()
-{
-    std::shared_ptr<syntax::IfStatement> node = std::make_shared<syntax::IfStatement>();
-
-    //this->tracer.enter ("Parsing if statement");
-
-    this->accept({TokenType::If});
-    this->accept({TokenType::ParenthOpen});
-
-    node->setCondition(std::dynamic_pointer_cast<syntax::LogicalExpression>(this->parseLogicalExpression()));
-
-    this->accept({TokenType::ParenthClose});
-
-    node->setTrueBlock(this->parseStatementBlock());
-
-    if (this->peek({TokenType::Else}))
-    {
-        this->accept({TokenType::Else});
-
-        node->setFalseBlock(this->parseStatementBlock());
-    }
-
-    //this->tracer.leave ();
-    return node;
-}
-
-std::shared_ptr<syntax::WhileStatement> Parser::parseWhileStatement()
-{
-    std::shared_ptr<syntax::WhileStatement> node = std::make_shared<syntax::WhileStatement>();
-
-    this->accept({TokenType::While});
-    this->accept({TokenType::ParenthOpen});
-
-    node->setCondition(std::dynamic_pointer_cast<syntax::LogicalExpression>(this->parseLogicalExpression()));
-
-    this->accept({TokenType::ParenthClose});
-
-    node->setBlock(this->parseStatementBlock());
-
-    return node;
-}
-
-
-NodePtr Parser::parseAssignmentOrFunCall()
+NodePtr Parser::parseAssignmentOrFunctionCall()
 {
     NodePtr node;
 
-    //this->tracer.enter ("Parsing assignment or function call");
-
-    auto tempToken = this->accept({TokenType::Name});
-
-    node = this->parseFunctionCall(tempToken._value);
+    // Get identifier and try to match with function call.
+    auto token = this->accept({TokenType::Name});
+    node = this->parseFunctionCall(token._value);
     if (!node)
     {
+        // Its not a function call, so its an assignment.
         std::shared_ptr<syntax::Assignment> assignmentNode = std::make_shared<syntax::Assignment>();
 
-        assignmentNode->setVariable(this->parseVariable(tempToken));
-
+        // Get name, then '=' and then value.
+        assignmentNode->setVariable(this->parseVariable(token));
         this->accept({TokenType::Assignment});
-
         assignmentNode->setValue(this->parseAssignable());
 
         node = assignmentNode;
     }
 
+    // End instruction.
     this->accept({TokenType::Semicolon});
 
     return node;

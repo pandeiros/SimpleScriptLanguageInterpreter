@@ -53,16 +53,16 @@ private:
     /* Decomposition procedures */
 
     // Functions.
-    std::shared_ptr<syntax::FunctionDefinition> parseFunction();    //
-    bool parseParameters(std::vector<std::string> & types, std::vector<std::string> & names);       //
-    std::shared_ptr<syntax::StatementBlock> parseStatementBlock();  //
+    std::shared_ptr<syntax::FunctionDefinition> parseFunction();
+    bool parseParameters(std::vector<std::string> & types, std::vector<std::string> & names);
+    std::shared_ptr<syntax::StatementBlock> parseStatementBlock();
 
     // Basic instructions.
-    std::shared_ptr<syntax::ReturnStatement> parseReturnStatement();    //
-    std::shared_ptr<syntax::VarDeclaration> parseVarDeclaration();      //
-    std::shared_ptr<syntax::ConstDeclaration> parseConstDeclaration();  //
-    std::shared_ptr<syntax::Assignable> parseAssignable(); //
-    std::shared_ptr<syntax::Call> parseFunctionCall(const std::string & identifier); //
+    std::shared_ptr<syntax::ReturnStatement> parseReturnStatement();
+    std::shared_ptr<syntax::VarDeclaration> parseVarDeclaration();
+    std::shared_ptr<syntax::ConstDeclaration> parseConstDeclaration();
+    std::shared_ptr<syntax::Assignable> parseAssignable();
+    std::shared_ptr<syntax::Call> parseFunctionCall(const std::string & identifier);
 
     // Expressions
     std::shared_ptr<syntax::Assignable> parseExpression(const Token & initToken = Token(TokenType::Undefined));
@@ -82,16 +82,13 @@ private:
     std::shared_ptr<syntax::IfStatement> parseIfStatement();
     std::shared_ptr<syntax::WhileStatement> parseWhileStatement();
 
-
-    NodePtr parseAssignmentOrFunCall();
-
-
-
+    // Variables and literals
     std::shared_ptr<syntax::Variable> parseVariable(const Token& firstToken = Token(TokenType::Undefined));
-    NodePtr parseLiteral();         //
-    std::shared_ptr<syntax::Literal> parseString();     //
-    std::shared_ptr<syntax::Literal> parseBool();       //
-    std::shared_ptr<syntax::Literal> parseNumber();     //
+    NodePtr parseLiteral();
+    std::shared_ptr<syntax::Literal> parseString();
+    std::shared_ptr<syntax::Literal> parseBool();
+    std::shared_ptr<syntax::Literal> parseNumber();
+    NodePtr parseAssignmentOrFunctionCall();
 
     // Lexer for receiving tokens.
     Lexer & _lexer;
