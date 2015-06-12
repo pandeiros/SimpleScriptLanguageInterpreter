@@ -61,13 +61,13 @@ private:
     std::shared_ptr<syntax::ReturnStatement> parseReturnStatement();
     std::shared_ptr<syntax::VarDeclaration> parseVarDeclaration();
     std::shared_ptr<syntax::ConstDeclaration> parseConstDeclaration();
-    std::shared_ptr<syntax::Assignable> parseAssignable();
+    std::shared_ptr<syntax::RValue> parseAssignable();
     std::shared_ptr<syntax::Call> parseFunctionCall(const std::string & identifier);
 
     // Expressions
-    std::shared_ptr<syntax::Assignable> parseExpression(const Token & initToken = Token(TokenType::Undefined));
-    std::shared_ptr<syntax::Assignable> parseLogicalExpression(const Token & initToken = Token(TokenType::Undefined));
-    std::shared_ptr<syntax::Assignable> parseArithmeticExpression(const Token & initToken = Token(TokenType::Undefined));
+    std::shared_ptr<syntax::RValue> parseExpression(const Token & initToken = Token(TokenType::Undefined));
+    std::shared_ptr<syntax::RValue> parseLogicalExpression(const Token & initToken = Token(TokenType::Undefined));
+    std::shared_ptr<syntax::RValue> parseArithmeticExpression(const Token & initToken = Token(TokenType::Undefined));
 
     // Arithmetic expression.
     std::shared_ptr<syntax::ArithmeticExpression> parseStrongArithmeticExpression(const Token & initToken = Token(TokenType::Undefined));

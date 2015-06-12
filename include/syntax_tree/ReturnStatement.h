@@ -8,17 +8,18 @@ namespace syntax
     class ReturnStatement : public Node
     {
     public:
-        void setValue(const std::shared_ptr<Assignable>& assignableNode)
-        {
-            this->assignableNode = assignableNode;
-        }
         virtual Type getType()
         {
             return Node::Type::ReturnStatement;
         }
 
-        bool isEmpty;
-        std::shared_ptr<Assignable> assignableNode;
+        void setValue(const std::shared_ptr<RValue> & rvalue)
+        {
+            _value = rvalue;
+        }
+
+        bool _isEmpty;
+        std::shared_ptr<RValue> _value;
     };
 }
 

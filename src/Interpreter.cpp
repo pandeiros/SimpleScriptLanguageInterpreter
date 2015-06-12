@@ -43,9 +43,9 @@ void Interpreter::run()
 
     auto program = parser.parse();
 
-    if (program.get()->functions.size() > 0 && parser.getParsingSucceeded())
+    if (program.get()->_functions.size() > 0 && parser.getParsingSucceeded())
     {
-        auto checkResult = semCheck.check(program);
+        auto checkResult = semCheck.checkAll(program);
 
         if (checkResult.size() > 0 && semCheck.getCheckSucceeded())
             executor.execute(checkResult);

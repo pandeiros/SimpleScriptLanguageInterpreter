@@ -1,39 +1,38 @@
 #ifndef __IF_STATEMENT_H__
 #define __IF_STATEMENT_H__
 
-#include "Node.h"
 #include "LogicalExpression.h"
 
-class StatementBlock;
+//class StatementBlock;
 
-/*
- *
- */
 namespace syntax
 {
     class IfStatement : public Node
     {
     public:
-        void setCondition(const std::shared_ptr<LogicalExpression>& conditionNode)
-        {
-            this->conditionNode = conditionNode;
-        }
-        void setTrueBlock(const std::shared_ptr<StatementBlock>& trueBlockNode)
-        {
-            this->trueBlockNode = trueBlockNode;
-        }
-        void setFalseBlock(const std::shared_ptr<StatementBlock>& falseBlockNode)
-        {
-            this->falseBlockNode = falseBlockNode;
-        }
         virtual Type getType()
         {
             return Node::Type::IfStatement;
         }
 
-        std::shared_ptr<LogicalExpression> conditionNode;
-        std::shared_ptr<StatementBlock> trueBlockNode;
-        std::shared_ptr<StatementBlock> falseBlockNode;
+        void setCondition(const std::shared_ptr<LogicalExpression> & condition)
+        {
+            _condition = condition;
+        }
+
+        void setTrueBlock(const std::shared_ptr<StatementBlock> & trueBlock)
+        {
+            _trueBlock = trueBlock;
+        }
+
+        void setFalseBlock(const std::shared_ptr<StatementBlock> & falseBlock)
+        {
+            _falseBlock = falseBlock;
+        }
+
+        std::shared_ptr<LogicalExpression> _condition;
+        std::shared_ptr<StatementBlock> _trueBlock;
+        std::shared_ptr<StatementBlock> _falseBlock;
     };
 }
 

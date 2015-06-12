@@ -271,7 +271,7 @@ std::shared_ptr<syntax::ReturnStatement> Parser::parseReturnStatement()
     if (this->peek({TokenType::Semicolon}))
     {
         this->accept({TokenType::Semicolon});
-        node->isEmpty = true;
+        node->_isEmpty = true;
         return node;
     }
 
@@ -337,9 +337,9 @@ std::shared_ptr<syntax::ConstDeclaration> Parser::parseConstDeclaration()
     return node;
 }
 
-std::shared_ptr<syntax::Assignable> Parser::parseAssignable()
+std::shared_ptr<syntax::RValue> Parser::parseAssignable()
 {
-    std::shared_ptr<syntax::Assignable> node;
+    std::shared_ptr<syntax::RValue> node;
 
     // Check for name, which can be function call.
     if (this->peek({TokenType::Name}))
@@ -410,9 +410,9 @@ std::shared_ptr<syntax::Call> Parser::parseFunctionCall(const std::string & name
 
 
 
-std::shared_ptr<syntax::Assignable> Parser::parseExpression(const Token & initToken)
+std::shared_ptr<syntax::RValue> Parser::parseExpression(const Token & initToken)
 {
-    std::shared_ptr<syntax::Assignable> node = std::make_shared<syntax::Assignable>();
+    std::shared_ptr<syntax::RValue> node = std::make_shared<syntax::RValue>();
 
     // Try parsing arithmetic expression.
     node = this->parseArithmeticExpression(initToken);
@@ -431,7 +431,7 @@ std::shared_ptr<syntax::Assignable> Parser::parseExpression(const Token & initTo
     return node;
 }
 
-std::shared_ptr<syntax::Assignable> Parser::parseLogicalExpression(const Token & initToken)
+std::shared_ptr<syntax::RValue> Parser::parseLogicalExpression(const Token & initToken)
 {
     std::shared_ptr<syntax::LogicalExpression> node = std::make_shared<syntax::LogicalExpression>();
 
@@ -461,7 +461,7 @@ std::shared_ptr<syntax::Assignable> Parser::parseLogicalExpression(const Token &
     return node;
 }
 
-std::shared_ptr<syntax::Assignable> Parser::parseArithmeticExpression(const Token & initToken)
+std::shared_ptr<syntax::RValue> Parser::parseArithmeticExpression(const Token & initToken)
 {
     std::shared_ptr<syntax::ArithmeticExpression> node = std::make_shared<syntax::ArithmeticExpression>();
 

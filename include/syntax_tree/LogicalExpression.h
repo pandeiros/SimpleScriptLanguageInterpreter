@@ -1,46 +1,47 @@
 #ifndef __LOGICAL_EXPRESSION_H__
 #define __LOGICAL_EXPRESSION_H__
 
-#include "Assignable.h"
+#include "RValue.h"
 #include "TokenType.h"
 
-/*
- *
- */
 namespace syntax
 {
-    class LogicalExpression : public Assignable
+    class LogicalExpression : public RValue
     {
     public:
-        void addOperand(const NodePtr& node)
-        {
-            this->operands.push_back(node);
-        }
-        void setOperator(const TokenType& operation)
-        {
-            this->operation = operation;
-        }
-        void setNegated()
-        {
-            this->negated = true;
-        }
-        bool isNegated()
-        {
-            return this->negated;
-        }
-        NodePtr& getLeftSide()
-        {
-            return this->operands.at(0);
-        }
-
         virtual Type getType()
         {
             return Node::Type::LogicalExpression;
         }
 
-        bool negated = false;
-        TokenType operation = TokenType::Undefined;
-        std::vector<NodePtr> operands;
+        void addOperand(const NodePtr & operand)
+        {
+            _operands.push_back(operand);
+        }
+
+        void setOperator(const TokenType & operation)
+        {
+            _operation = operation;
+        }
+
+        void setNegated()
+        {
+            _isNegated = true;
+        }
+
+        bool isNegated()
+        {
+            return _isNegated;
+        }
+
+        NodePtr & getLeftSide()
+        {
+            return _operands.at(0);
+        }
+
+        bool _isNegated = false;
+        TokenType _operation = TokenType::Undefined;
+        std::vector<NodePtr> _operands;
     };
 }
 

@@ -19,7 +19,6 @@ namespace syntax
             FunctionDefinition,
             IfStatement,
             LogicalExpression,
-            LoopJump,
             Number,
             Literal,
             Program,

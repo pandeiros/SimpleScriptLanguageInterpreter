@@ -8,16 +8,17 @@ namespace syntax
     class StatementBlock : public Node
     {
     public:
-        void addInstruction(const NodePtr & node)
-        {
-            this->instructions.push_back(node);
-        }
         virtual Type getType()
         {
             return Node::Type::StatementBlock;
         }
 
-        std::vector<NodePtr> instructions;
+        void addInstruction(const NodePtr & instruction)
+        {
+            _instructions.push_back(instruction);
+        }
+
+        std::vector<NodePtr> _instructions;
     };
 }
 

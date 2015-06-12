@@ -1,25 +1,27 @@
 #ifndef __PROGRAM_H__
 #define __PROGRAM_H__
 
-#include "Node.h"
+#include "FunctionDefinition.h"
 
-class FunctionDefinition;
+//class FunctionDefinition;
 
 namespace syntax
 {
     class Program : public Node
     {
     public:
-        void addFunction(const std::shared_ptr<FunctionDefinition>& function)
-        {
-            this->functions.push_back(function);
-        }
         virtual Type getType()
         {
             return Node::Type::Program;
         }
 
-        std::vector<std::shared_ptr<FunctionDefinition>> functions = {};
+        void addFunction(const std::shared_ptr<FunctionDefinition> & function)
+        {
+            _functions.push_back(function);
+        }
+
+
+        std::vector<std::shared_ptr<FunctionDefinition>> _functions = {};
     };
 }
 

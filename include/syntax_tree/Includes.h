@@ -12,7 +12,6 @@
 #include "FunctionDefinition.h"
 #include "IfStatement.h"
 #include "LogicalExpression.h"
-#include "LoopJump.h"
 #include "Literal.h"
 #include "Number.h"
 #include "Program.h"

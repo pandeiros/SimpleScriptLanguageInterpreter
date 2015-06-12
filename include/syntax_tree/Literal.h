@@ -12,8 +12,6 @@ namespace syntax
         {
             return Node::Type::Literal;
         }
-
-        //double value;
     };
 }
 

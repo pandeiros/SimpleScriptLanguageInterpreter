@@ -11,7 +11,7 @@ class SemanticChecker
 {
 public:
     // Initiate function checking
-    std::vector<std::shared_ptr<inter::Function>> check(const std::shared_ptr<syntax::Program>& program);
+    std::vector<std::shared_ptr<inter::Function>> checkAll(const std::shared_ptr<syntax::Program> & program);
 
     // Success flag getter.
     inline bool getCheckSucceeded()
@@ -24,19 +24,20 @@ private:
     bool scanFunctionDefinitions();
     bool checkForProgram();
 
-    // Main check function. Traverse all functions.
-    std::vector<std::shared_ptr<inter::Function>> traverseTree();
+    // Main check function. Traverse all nodes.
+    std::vector<std::shared_ptr<inter::Function>> traverseAll();
 
     /* Other check functions. */
     std::shared_ptr<inter::Function> checkFunction(syntax::FunctionDefinition& functionDef);
+
     std::shared_ptr<inter::Block> checkBlock(inter::ScopePrototype & scopePrototype, syntax::StatementBlock& blockNode);
-    std::shared_ptr<inter::AssignmentInstr> checkAssignment(inter::ScopePrototype & scopePrototype, const std::string& variable, syntax::Assignable& assignable);
-    std::shared_ptr<inter::AssignmentInstr> checkAssignment(inter::ScopePrototype & scopePrototype, syntax::Variable& variable, syntax::Assignable& assignable);
-    std::shared_ptr<inter::Assignable> checkAssignable(inter::ScopePrototype & scopePrototype, syntax::Assignable& assignable);
+    std::shared_ptr<inter::AssignmentInstr> checkAssignment(inter::ScopePrototype & scopePrototype, const std::string& variable, syntax::RValue& assignable);
+    std::shared_ptr<inter::AssignmentInstr> checkAssignment(inter::ScopePrototype & scopePrototype, syntax::Variable& variable, syntax::RValue& assignable);
+    std::shared_ptr<inter::Assignable> checkAssignable(inter::ScopePrototype & scopePrototype, syntax::RValue& assignable);
     std::shared_ptr<inter::CallInstr> checkFunctionCall(inter::ScopePrototype & scopePrototype, syntax::Call& call);
     std::shared_ptr<inter::Expression> checkExpression(inter::ScopePrototype & scopePrototype, syntax::ArithmeticExpression& call);
     std::shared_ptr<inter::Variable> checkVariable(inter::ScopePrototype & scopePrototype, syntax::Variable& variable);
-    std::shared_ptr<inter::ReturnInstr> checkReturnStatement(inter::ScopePrototype & scopePrototype, syntax::Assignable& assignable);
+    std::shared_ptr<inter::ReturnInstr> checkReturnStatement(inter::ScopePrototype & scopePrototype, syntax::RValue& assignable);
     std::shared_ptr<inter::IfInstr> checkIfStatement(inter::ScopePrototype & scopePrototype, syntax::IfStatement& stmt);
     std::shared_ptr<inter::WhileInstr> checkWhileStatement(inter::ScopePrototype & scopePrototype, syntax::WhileStatement& stmt);
     std::shared_ptr<inter::Condition> checkCondition(inter::ScopePrototype & scopePrototype, syntax::LogicalExpression& condition);

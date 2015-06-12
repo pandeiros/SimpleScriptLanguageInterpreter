@@ -19,9 +19,6 @@
     <Filter Include="Header Files\SyntaxTree">
       <UniqueIdentifier>{d01fed0a-fc75-480b-aceb-24eb5804ff00}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\SyntaxTree">
-      <UniqueIdentifier>{0166980b-1ed0-425a-8506-49157b580b1f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Intermediate">
       <UniqueIdentifier>{ee05721e-cc0f-4015-ab9f-44f571593ea1}</UniqueIdentifier>
     </Filter>
@@ -51,9 +48,6 @@
     <ClInclude Include="..\include\syntax_tree\Node.h">
       <Filter>Header Files\SyntaxTree</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\syntax_tree\Assignable.h">
-      <Filter>Header Files\SyntaxTree</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\syntax_tree\Assignment.h">
       <Filter>Header Files\SyntaxTree</Filter>
     </ClInclude>
@@ -61,12 +55,6 @@
       <Filter>Header Files\SyntaxTree</Filter>
     </ClInclude>
     <ClInclude Include="..\include\syntax_tree\IfStatement.h">
-      <Filter>Header Files\SyntaxTree</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\syntax_tree\LoopJump.h">
-      <Filter>Header Files\SyntaxTree</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\syntax_tree\Matrix.h">
       <Filter>Header Files\SyntaxTree</Filter>
     </ClInclude>
     <ClInclude Include="..\include\syntax_tree\Program.h">
@@ -181,6 +169,9 @@
       <Filter>Header Files\SyntaxTree</Filter>
     </ClInclude>
     <ClInclude Include="..\include\syntax_tree\ArithmeticExpression.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\RValue.h">
       <Filter>Header Files\SyntaxTree</Filter>
     </ClInclude>
   </ItemGroup>

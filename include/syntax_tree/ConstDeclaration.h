@@ -3,37 +3,34 @@
 
 #include "Node.h"
 
-/*
- *
- */
 namespace syntax
 {
     class ConstDeclaration : public Node
     {
     public:
-        void setName(const std::string & name)
-        {
-            this->name = name;
-        }
-
-        void setType(const std::string & type)
-        {
-            this->type = type;
-        }
-
-        void setValue(const std::shared_ptr<Assignable> & assignableNode)
-        {
-            this->assignableNode = assignableNode;
-        }
-
         virtual Type getType()
         {
             return Node::Type::ConstDeclaration;
         }
 
-        std::string type;
-        std::string name;
-        std::shared_ptr<Assignable> assignableNode;
+        void setName(const std::string & name)
+        {
+            _name = name;
+        }
+
+        void setType(const std::string & type)
+        {
+           _type = type;
+        }
+
+        void setValue(const std::shared_ptr<RValue> & rvalue)
+        {
+            _value = rvalue;
+        }
+
+        std::string _type;
+        std::string _name;
+        std::shared_ptr<RValue> _value;
     };
 }
 
