@@ -12,6 +12,11 @@ namespace syntax
     {
     public:
         typedef std::shared_ptr<Assignable> ptr;
+
+        virtual Type getType()
+        {
+            return Node::Type::Assignable;
+        }
     };
 }
 

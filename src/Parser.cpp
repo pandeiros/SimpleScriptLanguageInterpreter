@@ -116,6 +116,7 @@ void Parser::resetPreviousToken()
     this->_previousToken._col = 0;
 }
 
+
 /* Decomposition procedures */
 
 std::shared_ptr<syntax::FunctionDefinition> Parser::parseFunction()
@@ -259,6 +260,8 @@ std::shared_ptr<syntax::StatementBlock> Parser::parseStatementBlock()
     return node;
 }
 
+
+
 std::shared_ptr<syntax::ReturnStatement> Parser::parseReturnStatement()
 {
     std::shared_ptr<syntax::ReturnStatement> node = std::make_shared<syntax::ReturnStatement>();
@@ -345,7 +348,7 @@ std::shared_ptr<syntax::Assignable> Parser::parseAssignable()
         auto token = this->accept({TokenType::Name});
 
         // Check for function call.
-        node = this->parseFunCall(token._value);
+        node = this->parseFunctionCall(token._value);
 
         if (!node)
         {
@@ -361,7 +364,7 @@ std::shared_ptr<syntax::Assignable> Parser::parseAssignable()
     return node;
 }
 
-std::shared_ptr<syntax::Call> Parser::parseFunCall(const std::string & name)
+std::shared_ptr<syntax::Call> Parser::parseFunctionCall(const std::string & name)
 {
     std::shared_ptr<syntax::Call> node = std::make_shared<syntax::Call>();
 
@@ -407,58 +410,132 @@ std::shared_ptr<syntax::Call> Parser::parseFunCall(const std::string & name)
 }
 
 
-std::shared_ptr<syntax::ArithmeticExpression> Parser::parseExpression(const Token & firstToken)
+
+std::shared_ptr<syntax::Assignable> Parser::parseExpression(const Token & initToken)
+{
+    std::shared_ptr<syntax::Assignable> node = std::make_shared<syntax::Assignable>();
+
+    // Try parsing logical expression.
+    node = this->parseLogicalExpression(initToken);
+
+    if (!node)
+    {
+        node = this->parseArithmeticExpression(initToken);
+
+        if (!node)
+        {
+            return nullptr;
+            FAIL;
+        }
+    }
+
+    return node;
+}
+
+
+std::shared_ptr<syntax::Assignable> Parser::parseLogicalExpression(const Token & initToken)
+{
+    std::shared_ptr<syntax::LogicalExpression> node = std::make_shared<syntax::LogicalExpression>();
+
+    // Check if this is correct logical expression (could be arithmetic).
+    std::shared_ptr<syntax::LogicalExpression> operand = this->parseStrongLogicalExpression(initToken);
+    if (!operand)
+        return nullptr;
+
+    node->addOperand(operand);
+
+    while (this->peek({TokenType::Or}))
+    {
+        auto operatorToken = this->accept({TokenType::Or});
+        node->setOperator(TokenType::Or);
+
+        // Check again if this is correct logical expression.
+        std::shared_ptr<syntax::LogicalExpression> operand = this->parseStrongLogicalExpression();
+        if (!operand)
+            return nullptr;
+
+        node->addOperand(operand);
+    }
+}
+
+std::shared_ptr<syntax::Assignable> Parser::parseArithmeticExpression(const Token & initToken)
 {
     std::shared_ptr<syntax::ArithmeticExpression> node = std::make_shared<syntax::ArithmeticExpression>();
 
-    node->addOperand(this->parseMultiplicativeExpression(firstToken));
+    // Check if this is correct arithmetic expression (could be logical).
+    std::shared_ptr<syntax::ArithmeticExpression> operand = this->parseStrongArithmeticExpression(initToken);
+    if (!operand)
+        return nullptr;
 
+    node->addOperand(operand);
+
+    // Accept weak arithmetic operators.
     while (this->peek({TokenType::Plus, TokenType::Minus}))
     {
-        auto tempToken = this->accept({TokenType::Plus, TokenType::Minus});
-        node->addOperator(tempToken._type);
+        auto operatorToken = this->accept({TokenType::Plus, TokenType::Minus});
+        node->addOperator(operatorToken._type);
 
-        node->addOperand(this->parseMultiplicativeExpression());
+        // Check again if this is correct arithmetic expression.
+        std::shared_ptr<syntax::ArithmeticExpression> operand = this->parseStrongArithmeticExpression();
+        if (!operand)
+            return nullptr;
+
+        node->addOperand(operand);
     }
-
-    return node;
 }
 
-std::shared_ptr<syntax::ArithmeticExpression> Parser::parseMultiplicativeExpression(const Token& firstToken)
+
+
+std::shared_ptr<syntax::ArithmeticExpression> Parser::parseStrongArithmeticExpression(const Token & initToken)
 {
     std::shared_ptr<syntax::ArithmeticExpression> node = std::make_shared<syntax::ArithmeticExpression>();
 
-    node->addOperand(this->parsePrimaryExpression(firstToken));
+    // Check if this is correct arithmetic operand.
+    NodePtr operand = this->parseArithmeticOperand(initToken);
+    if (!operand)
+        return nullptr;
 
+    node->addOperand(operand);
+
+    // Accept strong arithmetic operators.
     while (this->peek({TokenType::Multiply, TokenType::Divide, TokenType::Modulo}))
     {
-        auto tempToken = this->accept({TokenType::Multiply, TokenType::Divide, TokenType::Modulo});
-        node->addOperator(tempToken._type);
+        auto operatorToken = this->accept({TokenType::Multiply, TokenType::Divide, TokenType::Modulo});
+        node->addOperator(operatorToken._type);
 
-        node->addOperand(this->parsePrimaryExpression());
+        // Check again if this is correct arithmetic operand.
+        NodePtr operand = this->parseArithmeticOperand();
+        if (!operand)
+            return nullptr;
+
+        node->addOperand(operand);
     }
 
     return node;
 }
 
-NodePtr Parser::parsePrimaryExpression(const Token& firstToken)
+NodePtr Parser::parseArithmeticOperand(const Token & initToken)
 {
-    if (firstToken._type != TokenType::Undefined)
+    // This happens, when TokenType::Name was received as first token of the expression.
+    if (initToken._type != TokenType::Undefined)
     {
-        auto node = this->parseVariable(firstToken);
-
+        auto node = this->parseVariable(initToken);
         return node;
     }
 
+    // Otherwise, we have to try other options.
+
     if (this->peek({TokenType::ParenthOpen}))
     {
+        // Try arithmetic expression in parenthesis.
         this->accept({TokenType::ParenthOpen});
-        auto node = this->parseExpression();
+        auto node = this->parseArithmeticExpression();
         this->accept({TokenType::ParenthClose});
 
         return node;
     }
 
+    // Or a variable.
     if (this->peek({TokenType::Name}))
     {
         auto node = this->parseVariable();
@@ -466,10 +543,117 @@ NodePtr Parser::parsePrimaryExpression(const Token& firstToken)
         return node;
     }
 
-    auto node = this->parseLiteral();
+    // Or a number.
+    auto node = this->parseNumber();
 
     return node;
 }
+
+
+std::shared_ptr<syntax::LogicalExpression> Parser::parseStrongLogicalExpression(const Token & initToken)
+{
+    std::shared_ptr<syntax::LogicalExpression> node = std::make_shared<syntax::LogicalExpression>();
+
+    // Check if this is correct logical operand.
+    NodePtr operand = this->parseRelationExpression();
+    if (!operand)
+        return nullptr;
+
+    node->addOperand(operand);
+
+    while (this->peek({TokenType::And}))
+    {
+        this->accept({TokenType::And});
+        node->setOperator(TokenType::And);
+
+        // Check again if this is correct logical operand.
+        NodePtr operand = this->parseRelationExpression();
+        if (!operand)
+            return nullptr;
+
+        node->addOperand(operand);
+    }
+
+    return node;
+}
+
+std::shared_ptr<syntax::LogicalExpression> Parser::parseRelationExpression(const Token & initToken)
+{
+    std::shared_ptr<syntax::LogicalExpression> node = std::make_shared<syntax::LogicalExpression>();
+
+    // Check if this is correct logical operand.
+    NodePtr operand = this->parseLogicalOperand();
+    if (!operand)
+        return nullptr;
+
+    node->addOperand(operand);
+
+    if (this->peek({TokenType::Less, TokenType::Greater, TokenType::LessOrEqual,
+        TokenType::GreaterOrEqual, TokenType::Equality, TokenType::Inequality}))
+    {
+        auto operatorToken = this->accept({TokenType::Less, TokenType::Greater, TokenType::LessOrEqual,
+                                         TokenType::GreaterOrEqual, TokenType::Equality, TokenType::Inequality});
+        node->setOperator(operatorToken._type);
+
+        // Check if this is correct logical operand.
+        NodePtr operand = this->parseLogicalOperand();
+        if (!operand)
+            return nullptr;
+
+        node->addOperand(operand);
+    }
+
+    //this->tracer.leave ();
+    return node;
+}
+
+NodePtr Parser::parseLogicalOperand(const Token & initToken)
+{
+    std::shared_ptr<syntax::LogicalExpression> node = std::make_shared<syntax::LogicalExpression>();
+
+    // Check for negation operator.
+    if (this->peek({TokenType::Negation}))
+    {
+        this->accept({TokenType::Negation});
+        node->setNegated();
+    }
+
+    // Otherwise, we have to try other options.
+
+    if (this->peek({TokenType::ParenthOpen}))
+    {
+        // Try logical expression in parenthesis.
+        this->accept({TokenType::ParenthOpen});
+        node->addOperand(this->parseLogicalExpression());
+        this->accept({TokenType::ParenthClose});
+    }
+    //// Or any assignable.
+    //else
+    //{
+    //    node->addOperand(this->parseAssignable());
+    //}
+
+    // Or a variable
+    else if (this->peek({TokenType::Name}))
+    {
+        node->addOperand(this->parseVariable());
+    }
+    // Or a literal.
+    else
+    {
+        node->addOperand(this->parseLiteral());
+    }
+
+    // TODO Understand this
+    if (!node->isNegated())
+    {
+        return node->getLeftSide();
+    }
+
+    return node;
+}
+
+
 
 std::shared_ptr<syntax::Variable> Parser::parseVariable(const Token& identifierToken)
 {
@@ -579,7 +763,7 @@ std::shared_ptr<syntax::IfStatement> Parser::parseIfStatement()
     this->accept({TokenType::If});
     this->accept({TokenType::ParenthOpen});
 
-    node->setCondition(this->parseCondition());
+    node->setCondition(std::dynamic_pointer_cast<syntax::LogicalExpression>(this->parseLogicalExpression()));
 
     this->accept({TokenType::ParenthClose});
 
@@ -603,7 +787,7 @@ std::shared_ptr<syntax::WhileStatement> Parser::parseWhileStatement()
     this->accept({TokenType::While});
     this->accept({TokenType::ParenthOpen});
 
-    node->setCondition(this->parseCondition());
+    node->setCondition(std::dynamic_pointer_cast<syntax::LogicalExpression>(this->parseLogicalExpression()));
 
     this->accept({TokenType::ParenthClose});
 
@@ -621,7 +805,7 @@ NodePtr Parser::parseAssignmentOrFunCall()
 
     auto tempToken = this->accept({TokenType::Name});
 
-    node = this->parseFunCall(tempToken._value);
+    node = this->parseFunctionCall(tempToken._value);
     if (!node)
     {
         std::shared_ptr<syntax::Assignment> assignmentNode = std::make_shared<syntax::Assignment>();
@@ -637,126 +821,5 @@ NodePtr Parser::parseAssignmentOrFunCall()
 
     this->accept({TokenType::Semicolon});
 
-    return node;
-}
-
-std::shared_ptr<syntax::LogicalExpression> Parser::parseCondition()
-{
-    std::shared_ptr<syntax::LogicalExpression> node = std::make_shared<syntax::LogicalExpression>();
-
-    //this->tracer.enter ("Parsing condition");
-
-    node->addOperand(this->parseAndCondition());
-
-    while (this->peek({TokenType::Or}))
-    {
-        this->accept({TokenType::Or});
-        node->setOperator(TokenType::Or);
-
-        node->addOperand(this->parseAndCondition());
-    }
-
-    //this->tracer.leave ();
-    return node;
-}
-
-std::shared_ptr<syntax::LogicalExpression> Parser::parseAndCondition()
-{
-    std::shared_ptr<syntax::LogicalExpression> node = std::make_shared<syntax::LogicalExpression>();
-
-    //this->tracer.enter ("Parsing and condition");
-
-    node->addOperand(this->parseEqualityCondition());
-
-    while (this->peek({TokenType::And}))
-    {
-        this->accept({TokenType::And});
-        node->setOperator(TokenType::And);
-
-        node->addOperand(this->parseEqualityCondition());
-    }
-
-    //this->tracer.leave ();
-    return node;
-}
-
-std::shared_ptr<syntax::LogicalExpression> Parser::parseEqualityCondition()
-{
-    std::shared_ptr<syntax::LogicalExpression> node = std::make_shared<syntax::LogicalExpression>();
-
-    //this->tracer.enter ("Parsing equality condition");
-
-    node->addOperand(this->parseRelationalCondition());
-
-    if (this->peek({TokenType::Equality, TokenType::Inequality}))
-    {
-        auto tempToken = this->accept({TokenType::Equality, TokenType::Inequality});
-        node->setOperator(tempToken._type);
-
-        node->addOperand(this->parseRelationalCondition());
-    }
-
-    //this->tracer.leave ();
-    return node;
-}
-
-std::shared_ptr<syntax::LogicalExpression> Parser::parseRelationalCondition()
-{
-    std::shared_ptr<syntax::LogicalExpression> node = std::make_shared<syntax::LogicalExpression>();
-
-    //this->tracer.enter ("Parsing relational condition");
-
-    node->addOperand(this->parsePrimaryCondition());
-
-    if (this->peek({TokenType::Less, TokenType::Greater, TokenType::LessOrEqual, TokenType::GreaterOrEqual}))
-    {
-        auto tempToken = this->accept({TokenType::Less, TokenType::Greater, TokenType::LessOrEqual, TokenType::GreaterOrEqual});
-        node->setOperator(tempToken._type);
-
-        node->addOperand(this->parsePrimaryCondition());
-    }
-
-    //this->tracer.leave ();
-    return node;
-}
-
-NodePtr Parser::parsePrimaryCondition()
-{
-    std::shared_ptr<syntax::LogicalExpression> node = std::make_shared<syntax::LogicalExpression>();
-
-    //this->tracer.enter ("Parsing primary condition");
-
-    if (this->peek({TokenType::Negation}))
-    {
-        this->accept({TokenType::Negation});
-
-        node->setNegated();
-    }
-
-    if (this->peek({TokenType::ParenthOpen}))
-    {
-        this->accept({TokenType::ParenthOpen});
-        node->addOperand(this->parseCondition());
-        this->accept({TokenType::ParenthClose});
-    }
-    else
-    {
-        if (this->peek({TokenType::Name}))
-        {
-            node->addOperand(this->parseVariable());
-        }
-        else
-        {
-            node->addOperand(this->parseLiteral());
-        }
-    }
-
-    if (!node->isNegated())
-    {
-        //this->tracer.leave ();
-        return node->getLeftSide();
-    }
-
-    //this->tracer.leave ();
     return node;
 }

@@ -38,7 +38,7 @@ IntAssign           = IntType Name AssignmentOp [ "<" IntType | FloatType | Bool
 FloatAssign         = FloatType Name AssignmentOp [ "<" IntType | FloatType ">" ] RValue
 StringAssign        = StringType Name AssignmentOp [ "<" IntType | FloatType | BoolType | StringAssign ">" ] RValue
 BoolAssign          = BoolType Name AssignmentOp [ "<" IntType | BoolType ">" ] RValue
-
+AssignmentOp        = "="
 
 --- Expressions ------------------------------------------------
 - When comparing different types, implicit upward conversion
@@ -48,19 +48,18 @@ BoolAssign          = BoolType Name AssignmentOp [ "<" IntType | BoolType ">" ] 
 ----------------------------------------------------------------
 LogicalExpr         = WeakLogicalExpr
 WeakLogicalExpr     = StrongLogicalExpr { WeakLogicalOp StrongLogicalExpr }
-StrongLogicalExpr   = LogicalOperand { StrongLogicalOp LogicalOperand }
-LogicalOperand      = FuncCall | Name | RelationExpr | ( LogicalExpr )
+StrongLogicalExpr   = RelationExpr { StrongLogicalOp RelationExpr }
+RelationExpr        = LogicalOperand [ RelationOp LogicalOperand ]
+LogicalOperand      = [ NegationOp ] RValue | "(" LogicalExpr ")"
 StrongLogicalOp     = "&&"
 WeakLogicalOp       = "||"
-RelationExpr        = ( "(" (Name | ArithmeticExpr) RelationOp RValue ")") |
-                      (     (Name | ArithmeticExpr) RelationOp RValue    )
 RelationOp          = "==" | "!=" | "<" | ">" | "<=" | ">="
-AssignmentOp        = "="
+NegationOp          = "!"
 
 ArithmeticExpr      = WeakArithmeticExpr
 WeakArithmeticExpr  = StrongArithmeticExpr { WeakArithmeticOp StrongArithmeticExpr }
 StrongArithmeticExpr= ArithmeticOperand { StrongArithmeticOp ArithmeticOperand }
-ArithmeticOperand   = Number | Name | FuncCall | ( ArithmeticExpr )
+ArithmeticOperand   = Number | Name | FuncCall | "(" ArithmeticExpr ")"
 StrongArithmeticOp  = "*" | "/" | "%"
 WeakArithmeticOp    = "+" | "-"
 

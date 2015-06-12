@@ -11,6 +11,7 @@ namespace syntax
         enum class Type
         {
             ArithmeticExpression,
+            Assignable,
             Assignment,
             Bool,
             Call,
