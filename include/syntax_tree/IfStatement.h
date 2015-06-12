@@ -2,6 +2,7 @@
 #define __IF_STATEMENT_H__
 
 #include "Node.h"
+#include "LogicalExpression.h"
 
 class StatementBlock;
 
@@ -13,7 +14,7 @@ namespace syntax
     class IfStatement : public Node
     {
     public:
-        void setCondition(const std::shared_ptr<Condition>& conditionNode)
+        void setCondition(const std::shared_ptr<LogicalExpression>& conditionNode)
         {
             this->conditionNode = conditionNode;
         }
@@ -30,7 +31,7 @@ namespace syntax
             return Node::Type::IfStatement;
         }
 
-        std::shared_ptr<Condition> conditionNode;
+        std::shared_ptr<LogicalExpression> conditionNode;
         std::shared_ptr<StatementBlock> trueBlockNode;
         std::shared_ptr<StatementBlock> falseBlockNode;
     };

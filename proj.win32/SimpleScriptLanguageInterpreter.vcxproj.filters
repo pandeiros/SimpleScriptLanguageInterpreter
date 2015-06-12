@@ -60,12 +60,6 @@
     <ClInclude Include="..\include\syntax_tree\Call.h">
       <Filter>Header Files\SyntaxTree</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\syntax_tree\Condition.h">
-      <Filter>Header Files\SyntaxTree</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\syntax_tree\Expression.h">
-      <Filter>Header Files\SyntaxTree</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\syntax_tree\IfStatement.h">
       <Filter>Header Files\SyntaxTree</Filter>
     </ClInclude>
@@ -181,6 +175,12 @@
       <Filter>Header Files\SyntaxTree</Filter>
     </ClInclude>
     <ClInclude Include="..\include\syntax_tree\ConstDeclaration.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\LogicalExpression.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\ArithmeticExpression.h">
       <Filter>Header Files\SyntaxTree</Filter>
     </ClInclude>
   </ItemGroup>

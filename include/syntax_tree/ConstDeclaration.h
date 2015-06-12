@@ -28,7 +28,7 @@ namespace syntax
 
         virtual Type getType()
         {
-            return Node::Type::VarDeclaration;
+            return Node::Type::ConstDeclaration;
         }
 
         std::string type;

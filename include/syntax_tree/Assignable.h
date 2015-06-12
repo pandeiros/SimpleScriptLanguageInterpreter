@@ -8,7 +8,7 @@
  */
 namespace syntax
 {
-    class Assignable : public Node
+    class Assignable : public Node  // TODO Change to RValue
     {
     public:
         typedef std::shared_ptr<Assignable> ptr;

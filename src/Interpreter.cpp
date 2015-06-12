@@ -43,11 +43,11 @@ void Interpreter::run()
 
     auto program = parser.parse();
 
-    if (program.get()->functions.size() > 0)
+    if (program.get()->functions.size() > 0 && parser.getParsingSucceeded())
     {
         auto checkResult = semCheck.check(program);
 
-        if (checkResult.size() > 0)
+        if (checkResult.size() > 0 && semCheck.getCheckSucceeded())
             executor.execute(checkResult);
     }
 }

@@ -99,9 +99,9 @@
     <ClInclude Include="..\include\syntax_tree\Assignment.h" />
     <ClInclude Include="..\include\syntax_tree\Bool.h" />
     <ClInclude Include="..\include\syntax_tree\Call.h" />
-    <ClInclude Include="..\include\syntax_tree\Condition.h" />
+    <ClInclude Include="..\include\syntax_tree\LogicalExpression.h" />
     <ClInclude Include="..\include\syntax_tree\ConstDeclaration.h" />
-    <ClInclude Include="..\include\syntax_tree\Expression.h" />
+    <ClInclude Include="..\include\syntax_tree\ArithmeticExpression.h" />
     <ClInclude Include="..\include\syntax_tree\FunctionDefinition.h" />
     <ClInclude Include="..\include\syntax_tree\IfStatement.h" />
     <ClInclude Include="..\include\syntax_tree\Includes.h" />

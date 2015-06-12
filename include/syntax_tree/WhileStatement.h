@@ -11,7 +11,7 @@ namespace syntax
     class WhileStatement : public Node
     {
     public:
-        void setCondition(const std::shared_ptr<Condition>& conditionNode)
+        void setCondition(const std::shared_ptr<LogicalExpression>& conditionNode)
         {
             this->conditionNode = conditionNode;
         }
@@ -24,7 +24,7 @@ namespace syntax
             return Node::Type::WhileStatement;
         }
 
-        std::shared_ptr<Condition> conditionNode;
+        std::shared_ptr<LogicalExpression> conditionNode;
         std::shared_ptr<StatementBlock> blockNode;
     };
 }

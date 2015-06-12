@@ -1,27 +1,28 @@
-#ifndef __EXPRESSION_H__
-#define __EXPRESSION_H__
+#ifndef __ARITHMETIC_EXPRESSION_H__
+#define __ARITHMETIC_EXPRESSION_H__
 
-#include "Node.h"
+#include "Assignable.h"
+#include "TokenType.h"
 
 /*
  *
  */
 namespace syntax
 {
-    class Expression : public Assignable
+    class ArithmeticExpression : public Assignable
     {
     public:
         void addOperand(const NodePtr& node)
         {
             this->operands.push_back(node);
         }
-        void addOperator(const TokenType& operation)
+        void addOperator(const TokenType & operation)
         {
             this->operations.push_back(operation);
         }
         virtual Type getType()
         {
-            return Node::Type::Expression;
+            return Node::Type::ArithmeticExpression;
         }
 
         std::vector<TokenType> operations;
@@ -29,4 +30,4 @@ namespace syntax
     };
 }
 
-#endif // __EXPRESSION_H__
+#endif // __ARITHMETIC_EXPRESSION_H__

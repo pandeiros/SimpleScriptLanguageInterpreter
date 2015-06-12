@@ -246,9 +246,9 @@ std::shared_ptr<inter::AssignmentInstr> SemanticChecker::checkAssignment(inter::
         {
             node->variable->indexArg1 = this->checkFunctionCall(scopePrototype, *(static_cast<syntax::Call*>(variable.indexArg1.get())));
         }
-        else if (variable.indexArg1->getType() == syntax::Node::Type::Expression)
+        else if (variable.indexArg1->getType() == syntax::Node::Type::ArithmeticExpression)
         {
-            node->variable->indexArg1 = this->checkExpression(scopePrototype, *(static_cast<syntax::Expression*>(variable.indexArg1.get())));
+            node->variable->indexArg1 = this->checkExpression(scopePrototype, *(static_cast<syntax::ArithmeticExpression*>(variable.indexArg1.get())));
         }
         else
         {
@@ -263,9 +263,9 @@ std::shared_ptr<inter::AssignmentInstr> SemanticChecker::checkAssignment(inter::
         {
             node->variable->indexArg2 = this->checkFunctionCall(scopePrototype, *(static_cast<syntax::Call*>(variable.indexArg2.get())));
         }
-        else if (variable.indexArg2->getType() == syntax::Node::Type::Expression)
+        else if (variable.indexArg2->getType() == syntax::Node::Type::ArithmeticExpression)
         {
-            node->variable->indexArg2 = this->checkExpression(scopePrototype, *(static_cast<syntax::Expression*>(variable.indexArg2.get())));
+            node->variable->indexArg2 = this->checkExpression(scopePrototype, *(static_cast<syntax::ArithmeticExpression*>(variable.indexArg2.get())));
         }
         else
         {
@@ -287,9 +287,9 @@ std::shared_ptr<inter::Assignable> SemanticChecker::checkAssignable(inter::Scope
     {
         return this->checkFunctionCall(scopePrototype, *(static_cast<syntax::Call*>(&assignable)));
     }
-    else if (assignable.getType() == syntax::Node::Type::Expression)
+    else if (assignable.getType() == syntax::Node::Type::ArithmeticExpression)
     {
-        return this->checkExpression(scopePrototype, *(static_cast<syntax::Expression*>(&assignable)));
+        return this->checkExpression(scopePrototype, *(static_cast<syntax::ArithmeticExpression*>(&assignable)));
     }
 
     MessageHandler::error(
@@ -354,7 +354,7 @@ std::shared_ptr<inter::CallInstr> SemanticChecker::checkFunctionCall(inter::Scop
     return obj;
 }
 
-std::shared_ptr<inter::Expression> SemanticChecker::checkExpression(inter::ScopePrototype & scopePrototype, syntax::Expression& expression)
+std::shared_ptr<inter::Expression> SemanticChecker::checkExpression(inter::ScopePrototype & scopePrototype, syntax::ArithmeticExpression& expression)
 {
     std::shared_ptr<inter::Expression> obj = std::make_shared<inter::Expression>();
 
@@ -366,9 +366,9 @@ std::shared_ptr<inter::Expression> SemanticChecker::checkExpression(inter::Scope
         {
             obj->operands.push_back(this->checkMatrixLiteral(*(static_cast<syntax::Matrix*>(operand.get()))));
         }
-        else */if (operand->getType() == syntax::Node::Type::Expression)
+        else */if (operand->getType() == syntax::Node::Type::ArithmeticExpression)
         {
-            obj->operands.push_back(this->checkExpression(scopePrototype, *(static_cast<syntax::Expression*>(operand.get()))));
+            obj->operands.push_back(this->checkExpression(scopePrototype, *(static_cast<syntax::ArithmeticExpression*>(operand.get()))));
         }
         else if (operand->getType() == syntax::Node::Type::Variable)
         {
@@ -467,7 +467,7 @@ std::shared_ptr<inter::WhileInstr> SemanticChecker::checkWhileStatement(inter::S
     return obj;
 }
 
-std::shared_ptr<inter::Condition> SemanticChecker::checkCondition(inter::ScopePrototype & scopePrototype, syntax::Condition& condition)
+std::shared_ptr<inter::Condition> SemanticChecker::checkCondition(inter::ScopePrototype & scopePrototype, syntax::LogicalExpression& condition)
 {
     std::shared_ptr<inter::Condition> obj = std::make_shared<inter::Condition>();
 
@@ -476,9 +476,9 @@ std::shared_ptr<inter::Condition> SemanticChecker::checkCondition(inter::ScopePr
 
     for (auto& operand : condition.operands)
     {
-        if (operand->getType() == syntax::Node::Type::Condition)
+        if (operand->getType() == syntax::Node::Type::LogicalExpression)
         {
-            obj->operands.push_back(checkCondition(scopePrototype, *(static_cast<syntax::Condition*>(operand.get()))));
+            obj->operands.push_back(checkCondition(scopePrototype, *(static_cast<syntax::LogicalExpression*>(operand.get()))));
         }
         else if (operand->getType() == syntax::Node::Type::Variable)
         {

@@ -63,6 +63,7 @@ Token Parser::accept(const std::initializer_list<TokenType> & acceptableTokens)
     else
     {
         PRINT_UNEXP;
+        FAIL;
         return token;
     }
 }
@@ -94,6 +95,7 @@ void Parser::peekFail()
     Token & token = this->_previousToken;
 
     PRINT_UNEXP;
+    FAIL;
 }
 
 const std::string Parser::getErrorIndicator(const unsigned int & pos)
@@ -260,9 +262,9 @@ std::shared_ptr<syntax::StatementBlock> Parser::parseStatementBlock()
 std::shared_ptr<syntax::ReturnStatement> Parser::parseReturnStatement()
 {
     std::shared_ptr<syntax::ReturnStatement> node = std::make_shared<syntax::ReturnStatement>();
-
     this->accept({TokenType::Return});
 
+    // Empty return.
     if (this->peek({TokenType::Semicolon}))
     {
         this->accept({TokenType::Semicolon});
@@ -270,6 +272,7 @@ std::shared_ptr<syntax::ReturnStatement> Parser::parseReturnStatement()
         return node;
     }
 
+    // Return with a RValue.
     node->setValue(this->parseAssignable());
     this->accept({TokenType::Semicolon});
 
@@ -279,17 +282,18 @@ std::shared_ptr<syntax::ReturnStatement> Parser::parseReturnStatement()
 std::shared_ptr<syntax::VarDeclaration> Parser::parseVarDeclaration()
 {
     std::shared_ptr<syntax::VarDeclaration> node = std::make_shared<syntax::VarDeclaration>();
-
     this->accept({TokenType::Var});
 
+    // Check for type.
     auto typeToken = this->accept({TokenType::Integer, TokenType::String,
                                   TokenType::Bool, TokenType::Float});
 
+    // Get the variable name.
     auto nameToken = this->accept({TokenType::Name});
-
     node->setName(nameToken._value);
     node->setType(typeToken._value);
 
+    // If there is sth to assign, do it.
     if (this->peek({TokenType::Assignment}))
     {
         this->accept({TokenType::Assignment});
@@ -297,6 +301,7 @@ std::shared_ptr<syntax::VarDeclaration> Parser::parseVarDeclaration()
         node->setValue(this->parseAssignable());
     }
 
+    // Finish assign or empty declaration with a semicolon.
     this->accept({TokenType::Semicolon});
 
     return node;
@@ -305,17 +310,18 @@ std::shared_ptr<syntax::VarDeclaration> Parser::parseVarDeclaration()
 std::shared_ptr<syntax::ConstDeclaration> Parser::parseConstDeclaration()
 {
     std::shared_ptr<syntax::ConstDeclaration> node = std::make_shared<syntax::ConstDeclaration>();
-
     this->accept({TokenType::Const});
 
+    // Check for type.
     auto typeToken = this->accept({TokenType::Integer, TokenType::String,
                                   TokenType::Bool, TokenType::Float});
 
+    // Get the constant name.
     auto nameToken = this->accept({TokenType::Name});
-
     node->setName(nameToken._value);
     node->setType(typeToken._value);
 
+    // If there is sth to assign, do it.
     if (this->peek({TokenType::Assignment}))
     {
         this->accept({TokenType::Assignment});
@@ -323,6 +329,7 @@ std::shared_ptr<syntax::ConstDeclaration> Parser::parseConstDeclaration()
         node->setValue(this->parseAssignable());
     }
 
+    // Finish assign or empty declaration with a semicolon.
     this->accept({TokenType::Semicolon});
 
     return node;
@@ -332,13 +339,17 @@ std::shared_ptr<syntax::Assignable> Parser::parseAssignable()
 {
     std::shared_ptr<syntax::Assignable> node;
 
+    // Check for name, which can be function call.
     if (this->peek({TokenType::Name}))
     {
         auto token = this->accept({TokenType::Name});
 
+        // Check for function call.
         node = this->parseFunCall(token._value);
+
         if (!node)
         {
+            // Otherwise, has to be expression.
             node = this->parseExpression(token);
         }
     }
@@ -350,24 +361,27 @@ std::shared_ptr<syntax::Assignable> Parser::parseAssignable()
     return node;
 }
 
-std::shared_ptr<syntax::Call> Parser::parseFunCall(const std::string & identifier)
+std::shared_ptr<syntax::Call> Parser::parseFunCall(const std::string & name)
 {
     std::shared_ptr<syntax::Call> node = std::make_shared<syntax::Call>();
 
+    // Call operator "()" required.
     if (!this->peek({TokenType::ParenthOpen}))
     {
         return nullptr;
     }
 
-    node->setName(identifier);
+    node->setName(name);
     this->accept({TokenType::ParenthOpen});
 
+    // Empty call.
     if (this->peek({TokenType::ParenthClose}))
     {
         this->accept({TokenType::ParenthClose});
         return node;
     }
 
+    // Otherwise, parse every argument as assignable.
     while (true)
     {
         node->addArgument(this->parseAssignable());
@@ -377,21 +391,25 @@ std::shared_ptr<syntax::Call> Parser::parseFunCall(const std::string & identifie
             this->accept({TokenType::ParenthClose});
             break;
         }
+
+        // Arguments separated by comma.
         if (this->peek({TokenType::Comma}))
         {
             this->accept({TokenType::Comma});
             continue;
         }
 
+        // Error.
         this->peekFail();
     }
 
     return node;
 }
 
-std::shared_ptr<syntax::Expression> Parser::parseExpression(const Token & firstToken)
+
+std::shared_ptr<syntax::ArithmeticExpression> Parser::parseExpression(const Token & firstToken)
 {
-    std::shared_ptr<syntax::Expression> node = std::make_shared<syntax::Expression>();
+    std::shared_ptr<syntax::ArithmeticExpression> node = std::make_shared<syntax::ArithmeticExpression>();
 
     node->addOperand(this->parseMultiplicativeExpression(firstToken));
 
@@ -406,9 +424,9 @@ std::shared_ptr<syntax::Expression> Parser::parseExpression(const Token & firstT
     return node;
 }
 
-std::shared_ptr<syntax::Expression> Parser::parseMultiplicativeExpression(const Token& firstToken)
+std::shared_ptr<syntax::ArithmeticExpression> Parser::parseMultiplicativeExpression(const Token& firstToken)
 {
-    std::shared_ptr<syntax::Expression> node = std::make_shared<syntax::Expression>();
+    std::shared_ptr<syntax::ArithmeticExpression> node = std::make_shared<syntax::ArithmeticExpression>();
 
     node->addOperand(this->parsePrimaryExpression(firstToken));
 
@@ -622,9 +640,9 @@ NodePtr Parser::parseAssignmentOrFunCall()
     return node;
 }
 
-std::shared_ptr<syntax::Condition> Parser::parseCondition()
+std::shared_ptr<syntax::LogicalExpression> Parser::parseCondition()
 {
-    std::shared_ptr<syntax::Condition> node = std::make_shared<syntax::Condition>();
+    std::shared_ptr<syntax::LogicalExpression> node = std::make_shared<syntax::LogicalExpression>();
 
     //this->tracer.enter ("Parsing condition");
 
@@ -642,9 +660,9 @@ std::shared_ptr<syntax::Condition> Parser::parseCondition()
     return node;
 }
 
-std::shared_ptr<syntax::Condition> Parser::parseAndCondition()
+std::shared_ptr<syntax::LogicalExpression> Parser::parseAndCondition()
 {
-    std::shared_ptr<syntax::Condition> node = std::make_shared<syntax::Condition>();
+    std::shared_ptr<syntax::LogicalExpression> node = std::make_shared<syntax::LogicalExpression>();
 
     //this->tracer.enter ("Parsing and condition");
 
@@ -662,9 +680,9 @@ std::shared_ptr<syntax::Condition> Parser::parseAndCondition()
     return node;
 }
 
-std::shared_ptr<syntax::Condition> Parser::parseEqualityCondition()
+std::shared_ptr<syntax::LogicalExpression> Parser::parseEqualityCondition()
 {
-    std::shared_ptr<syntax::Condition> node = std::make_shared<syntax::Condition>();
+    std::shared_ptr<syntax::LogicalExpression> node = std::make_shared<syntax::LogicalExpression>();
 
     //this->tracer.enter ("Parsing equality condition");
 
@@ -682,9 +700,9 @@ std::shared_ptr<syntax::Condition> Parser::parseEqualityCondition()
     return node;
 }
 
-std::shared_ptr<syntax::Condition> Parser::parseRelationalCondition()
+std::shared_ptr<syntax::LogicalExpression> Parser::parseRelationalCondition()
 {
-    std::shared_ptr<syntax::Condition> node = std::make_shared<syntax::Condition>();
+    std::shared_ptr<syntax::LogicalExpression> node = std::make_shared<syntax::LogicalExpression>();
 
     //this->tracer.enter ("Parsing relational condition");
 
@@ -704,7 +722,7 @@ std::shared_ptr<syntax::Condition> Parser::parseRelationalCondition()
 
 NodePtr Parser::parsePrimaryCondition()
 {
-    std::shared_ptr<syntax::Condition> node = std::make_shared<syntax::Condition>();
+    std::shared_ptr<syntax::LogicalExpression> node = std::make_shared<syntax::LogicalExpression>();
 
     //this->tracer.enter ("Parsing primary condition");
 

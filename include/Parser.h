@@ -4,11 +4,12 @@
 #include "Token.h"
 #include "Includes.h"
 
-#define PRINT_UNEXP  (MessageHandler::unexpectedToken(getTokenTypeName(token._type), \
+#define PRINT_UNEXP (MessageHandler::unexpectedToken(getTokenTypeName(token._type), \
                     std::to_string(token._line), \
                     std::to_string(token._col), \
                     _lexer.getLine(token._lineStart), \
                     std::string(token._col, ' ').append("^")) )
+#define FAIL (this->_parsingSucceeded = false)
 
 class Lexer;
 
@@ -23,6 +24,12 @@ public:
 
     // Main parsing method. Initiate subsequent decompositions.
     std::shared_ptr<syntax::Program> parse();
+
+    // Success flag getter.
+    inline bool getParsingSucceeded()
+    {
+        return _parsingSucceeded;
+    }
 
 private:
     /* Parser tools for managing received tokens. */
@@ -47,31 +54,35 @@ private:
 
     std::shared_ptr<syntax::FunctionDefinition> parseFunction();    //
     bool parseParameters(std::vector<std::string> & types, std::vector<std::string> & names);       //
-    std::shared_ptr<syntax::StatementBlock> parseStatementBlock();
+    std::shared_ptr<syntax::StatementBlock> parseStatementBlock();  //
+
+    std::shared_ptr<syntax::ReturnStatement> parseReturnStatement();    //
+    std::shared_ptr<syntax::VarDeclaration> parseVarDeclaration();      //
+    std::shared_ptr<syntax::ConstDeclaration> parseConstDeclaration();  //
+    std::shared_ptr<syntax::Assignable> parseAssignable(); //
+    std::shared_ptr<syntax::Call> parseFunCall(const std::string& identifier); //
 
     std::shared_ptr<syntax::IfStatement> parseIfStatement();
     std::shared_ptr<syntax::WhileStatement> parseWhileStatement();
-    std::shared_ptr<syntax::ReturnStatement> parseReturnStatement();
-    std::shared_ptr<syntax::VarDeclaration> parseVarDeclaration();
-    std::shared_ptr<syntax::ConstDeclaration> parseConstDeclaration();
+
     NodePtr parseAssignmentOrFunCall();
 
-    std::shared_ptr<syntax::Assignable> parseAssignable();
-    std::shared_ptr<syntax::Call> parseFunCall(const std::string& identifier);
+    
+
     std::shared_ptr<syntax::Variable> parseVariable(const Token& firstToken = Token(TokenType::Undefined));
     NodePtr parseLiteral();         //
     std::shared_ptr<syntax::Literal> parseString();     //
     std::shared_ptr<syntax::Literal> parseBool();       //
     std::shared_ptr<syntax::Literal> parseNumber();     //
 
-    std::shared_ptr<syntax::Expression> parseExpression(const Token& firstToken = Token(TokenType::Undefined));
-    std::shared_ptr<syntax::Expression> parseMultiplicativeExpression(const Token& firstToken = Token(TokenType::Undefined));
+    std::shared_ptr<syntax::ArithmeticExpression> parseExpression(const Token& firstToken = Token(TokenType::Undefined));
+    std::shared_ptr<syntax::ArithmeticExpression> parseMultiplicativeExpression(const Token& firstToken = Token(TokenType::Undefined));
     NodePtr parsePrimaryExpression(const Token& firstToken = Token(TokenType::Undefined));
 
-    std::shared_ptr<syntax::Condition> parseCondition();
-    std::shared_ptr<syntax::Condition> parseAndCondition();
-    std::shared_ptr<syntax::Condition> parseEqualityCondition();
-    std::shared_ptr<syntax::Condition> parseRelationalCondition();
+    std::shared_ptr<syntax::LogicalExpression> parseCondition();
+    std::shared_ptr<syntax::LogicalExpression> parseAndCondition();
+    std::shared_ptr<syntax::LogicalExpression> parseEqualityCondition();
+    std::shared_ptr<syntax::LogicalExpression> parseRelationalCondition();
     NodePtr parsePrimaryCondition();
 
     // Lexer for receiving tokens.
@@ -79,6 +90,9 @@ private:
 
     // Saved previous token.
     Token _previousToken;
+
+    // Success flag.
+    bool _parsingSucceeded = true;
 };
 
 #endif // __PARSER_H__

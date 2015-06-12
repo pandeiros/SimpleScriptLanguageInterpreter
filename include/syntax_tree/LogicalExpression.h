@@ -1,7 +1,7 @@
-#ifndef __CONDITION_H__
-#define __CONDITION_H__
+#ifndef __LOGICAL_EXPRESSION_H__
+#define __LOGICAL_EXPRESSION_H__
 
-#include "Node.h"
+#include "Assignable.h"
 #include "TokenType.h"
 
 /*
@@ -9,7 +9,7 @@
  */
 namespace syntax
 {
-    class Condition : public Node
+    class LogicalExpression : public Assignable
     {
     public:
         void addOperand(const NodePtr& node)
@@ -35,7 +35,7 @@ namespace syntax
 
         virtual Type getType()
         {
-            return Node::Type::Condition;
+            return Node::Type::LogicalExpression;
         }
 
         bool negated = false;
@@ -44,4 +44,4 @@ namespace syntax
     };
 }
 
-#endif // __CONDITION_H__
+#endif // __LOGICAL_EXPRESSION_H__

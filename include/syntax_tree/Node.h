@@ -10,13 +10,14 @@ namespace syntax
     public:
         enum class Type
         {
+            ArithmeticExpression,
             Assignment,
             Bool,
             Call,
-            Condition,
-            Expression,
+            ConstDeclaration,
             FunctionDefinition,
             IfStatement,
+            LogicalExpression,
             LoopJump,
             Number,
             Literal,
