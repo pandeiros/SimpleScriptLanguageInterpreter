@@ -2,7 +2,7 @@
 #define __PARSER_H__
 
 #include "Token.h"
-#include "Node.h"
+#include "Includes.h"
 
 #define PRINT_UNEXP  (MessageHandler::unexpectedToken(getTokenTypeName(token._type), \
                     std::to_string(token._line), \
@@ -44,23 +44,25 @@ private:
     void resetPreviousToken();
 
     /* Decomposition procedures */
-    std::shared_ptr<syntax::FunctionDefinition> parseFunction();
-    bool parseParameters(std::vector<std::string> & types, std::vector<std::string> & names);
+
+    std::shared_ptr<syntax::FunctionDefinition> parseFunction();    //
+    bool parseParameters(std::vector<std::string> & types, std::vector<std::string> & names);       //
     std::shared_ptr<syntax::StatementBlock> parseStatementBlock();
 
     std::shared_ptr<syntax::IfStatement> parseIfStatement();
     std::shared_ptr<syntax::WhileStatement> parseWhileStatement();
     std::shared_ptr<syntax::ReturnStatement> parseReturnStatement();
     std::shared_ptr<syntax::VarDeclaration> parseVarDeclaration();
+    std::shared_ptr<syntax::ConstDeclaration> parseConstDeclaration();
     NodePtr parseAssignmentOrFunCall();
-    std::shared_ptr<syntax::LoopJump> parseLoopJump();
 
     std::shared_ptr<syntax::Assignable> parseAssignable();
     std::shared_ptr<syntax::Call> parseFunCall(const std::string& identifier);
     std::shared_ptr<syntax::Variable> parseVariable(const Token& firstToken = Token(TokenType::Undefined));
-    NodePtr parseLiteral();
-    double parseNumber();
-    //std::shared_ptr<syntax::Matrix> parseMatrixLiteral(); TODO REMOVE
+    NodePtr parseLiteral();         //
+    std::shared_ptr<syntax::Literal> parseString();     //
+    std::shared_ptr<syntax::Literal> parseBool();       //
+    std::shared_ptr<syntax::Literal> parseNumber();     //
 
     std::shared_ptr<syntax::Expression> parseExpression(const Token& firstToken = Token(TokenType::Undefined));
     std::shared_ptr<syntax::Expression> parseMultiplicativeExpression(const Token& firstToken = Token(TokenType::Undefined));

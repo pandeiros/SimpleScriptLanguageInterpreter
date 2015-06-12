@@ -6,8 +6,8 @@
 
 enum class TokenType
 {
+    Program,
     Function,
-    MainProgram,
     ParenthOpen,
     ParenthClose,
     BracketOpen,
@@ -15,26 +15,27 @@ enum class TokenType
     SquareBracketOpen,
     SquareBracketClose,
     Semicolon,
+    Return,
 
     Var,
+    Const,
     Assignment,
     Integer,
     String,
     Float,
     Bool,
-    Identifier,
+    Name,
     Type,
     Quotation,
     True,
     False,
+    StringLiteral,
+    NumberLiteral,
 
     Comma,
     If,
     While,
     Else,
-    Return,
-    Continue,
-    Break,
     Negation,
     Or,
     And,
@@ -51,7 +52,8 @@ enum class TokenType
     Modulo,
     Infinity,
     Dot,
-    NumberLiteral,
+
+    Comment,
     Invalid,
     EndOfFile,
     Undefined
@@ -59,7 +61,7 @@ enum class TokenType
 
 const std::unordered_map<TokenType, std::string> tokenTypeNames =
 {
-    {TokenType::MainProgram, "MainProgram"},
+    {TokenType::Program, "MainProgram"},
     {TokenType::Function, "Function"},
     {TokenType::ParenthOpen, "ParenthOpen"},
     {TokenType::ParenthClose, "ParenthClose"},
@@ -69,25 +71,25 @@ const std::unordered_map<TokenType, std::string> tokenTypeNames =
     {TokenType::Return, "Return"},
 
     {TokenType::Var, "Var"},
+    {TokenType::Var, "Const"},
     {TokenType::Assignment, "Assignment"},
     {TokenType::Integer, "Int"},
     {TokenType::Float, "Float"},
     {TokenType::Bool, "Bool"},
     {TokenType::String, "String"},
-    {TokenType::Identifier, "Identifier"},      // TODO Change to "Name"
+    {TokenType::Name, "Name"},
     {TokenType::Comma, "Comma"},
-    {TokenType::Quotation, "Quotation"},
+    {TokenType::Quotation, "Quotation"},    // TODO Check if used 
     {TokenType::True, "True"},
     {TokenType::False, "False"},
-   // {TokenType::Type, "Type"},
+    {TokenType::StringLiteral, "StringLiteral"},
+    // {TokenType::Type, "Type"},
 
     {TokenType::SquareBracketOpen, "SquareBracketOpen"},
     {TokenType::SquareBracketClose, "SquareBracketClose"},
     {TokenType::If, "If"},
     {TokenType::While, "While"},
     {TokenType::Else, "Else"},
-    {TokenType::Continue, "Continue"},
-    {TokenType::Break, "Break"},
     {TokenType::Negation, "Negation"},
     {TokenType::Or, "Or"},
     {TokenType::And, "And"},
@@ -106,6 +108,7 @@ const std::unordered_map<TokenType, std::string> tokenTypeNames =
     {TokenType::Dot, "Dot"},
     {TokenType::NumberLiteral, "NumberLiteral"},
 
+    {TokenType::Comment, "Comment"},
     {TokenType::Invalid, "Invalid"},
     {TokenType::EndOfFile, "EndOfFile"},
     {TokenType::Undefined, "Undefined"}
@@ -114,13 +117,14 @@ const std::unordered_map<TokenType, std::string> tokenTypeNames =
 static const std::unordered_map<std::string, TokenType> & keywords =
 {
     {"function", TokenType::Function},
-    {"program", TokenType::MainProgram},
+    {"program", TokenType::Program},
     {"return", TokenType::Return},
 
     {"var", TokenType::Var},
+    {"const", TokenType::Const},
     {"int", TokenType::Integer},
     {"bool", TokenType::Bool},
-    {"string", TokenType::String },
+    {"string", TokenType::String},
     {"float", TokenType::Float},
     {"true", TokenType::True},
     {"false", TokenType::False},
@@ -128,8 +132,6 @@ static const std::unordered_map<std::string, TokenType> & keywords =
     {"if", TokenType::If},
     {"while", TokenType::While},
     {"else", TokenType::Else},
-    {"continue", TokenType::Continue},
-    {"break", TokenType::Break},
     {"or", TokenType::Or},
     {"and", TokenType::And},
     {"infinity", TokenType::Infinity}
@@ -152,7 +154,7 @@ static const std::unordered_map<char, TokenType> & simpleSigns =
     {'/', TokenType::Divide},
     {'%', TokenType::Modulo},
     {'.', TokenType::Dot},
-    {"\"", TokenType::Quotation}
+    {'"', TokenType::Quotation} // TODO Check if used 
 };
 
 

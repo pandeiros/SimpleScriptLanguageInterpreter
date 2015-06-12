@@ -32,12 +32,12 @@ LineComment         = "//" String "\n"
 VarDeclaration      = "var" ( (Type Name) | TypeAssignment )
 ConstDeclaration    = "const" TypeAssignment
 FuncCall            = Name "(" ([ RValue ] | RValue { "," RValue }) ")"
-Assignment          = Name "=" [ "<" Type ">" ] RValue
+Assignment          = Name AssignmentOp [ "<" Type ">" ] RValue
 TypeAssignment      = IntAssign | FloatAssign | StringAssignment | BoolAssign
-IntAssign           = IntType Name "=" [ "<" IntType | FloatType | BoolType ">" ] RValue
-FloatAssign         = FloatType Name "=" [ "<" IntType | FloatType ">" ] RValue
-StringAssign        = StringType Name "=" [ "<" IntType | FloatType | BoolType | StringAssign ">" ] RValue
-BoolAssign          = BoolType Name "=" [ "<" IntType | BoolType ">" ] RValue
+IntAssign           = IntType Name AssignmentOp [ "<" IntType | FloatType | BoolType ">" ] RValue
+FloatAssign         = FloatType Name AssignmentOp [ "<" IntType | FloatType ">" ] RValue
+StringAssign        = StringType Name AssignmentOp [ "<" IntType | FloatType | BoolType | StringAssign ">" ] RValue
+BoolAssign          = BoolType Name AssignmentOp [ "<" IntType | BoolType ">" ] RValue
 
 
 --- Expressions ------------------------------------------------

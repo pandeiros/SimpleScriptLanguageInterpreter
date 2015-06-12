@@ -8,7 +8,7 @@
  */
 namespace syntax
 {
-    class LoopJump : public Node
+   /* class LoopJump : public Node
     {
     public:
         void setType(const TokenType& type)
@@ -26,7 +26,7 @@ namespace syntax
         }
 
         bool isBreak;
-    };
+    };*/
 }
 
 #endif // __LOOP_JUMP_H__

@@ -13,7 +13,7 @@ public:
     InputManager() = default;
 
     // Input controllers.
-    const char nextCharacter();
+    const char nextCharacter(bool isComment = false);
     void rewind();              // TODO REMOVE,  USE BUFFER
 
     // Getters.
@@ -42,8 +42,8 @@ private:
     std::streampos _currentLinePos;
 
     // Signs read from buffer.
-    char _previousSign = 0;
-    char sign = ' ';
+    char _previousCharacter = 0;
+    char _character = ' ';
 
     // Path to source file.
     std::string _sourceFile;

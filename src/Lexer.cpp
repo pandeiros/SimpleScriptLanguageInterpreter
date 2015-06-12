@@ -10,28 +10,28 @@ Lexer::Lexer(const std::string & file)
 const Token Lexer::nextToken()
 {
     Token token;
-    auto character = this->_inputManager.nextCharacter();
+    auto character = _inputManager.nextCharacter();
 
     // Ignore white characters.
     while (isspace(character))
     {
-        character = this->_inputManager.nextCharacter();
+        character = _inputManager.nextCharacter();
     }
 
     // Occurence details in the source.
-    token._line = this->_inputManager.getCurrentLineNo();
-    token._col = this->_inputManager.getCurrentSignPos() - 1;
-    token._lineStart = this->_inputManager.getCurrentLinePos();
+    token._line = _inputManager.getCurrentLineNo();
+    token._col = _inputManager.getCurrentSignPos() - 1;
+    token._lineStart = _inputManager.getCurrentLinePos();
 
     // Return EOF token if EOF found.
-    if (this->_inputManager.hasFinished())
+    if (_inputManager.hasFinished())
     {
         token._type = TokenType::EndOfFile;
         return token;
     }
 
     // Looking for KEYWORD od IDENTIFIER (because it has to begin with letter or '_')
-    if (isalpha(character) || character == '_' || character == '$')    // TODO Remove $
+    if (isalpha(character) || character == '_')
     {
         // Character buffer.
         std::string buffer;
@@ -40,24 +40,26 @@ const Token Lexer::nextToken()
         do
         {
             buffer.push_back(character);
-            character = this->_inputManager.nextCharacter();
+            character = _inputManager.nextCharacter();
         }
-        while (isalnum(character) || character == '_' || character == '$'); // TODO Remove $
+        while (isalnum(character) || character == '_');
 
-        this->_inputManager.rewind();   // TODO Change
+        _inputManager.rewind();   // TODO Change
 
         if (keywords.count(buffer) == 1)
         {
             // KEYWORD found.
             token._type = keywords.at(buffer);
+            token._value = buffer;
         }
         else
         {
             // IDENTIFIER FOUND
-            token._type = TokenType::Identifier;
+            token._type = TokenType::Name;
             token._value = buffer;
         }
     }
+
     // Looking for NUMBER
     else if (isdigit(character))
     {
@@ -66,17 +68,51 @@ const Token Lexer::nextToken()
         do
         {
             buffer.push_back(character);
-            character = this->_inputManager.nextCharacter();
+            character = _inputManager.nextCharacter();
         }
         while (isdigit(character) || character == '.');
 
-        this->_inputManager.rewind();
+        _inputManager.rewind();
 
         token._type = TokenType::NumberLiteral;
         token._value = buffer;
     }
+
+    // Parse STRING
+    else if (character == '"')
+    {
+        // Character buffer.
+        std::string buffer;
+        character = _inputManager.nextCharacter();
+
+        // Read as many characters as possible.
+        while (character != '"')
+        {
+            buffer.push_back(character);
+            character = _inputManager.nextCharacter();
+        }
+
+        token._type = TokenType::StringLiteral;
+        token._value = buffer;
+    }
+
+    // Parse COMMENT
+    else if (character == '/')
+    {
+        // Check for Division character.
+        if (_inputManager.nextCharacter() != '/')
+        {
+            _inputManager.rewind();
+            token._type = TokenType::Divide;
+        }
+        else
+        {
+            // Ignore all character in the line.
+            while (_inputManager.nextCharacter(true) != '\n');
+            token._type = TokenType::Comment;
+        }
+    }
     // Other characters.
-    // TODO Check for string (charactere between " ").
     else
     {
         // Special characters
@@ -84,78 +120,78 @@ const Token Lexer::nextToken()
         {
             case '=':
             {
-                if (this->_inputManager.nextCharacter() == '=')
+                if (_inputManager.nextCharacter() == '=')
                 {
                     token._type = TokenType::Equality;
                 }
                 else
                 {
-                    this->_inputManager.rewind();
+                    _inputManager.rewind();
                     token._type = TokenType::Assignment;
                 }
                 break;
             }
             case '<':
             {
-                if (this->_inputManager.nextCharacter() == '=')
+                if (_inputManager.nextCharacter() == '=')
                 {
                     token._type = TokenType::LessOrEqual;
                 }
                 else
                 {
-                    this->_inputManager.rewind();
+                    _inputManager.rewind();
                     token._type = TokenType::Less;
                 }
                 break;
             }
             case '>':
             {
-                if (this->_inputManager.nextCharacter() == '=')
+                if (_inputManager.nextCharacter() == '=')
                 {
                     token._type = TokenType::GreaterOrEqual;
                 }
                 else
                 {
-                    this->_inputManager.rewind();
+                    _inputManager.rewind();
                     token._type = TokenType::Greater;
                 }
                 break;
             }
             case '!':
             {
-                if (this->_inputManager.nextCharacter() == '=')
+                if (_inputManager.nextCharacter() == '=')
                 {
                     token._type = TokenType::Inequality;
                 }
                 else
                 {
-                    this->_inputManager.rewind();
+                    _inputManager.rewind();
                     token._type = TokenType::Negation;
                 }
                 break;
             }
             case '&':
             {
-                if (this->_inputManager.nextCharacter() == '&')
+                if (_inputManager.nextCharacter() == '&')
                 {
                     token._type = TokenType::And;
                 }
                 else
                 {
-                    this->_inputManager.rewind();
+                    _inputManager.rewind();
                     token._type = TokenType::Invalid;
                 }
                 break;
             }
             case '|':
             {
-                if (this->_inputManager.nextCharacter() == '|')
+                if (_inputManager.nextCharacter() == '|')
                 {
                     token._type = TokenType::Or;
                 }
                 else
                 {
-                    this->_inputManager.rewind();
+                    _inputManager.rewind();
                     token._type = TokenType::Invalid;
                 }
                 break;
@@ -180,5 +216,5 @@ const Token Lexer::nextToken()
 
 const std::string Lexer::getLine(const std::streampos& linePos)
 {
-    return this->_inputManager.getLine(linePos);
+    return _inputManager.getLine(linePos);
 }

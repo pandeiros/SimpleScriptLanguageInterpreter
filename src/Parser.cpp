@@ -69,6 +69,8 @@ Token Parser::accept(const std::initializer_list<TokenType> & acceptableTokens)
 
 bool Parser::peek(const std::initializer_list<TokenType> & acceptableTokens)
 {
+    // Only check, do not accept it yet.
+
     if (!this->hasBufferedToken())
     {
         this->_previousToken = this->_lexer.nextToken();
@@ -118,21 +120,25 @@ std::shared_ptr<syntax::FunctionDefinition> Parser::parseFunction()
 {
     std::shared_ptr<syntax::FunctionDefinition> node = std::make_shared<syntax::FunctionDefinition>();
 
-    auto token = this->accept({TokenType::MainProgram, TokenType::Function, TokenType::EndOfFile});
-
+    // Main or other function keyword.
+    auto token = this->accept({TokenType::Program, TokenType::Function, TokenType::EndOfFile});
     if (token._type == TokenType::EndOfFile)
     {
         return nullptr;
     }
 
-    auto idToken = this->accept({TokenType::Identifier});
-    if (token._type == TokenType::MainProgram)
+    // Function name.
+    auto idToken = this->accept({TokenType::Name});
+    if (token._type == TokenType::Program)
         node->setName("program");
 
+    // Parse function arguments.
     std::vector<std::string> types;
     std::vector<std::string> names;
     if (this->parseParameters(types, names))
         node->setParameters(types, names);
+
+    // Link Block with instructions to function.
     node->setBlock(this->parseStatementBlock());
 
     return node;
@@ -142,44 +148,51 @@ bool Parser::parseParameters(std::vector<std::string> & types, std::vector<std::
 {
     Token token;
 
+    // Empty arg list or get type.
     this->accept({TokenType::ParenthOpen});
-
     token = this->accept({TokenType::ParenthClose, TokenType::Integer, TokenType::String,
                          TokenType::Bool, TokenType::Float});
 
+    // Error.
     if (token._type == TokenType::Undefined)
         return false;
 
+    // At leat one argument.
     if (token._type != TokenType::ParenthClose)
     {
-        if (this->peek({TokenType::Identifier}))
+        // Get argument name and save it together with type.
+        if (this->peek({TokenType::Name}))
         {
             types.push_back(token._value);
-            token = this->accept({TokenType::Identifier});
+            token = this->accept({TokenType::Name});
             names.push_back(token._value);
         }
         else
             return false;
 
+        // Try to get more arguments.
         while (true)
         {
+            // End of list or argument separator.
             token = this->accept({TokenType::ParenthClose, TokenType::Comma});
 
+            // Error.
             if (token._type == TokenType::Undefined)
                 return false;
 
+            // End of list.
             if (token._type == TokenType::ParenthClose)
             {
                 break;
             }
 
+            // Acquire next argument.
             token = this->accept({TokenType::Integer, TokenType::String,
                                  TokenType::Bool, TokenType::Float});
-
-            if (this->peek({TokenType::Identifier}))
+            if (this->peek({TokenType::Name}))
             {
                 types.push_back(token._value);
-                token = this->accept({TokenType::Identifier});
+                token = this->accept({TokenType::Name});
                 names.push_back(token._value);
             }
             else
@@ -193,61 +206,54 @@ bool Parser::parseParameters(std::vector<std::string> & types, std::vector<std::
 std::shared_ptr<syntax::StatementBlock> Parser::parseStatementBlock()
 {
     std::shared_ptr<syntax::StatementBlock> node = std::make_shared<syntax::StatementBlock>();
-
-    this->accept({TokenType::BracketOpen});
-
     Token tempToken;
 
+    // Beginning of a block
+    this->accept({TokenType::BracketOpen});
+
+    // Check for instructions, declarations, assignments or line comments.
     while (true)
     {
-        if (!this->peek({
-            TokenType::If,
-            TokenType::While,
-            TokenType::Return,
-            TokenType::Var,
-            TokenType::BracketOpen,
-            TokenType::Identifier,
-            TokenType::Continue,
-            TokenType::Break
-        }))
+        if (!this->peek({TokenType::If, TokenType::While, TokenType::Return,
+            TokenType::Var, TokenType::Const, TokenType::BracketOpen,
+            TokenType::Name, TokenType::Comment}))
         {
             break;
         }
 
-            tempToken = this->getPeeked();
+        tempToken = this->getPeeked();
 
-            switch (tempToken._type)
-            {
-                case TokenType::If:
-                    node->addInstruction(parseIfStatement());
-                    break;
-                case TokenType::While:
-                    node->addInstruction(parseWhileStatement());
-                    break;
-                case TokenType::Return:
-                    node->addInstruction(parseReturnStatement());
-                    break;
-                case TokenType::Var:
-                    node->addInstruction(parseVarDeclaration());
-                    break;
-                case TokenType::BracketOpen:
-                    node->addInstruction(parseStatementBlock());
-                    break;
-                case TokenType::Identifier:
-                    node->addInstruction(parseAssignmentOrFunCall());
-                    break;
-                case TokenType::Continue:
-                case TokenType::Break:
-                    node->addInstruction(parseLoopJump());
-                    break;
-                default:
-                    break;
-            }
+        switch (tempToken._type)
+        {
+            case TokenType::If:
+                node->addInstruction(parseIfStatement());
+                break;
+            case TokenType::While:
+                node->addInstruction(parseWhileStatement());
+                break;
+            case TokenType::Return:
+                node->addInstruction(parseReturnStatement());
+                break;
+            case TokenType::Var:
+                node->addInstruction(parseVarDeclaration());
+                break;
+            case TokenType::Const:
+                node->addInstruction(parseConstDeclaration());
+                break;
+            case TokenType::BracketOpen:
+                node->addInstruction(parseStatementBlock());
+                break;
+            case TokenType::Name:
+                node->addInstruction(parseAssignmentOrFunCall());
+                break;
+            default:
+                break;
+        }
     }
 
+    // End of block.
     this->accept({TokenType::BracketClose});
 
-    //this->tracer.leave ();
     return node;
 }
 
@@ -279,7 +285,33 @@ std::shared_ptr<syntax::VarDeclaration> Parser::parseVarDeclaration()
     auto typeToken = this->accept({TokenType::Integer, TokenType::String,
                                   TokenType::Bool, TokenType::Float});
 
-    auto nameToken = this->accept({TokenType::Identifier});
+    auto nameToken = this->accept({TokenType::Name});
+
+    node->setName(nameToken._value);
+    node->setType(typeToken._value);
+
+    if (this->peek({TokenType::Assignment}))
+    {
+        this->accept({TokenType::Assignment});
+
+        node->setValue(this->parseAssignable());
+    }
+
+    this->accept({TokenType::Semicolon});
+
+    return node;
+}
+
+std::shared_ptr<syntax::ConstDeclaration> Parser::parseConstDeclaration()
+{
+    std::shared_ptr<syntax::ConstDeclaration> node = std::make_shared<syntax::ConstDeclaration>();
+
+    this->accept({TokenType::Const});
+
+    auto typeToken = this->accept({TokenType::Integer, TokenType::String,
+                                  TokenType::Bool, TokenType::Float});
+
+    auto nameToken = this->accept({TokenType::Name});
 
     node->setName(nameToken._value);
     node->setType(typeToken._value);
@@ -300,9 +332,9 @@ std::shared_ptr<syntax::Assignable> Parser::parseAssignable()
 {
     std::shared_ptr<syntax::Assignable> node;
 
-    if (this->peek({TokenType::Identifier}))
+    if (this->peek({TokenType::Name}))
     {
-        auto token = this->accept({TokenType::Identifier});
+        auto token = this->accept({TokenType::Name});
 
         node = this->parseFunCall(token._value);
         if (!node)
@@ -391,7 +423,6 @@ std::shared_ptr<syntax::Expression> Parser::parseMultiplicativeExpression(const 
     return node;
 }
 
-
 NodePtr Parser::parsePrimaryExpression(const Token& firstToken)
 {
     if (firstToken._type != TokenType::Undefined)
@@ -410,7 +441,7 @@ NodePtr Parser::parsePrimaryExpression(const Token& firstToken)
         return node;
     }
 
-    if (this->peek({TokenType::Identifier}))
+    if (this->peek({TokenType::Name}))
     {
         auto node = this->parseVariable();
 
@@ -426,9 +457,9 @@ std::shared_ptr<syntax::Variable> Parser::parseVariable(const Token& identifierT
 {
     std::shared_ptr<syntax::Variable> node = std::make_shared<syntax::Variable>();
 
-    if (identifierToken._type != TokenType::Identifier)
+    if (identifierToken._type != TokenType::Name)
     {
-        auto tempToken = this->accept({TokenType::Identifier});
+        auto tempToken = this->accept({TokenType::Name});
         node->setName(tempToken._value);
     }
     else
@@ -453,12 +484,11 @@ std::shared_ptr<syntax::Variable> Parser::parseVariable(const Token& identifierT
     return node;
 }
 
-
 NodePtr Parser::parseLiteral()
 {
     std::shared_ptr<syntax::Literal> node = std::make_shared<syntax::Literal>();
 
-    if (this->peek({TokenType::Quotation}))
+    if (this->peek({TokenType::StringLiteral}))
     {
         node = this->parseString();
     }
@@ -467,14 +497,36 @@ NodePtr Parser::parseLiteral()
         node = this->parseBool();
     }
     else
-        node->pushValue(this->parseNumber());
+        node = this->parseNumber();
 
 
     return node;
 }
 
-double Parser::parseNumber()
+std::shared_ptr<syntax::Literal> Parser::parseString()
 {
+    auto token = this->accept({TokenType::StringLiteral});
+
+    std::shared_ptr<syntax::String> node = std::make_shared<syntax::String>();
+    node->_value = token._value;
+
+    return node;
+}
+
+std::shared_ptr<syntax::Literal> Parser::parseBool()
+{
+    auto token = this->accept({TokenType::True, TokenType::False});
+
+    std::shared_ptr<syntax::Bool> node = std::make_shared<syntax::Bool>();
+    node->_value = token._value == "true" ? true : false;
+
+    return node;
+}
+
+std::shared_ptr<syntax::Literal> Parser::parseNumber()
+{
+    std::shared_ptr<syntax::Number> node = std::make_shared<syntax::Number>();
+
     double value = 0;
     bool negative = false;
 
@@ -496,7 +548,8 @@ double Parser::parseNumber()
         value *= -1;
     }
 
-    return value;
+    node->_value = value;
+    return node;
 }
 
 std::shared_ptr<syntax::IfStatement> Parser::parseIfStatement()
@@ -548,7 +601,7 @@ NodePtr Parser::parseAssignmentOrFunCall()
 
     //this->tracer.enter ("Parsing assignment or function call");
 
-    auto tempToken = this->accept({TokenType::Identifier});
+    auto tempToken = this->accept({TokenType::Name});
 
     node = this->parseFunCall(tempToken._value);
     if (!node)
@@ -568,19 +621,6 @@ NodePtr Parser::parseAssignmentOrFunCall()
 
     return node;
 }
-
-std::shared_ptr<syntax::LoopJump> Parser::parseLoopJump()
-{
-    std::shared_ptr<syntax::LoopJump> node = std::make_shared<syntax::LoopJump>();
-
-    auto token = this->accept({TokenType::Continue, TokenType::Break});
-    node->setType(token._type);
-
-    this->accept({TokenType::Semicolon});
-
-    return node;
-}
-
 
 std::shared_ptr<syntax::Condition> Parser::parseCondition()
 {
@@ -683,7 +723,7 @@ NodePtr Parser::parsePrimaryCondition()
     }
     else
     {
-        if (this->peek({TokenType::Identifier}))
+        if (this->peek({TokenType::Name}))
         {
             node->addOperand(this->parseVariable());
         }

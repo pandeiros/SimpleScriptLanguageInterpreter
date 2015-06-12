@@ -1,84 +1,86 @@
 #include "InputManager.h"
 #include "MessageHandler.h"
 
-const char InputManager::nextCharacter()
+const char InputManager::nextCharacter(bool isComment)
 {
     while (true)
     {
-        this->_previousSign = sign;
-        sign = this->_handler.get();
+        _previousCharacter = _character;
+        _character = _handler.get();
 
         // New line.
-        if (sign == '\n' || sign == '\r')
+        if (_character == '\n' || _character == '\r')
         {
-
-            // Ex. We got \n but wait for \r to increment line count.
-            if (this->_previousSign != sign &&
-                (this->_previousSign == '\n' || this->_previousSign == '\r'))
+            // Ex. We got \n but wait for \r to increment line count (or other way around).
+            if (_previousCharacter != _character &&
+                (_previousCharacter == '\n' || _previousCharacter == '\r'))
             {
                 // DO NOTHING
             }
             else
             {
-                this->_currentLineNo++;
-                this->_currentSignPos = 0;
-                this->_currentLinePos = this->_handler.tellg();
+                _currentLineNo++;
+                _currentSignPos = 0;
+                _currentLinePos = _handler.tellg();
+
+                if (isComment)
+                    return '\n';
             }
 
             // Reading empty lines.
             continue;
         }
 
-        this->_currentSignPos++;
-        return sign;
+        _currentSignPos++;
+        return _character;
     }
 }
 
 // TODO Use buffer instead.
 void InputManager::rewind()
 {
-    this->_handler.unget().unget();
+    _handler.unget().unget();
 
-    this->_previousSign = this->_handler.get();
-    auto peek = this->_handler.peek();
+    _previousCharacter = _handler.get();
+    auto peek = _handler.peek();
 
     if (peek == '\n' || peek == '\r')
     {
-        this->_previousSign = this->_handler.get();
+        _previousCharacter = _handler.get();
         return;
     }
 
-    this->_currentSignPos--;
+    _currentSignPos--;
 }
 
 const bool InputManager::hasFinished() const
 {
-    return this->_handler.eof();
+    return _handler.eof();
 }
 
 const unsigned int & InputManager::getCurrentLineNo() const
 {
-    return this->_currentLineNo;
+    return _currentLineNo;
 }
 
 const unsigned int & InputManager::getCurrentSignPos() const
 {
-    return this->_currentSignPos;
+    return _currentSignPos;
 }
 
 const std::streampos InputManager::getCurrentLinePos() const
 {
-    return this->_currentLinePos;
+    return _currentLinePos;
 }
 
 const std::string InputManager::getLine(const std::streampos& linePos)
 {
-    const std::streampos currentPos = this->_handler.tellg();
+    const std::streampos currentPos = _handler.tellg();
     std::string line;
 
-    this->_handler.seekg(linePos);
-    std::getline(this->_handler, line);
-    this->_handler.seekg(currentPos);
+    _handler.seekg(linePos);
+    std::getline(_handler, line);
+    _handler.seekg(currentPos);
 
     return line;
 }

@@ -100,17 +100,20 @@
     <ClInclude Include="..\include\syntax_tree\Bool.h" />
     <ClInclude Include="..\include\syntax_tree\Call.h" />
     <ClInclude Include="..\include\syntax_tree\Condition.h" />
+    <ClInclude Include="..\include\syntax_tree\ConstDeclaration.h" />
     <ClInclude Include="..\include\syntax_tree\Expression.h" />
     <ClInclude Include="..\include\syntax_tree\FunctionDefinition.h" />
     <ClInclude Include="..\include\syntax_tree\IfStatement.h" />
+    <ClInclude Include="..\include\syntax_tree\Includes.h" />
     <ClInclude Include="..\include\syntax_tree\Literal.h" />
     <ClInclude Include="..\include\syntax_tree\LoopJump.h" />
     <ClInclude Include="..\include\syntax_tree\Matrix.h" />
     <ClInclude Include="..\include\syntax_tree\Node.h" />
+    <ClInclude Include="..\include\syntax_tree\Number.h" />
     <ClInclude Include="..\include\syntax_tree\Program.h" />
     <ClInclude Include="..\include\syntax_tree\ReturnStatement.h" />
     <ClInclude Include="..\include\syntax_tree\StatementBlock.h" />
-    <ClInclude Include="..\include\syntax_tree\String.h" />
+    <ClInclude Include="..\include\syntax_tree\SyntaxString.h" />
     <ClInclude Include="..\include\syntax_tree\VarDeclaration.h" />
     <ClInclude Include="..\include\syntax_tree\Variable.h" />
     <ClInclude Include="..\include\syntax_tree\WhileStatement.h" />
@@ -127,7 +130,6 @@
     <ClCompile Include="..\src\MessageHandler.cpp" />
     <ClCompile Include="..\src\Parser.cpp" />
     <ClCompile Include="..\src\SemanticChecker.cpp" />
-    <ClCompile Include="..\src\syntax_tree\Node.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

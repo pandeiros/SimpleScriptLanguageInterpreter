@@ -171,7 +171,16 @@
     <ClInclude Include="..\include\syntax_tree\Bool.h">
       <Filter>Header Files\SyntaxTree</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\syntax_tree\String.h">
+    <ClInclude Include="..\include\syntax_tree\Number.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\Includes.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\SyntaxString.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\ConstDeclaration.h">
       <Filter>Header Files\SyntaxTree</Filter>
     </ClInclude>
   </ItemGroup>
@@ -193,9 +202,6 @@
     </ClCompile>
     <ClCompile Include="..\src\Parser.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\syntax_tree\Node.cpp">
-      <Filter>Source Files\SyntaxTree</Filter>
     </ClCompile>
     <ClCompile Include="..\src\SemanticChecker.cpp">
       <Filter>Source Files</Filter>

@@ -70,14 +70,6 @@ bool SemanticChecker::checkForProgram()
             );
         return false;
     }
-    // TODO change it.
-   /* if (this->_definedFunctions.at("program")->scopePrototype.variables.size() != 0)
-    {
-        MessageHandler::error(
-            std::string("\"program\" function should not have parameters")
-            );
-        return false;
-    }*/
 
     return true;
 }
@@ -169,13 +161,14 @@ std::shared_ptr<inter::Block> SemanticChecker::checkBlock(inter::ScopePrototype 
                 block->instructions.push_back(this->checkWhileStatement(block->scopePrototype, *node));
                 break;
             }
-            case syntax::Node::Type::LoopJump:
+            // TODO REMOVE
+            /*case syntax::Node::Type::LoopJump:
             {
                 auto node = std::make_shared<inter::LoopJumpInstr>();
                 node->isBreak = (static_cast<syntax::LoopJump*>(instruction.get()))->isBreak;
                 block->instructions.push_back(node);
                 break;
-            }
+            }*/
             default:
             {
                 MessageHandler::error(
@@ -369,11 +362,11 @@ std::shared_ptr<inter::Expression> SemanticChecker::checkExpression(inter::Scope
 
     for (auto& operand : expression.operands)
     {
-        if (operand->getType() == syntax::Node::Type::Matrix)
+       /* if (operand->getType() == syntax::Node::Type::Matrix)
         {
             obj->operands.push_back(this->checkMatrixLiteral(*(static_cast<syntax::Matrix*>(operand.get()))));
         }
-        else if (operand->getType() == syntax::Node::Type::Expression)
+        else */if (operand->getType() == syntax::Node::Type::Expression)
         {
             obj->operands.push_back(this->checkExpression(scopePrototype, *(static_cast<syntax::Expression*>(operand.get()))));
         }
@@ -483,11 +476,7 @@ std::shared_ptr<inter::Condition> SemanticChecker::checkCondition(inter::ScopePr
 
     for (auto& operand : condition.operands)
     {
-        if (operand->getType() == syntax::Node::Type::Matrix)
-        {
-            obj->operands.push_back(checkMatrixLiteral(*(static_cast<syntax::Matrix*>(operand.get()))));
-        }
-        else if (operand->getType() == syntax::Node::Type::Condition)
+        if (operand->getType() == syntax::Node::Type::Condition)
         {
             obj->operands.push_back(checkCondition(scopePrototype, *(static_cast<syntax::Condition*>(operand.get()))));
         }
@@ -506,23 +495,24 @@ std::shared_ptr<inter::Condition> SemanticChecker::checkCondition(inter::ScopePr
     return obj;
 }
 
-std::shared_ptr<inter::Literal> SemanticChecker::checkMatrixLiteral(syntax::Matrix& matrixLiteral)
-{
-    std::shared_ptr<inter::Literal> obj = std::make_shared<inter::Literal>();
-
-    unsigned int lastRowSize = matrixLiteral.data.at(0).size();
-
-    for (auto it = matrixLiteral.data.begin() + 1; it != matrixLiteral.data.end(); ++it)
-    {
-        if (it->size() != lastRowSize)
-        {
-            MessageHandler::error(
-                std::string("Invalid matrix literal definition")
-                );
-        }
-    }
-
-    obj->data = matrixLiteral.data;
-
-    return obj;
-}
+// TODO REMOVE
+//std::shared_ptr<inter::Literal> SemanticChecker::checkMatrixLiteral(syntax::Matrix& matrixLiteral)
+//{
+//    std::shared_ptr<inter::Literal> obj = std::make_shared<inter::Literal>();
+//
+//    unsigned int lastRowSize = matrixLiteral.data.at(0).size();
+//
+//    for (auto it = matrixLiteral.data.begin() + 1; it != matrixLiteral.data.end(); ++it)
+//    {
+//        if (it->size() != lastRowSize)
+//        {
+//            MessageHandler::error(
+//                std::string("Invalid matrix literal definition")
+//                );
+//        }
+//    }
+//
+//    obj->data = matrixLiteral.data;
+//
+//    return obj;
+//}

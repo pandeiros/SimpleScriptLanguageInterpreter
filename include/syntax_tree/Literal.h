@@ -8,16 +8,12 @@ namespace syntax
     class Literal : public Node
     {
     public:
-        void pushValue(const double & value)
-        {
-            this->value = value;
-        }
         virtual Type getType()
         {
-            return Node::Type::Number;
+            return Node::Type::Literal;
         }
 
-        double value;
+        //double value;
     };
 }
 

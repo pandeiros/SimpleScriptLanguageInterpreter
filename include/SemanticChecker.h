@@ -34,7 +34,7 @@ private:
     std::shared_ptr<inter::IfInstr> checkIfStatement(inter::ScopePrototype & scopePrototype, syntax::IfStatement& stmt);
     std::shared_ptr<inter::WhileInstr> checkWhileStatement(inter::ScopePrototype & scopePrototype, syntax::WhileStatement& stmt);
     std::shared_ptr<inter::Condition> checkCondition(inter::ScopePrototype & scopePrototype, syntax::Condition& condition);
-    std::shared_ptr<inter::Literal> checkMatrixLiteral(syntax::Matrix& matrixLiteral);
+    //std::shared_ptr<inter::Literal> checkMatrixLiteral(syntax::Matrix& matrixLiteral);
     void checkVarDeclaration(inter::ScopePrototype & scopePrototype, const std::string & type, const std::string & name);
 
     // Members.

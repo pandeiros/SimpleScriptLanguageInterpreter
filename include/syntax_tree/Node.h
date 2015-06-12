@@ -19,6 +19,7 @@ namespace syntax
             IfStatement,
             LoopJump,
             Number,
+            Literal,
             Program,
             ReturnStatement,
             StatementBlock,
@@ -36,21 +37,5 @@ namespace syntax
 }
 
 typedef std::shared_ptr<syntax::Node> NodePtr;
-
-#include "Assignable.h"
-#include "Assignment.h"
-#include "Call.h"
-#include "Condition.h"
-#include "Expression.h"
-#include "FunctionDefinition.h"
-#include "IfStatement.h"
-#include "LoopJump.h"
-#include "Literal.h"
-#include "Program.h"
-#include "ReturnStatement.h"
-#include "StatementBlock.h"
-#include "VarDeclaration.h"
-#include "Variable.h"
-#include "WhileStatement.h"
 
 #endif // __NODE_H__

@@ -12,7 +12,9 @@ namespace syntax
         {
             return Node::Type::Bool;
         }
+
+        bool _value;
     };
 }
 
-#endif // __LITERAL_H_
+#endif // __BOOL_H__

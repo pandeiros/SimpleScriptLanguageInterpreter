@@ -2,6 +2,7 @@
 #define __STRING_H__
 
 #include "Literal.h"
+#include <string>
 
 namespace syntax
 {
@@ -12,7 +13,9 @@ namespace syntax
         {
             return Node::Type::String;
         }
+
+        std::string _value = "";
     };
 }
 
-#endif // __LITERAL_H_
+#endif // __STRING_H__
