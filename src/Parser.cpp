@@ -415,12 +415,12 @@ std::shared_ptr<syntax::Assignable> Parser::parseExpression(const Token & initTo
 {
     std::shared_ptr<syntax::Assignable> node = std::make_shared<syntax::Assignable>();
 
-    // Try parsing logical expression.
-    node = this->parseLogicalExpression(initToken);
+    // Try parsing arithmetic expression.
+    node = this->parseArithmeticExpression(initToken);
 
     if (!node)
     {
-        node = this->parseArithmeticExpression(initToken);
+        node = this->parseLogicalExpression(initToken);
 
         if (!node)
         {
@@ -447,6 +447,9 @@ std::shared_ptr<syntax::Assignable> Parser::parseLogicalExpression(const Token &
     while (this->peek({TokenType::Or}))
     {
         auto operatorToken = this->accept({TokenType::Or});
+        if (!_parsingSucceeded)
+            return nullptr;
+
         node->setOperator(TokenType::Or);
 
         // Check again if this is correct logical expression.
@@ -456,6 +459,8 @@ std::shared_ptr<syntax::Assignable> Parser::parseLogicalExpression(const Token &
 
         node->addOperand(operand);
     }
+
+    return node;
 }
 
 std::shared_ptr<syntax::Assignable> Parser::parseArithmeticExpression(const Token & initToken)
@@ -473,6 +478,8 @@ std::shared_ptr<syntax::Assignable> Parser::parseArithmeticExpression(const Toke
     while (this->peek({TokenType::Plus, TokenType::Minus}))
     {
         auto operatorToken = this->accept({TokenType::Plus, TokenType::Minus});
+        if (!_parsingSucceeded)
+            return nullptr;
         node->addOperator(operatorToken._type);
 
         // Check again if this is correct arithmetic expression.
@@ -482,6 +489,8 @@ std::shared_ptr<syntax::Assignable> Parser::parseArithmeticExpression(const Toke
 
         node->addOperand(operand);
     }
+
+    return node;
 }
 
 
@@ -501,6 +510,8 @@ std::shared_ptr<syntax::ArithmeticExpression> Parser::parseStrongArithmeticExpre
     while (this->peek({TokenType::Multiply, TokenType::Divide, TokenType::Modulo}))
     {
         auto operatorToken = this->accept({TokenType::Multiply, TokenType::Divide, TokenType::Modulo});
+        if (!_parsingSucceeded)
+            return nullptr;
         node->addOperator(operatorToken._type);
 
         // Check again if this is correct arithmetic operand.
