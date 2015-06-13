@@ -12,7 +12,7 @@ Interpreter::Interpreter(int argc, char* argv[]) : _argCount(argc)
     {
         // First parameter should be source file.
         std::string strSource(argv[1]);
-        this->_sourceFile = strSource;
+        _sourceFile = strSource;
 
         if (argc > 2)
         {
@@ -41,13 +41,27 @@ void Interpreter::run()
     SemanticChecker semCheck;
     Executor executor;
 
+    MessageHandler::debug("Parsing started.");
     auto program = parser.parse();
+    return;
 
     if (program.get()->_functions.size() > 0 && parser.getParsingSucceeded())
     {
+        MessageHandler::debug("Semantic analysis started.");
+
+        // TODO Pass 'program' function arguments.
         auto checkResult = semCheck.checkAll(program);
 
         if (checkResult.size() > 0 && semCheck.getCheckSucceeded())
+        {
+            MessageHandler::debug("Executing started.");
             executor.execute(checkResult);
+        }
+        else
+            MessageHandler::error(" ::: SEMANTIC ANALYSIS FAILED! :::");
+    }
+    else
+    {
+        MessageHandler::error(" ::: PARSING FAILED! :::");
     }
 }

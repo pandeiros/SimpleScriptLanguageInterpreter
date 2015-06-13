@@ -32,7 +32,7 @@ private:
         for (unsigned int i = 0; i < _vecArgs.size(); ++i)
             std::cout << _vecArgs[i] << "  ";
         std::cout << "\n";
-        std::cout << "==========================\n";
+        std::cout << "==========================\n\n";
     }
 #endif
 

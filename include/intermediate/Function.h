@@ -57,6 +57,7 @@ namespace inter
             return nullptr;
         };
 
+        bool _isMain = false;
         std::string _name;
     };
 }

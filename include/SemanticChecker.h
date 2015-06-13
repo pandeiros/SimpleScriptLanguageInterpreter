@@ -47,7 +47,7 @@ private:
     std::shared_ptr<inter::WhileInstr> checkWhileStatement(inter::ScopePrototype & scopePrototype, syntax::WhileStatement& stmt);
     std::shared_ptr<inter::Condition> checkCondition(inter::ScopePrototype & scopePrototype, syntax::LogicalExpression& condition);
     //std::shared_ptr<inter::Literal> checkMatrixLiteral(syntax::Matrix& matrixLiteral);
-    
+
 
     // Members.
     syntax::Program * _syntaxTree;

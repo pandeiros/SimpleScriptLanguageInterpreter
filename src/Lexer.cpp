@@ -104,12 +104,14 @@ const Token Lexer::nextToken()
         {
             _inputManager.rewind();
             token._type = TokenType::Divide;
+            token._value = tokenTypeNames.at(TokenType::Divide);
         }
         else
         {
             // Ignore all character in the line.
             while (_inputManager.nextCharacter(true) != '\n');
             token._type = TokenType::Comment;
+            token._value = tokenTypeNames.at(TokenType::Comment);
         }
     }
     // Other characters.
@@ -209,6 +211,8 @@ const Token Lexer::nextToken()
                 break;
             }
         }
+
+        token._value = tokenTypeNames.at(token._type);
     }
 
     return token;

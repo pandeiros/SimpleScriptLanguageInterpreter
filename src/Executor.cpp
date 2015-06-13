@@ -13,6 +13,13 @@ void Executor::execute(const std::vector<std::shared_ptr<inter::Function>>& func
     }
 
     // Find entry point ("program" function) and execute it all!
-    auto & entryPoint = definedFunctions.at("program");
-    entryPoint->execute(nullptr, definedFunctions, {});
+    for (auto & function : definedFunctions)
+    {
+        if (function.second->_isMain)
+        {
+            auto & entryPoint = definedFunctions.at(function.first);
+            entryPoint->execute(nullptr, definedFunctions, {});
+            break;
+        }
+    }
 }

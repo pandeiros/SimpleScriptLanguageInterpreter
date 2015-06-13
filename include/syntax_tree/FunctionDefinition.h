@@ -30,6 +30,7 @@ namespace syntax
             _block = block;
         }
 
+        bool _isMain = false;
         std::string _name;
         std::vector<std::string> _types;
         std::vector<std::string> _names;

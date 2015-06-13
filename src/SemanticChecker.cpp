@@ -43,6 +43,7 @@ bool SemanticChecker::scanFunctionDefinitions()
         // Prepare function.
         auto & exeFunction = _definedFunctions.at(function->_name);
         exeFunction->_name = function->_name;
+        exeFunction->_isMain = function->_isMain;
 
         // Parse variables. check for duplicates.
         for (unsigned int i = 0; i < function->_names.size(); ++i)
@@ -64,15 +65,14 @@ bool SemanticChecker::scanFunctionDefinitions()
 bool SemanticChecker::checkForProgram()
 {
     // Check for main "program" function.
-    if (_definedFunctions.count("program") == 0)
+    for (auto & function : _definedFunctions)
     {
-        MessageHandler::error(
-            std::string("No entry point (a.k.a. \"program\" function) defined")
-            );
-        return false;
+        if (function.second->_isMain)
+            return true;
     }
 
-    return true;
+    MessageHandler::error(std::string("No entry point (a.k.a. \"program\" function) defined"));
+    return false;
 }
 
 std::vector<std::shared_ptr<inter::Function>> SemanticChecker::traverseAll()

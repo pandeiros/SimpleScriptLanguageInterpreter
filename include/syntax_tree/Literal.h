@@ -1,11 +1,11 @@
 #ifndef __LITERAL_H__
 #define __LITERAL_H__
 
-#include "Node.h"
+#include "RValue.h"
 
 namespace syntax
 {
-    class Literal : public Node
+    class Literal : public RValue
     {
     public:
         virtual Type getType()

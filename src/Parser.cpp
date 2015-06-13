@@ -58,6 +58,7 @@ Token Parser::accept(const std::initializer_list<TokenType> & acceptableTokens)
     // If accepted, return it. Otherwise print error message.
     if (this->isAcceptable(token, acceptableTokens))
     {
+        MessageHandler::token(token._value);
         return token;
     }
     else
@@ -98,9 +99,20 @@ void Parser::peekFail()
     FAIL;
 }
 
-const std::string Parser::getErrorIndicator(const unsigned int & pos)
+const std::string Parser::getErrorIndicator(const unsigned int & pos, const std::string & line)
 {
-    return std::string(pos, ' ').append("^");
+    int count = 0;
+    for (auto & ch : line)
+        if (ch == '\t')
+            ++count;
+        else
+            break;
+
+    int count2 = pos - count;
+    if (count2 < 0)
+        count2 = 0;
+
+    return std::string(count, '\t').append(std::string(count2, ' ')).append("^");
 }
 
 bool Parser::hasBufferedToken() const
@@ -121,6 +133,8 @@ void Parser::resetPreviousToken()
 
 std::shared_ptr<syntax::FunctionDefinition> Parser::parseFunction()
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<syntax::FunctionDefinition> node = std::make_shared<syntax::FunctionDefinition>();
 
     // Main or other function keyword.
@@ -132,8 +146,10 @@ std::shared_ptr<syntax::FunctionDefinition> Parser::parseFunction()
 
     // Function name.
     auto idToken = this->accept({TokenType::Name});
+    node->setName(idToken._value);
+
     if (token._type == TokenType::Program)
-        node->setName("program");
+        node->_isMain = true;
 
     // Parse function arguments.
     std::vector<std::string> types;
@@ -149,6 +165,8 @@ std::shared_ptr<syntax::FunctionDefinition> Parser::parseFunction()
 
 bool Parser::parseParameters(std::vector<std::string> & types, std::vector<std::string> & names)
 {
+    CHECK_FAIL(false);
+
     Token token;
 
     // Empty arg list or get type.
@@ -208,8 +226,10 @@ bool Parser::parseParameters(std::vector<std::string> & types, std::vector<std::
 
 std::shared_ptr<syntax::StatementBlock> Parser::parseStatementBlock()
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<syntax::StatementBlock> node = std::make_shared<syntax::StatementBlock>();
-    Token tempToken;
+    Token token;
 
     // Beginning of a block
     this->accept({TokenType::BracketOpen});
@@ -217,6 +237,8 @@ std::shared_ptr<syntax::StatementBlock> Parser::parseStatementBlock()
     // Check for instructions, declarations, assignments or line comments.
     while (true)
     {
+        CHECK_FAIL(nullptr);
+
         if (!this->peek({TokenType::If, TokenType::While, TokenType::Return,
             TokenType::Var, TokenType::Const, TokenType::BracketOpen,
             TokenType::Name, TokenType::Comment}))
@@ -224,9 +246,9 @@ std::shared_ptr<syntax::StatementBlock> Parser::parseStatementBlock()
             break;
         }
 
-        tempToken = this->getPeeked();
+        token = this->getPeeked();
 
-        switch (tempToken._type)
+        switch (token._type)
         {
             case TokenType::If:
                 node->addInstruction(parseIfStatement());
@@ -264,6 +286,8 @@ std::shared_ptr<syntax::StatementBlock> Parser::parseStatementBlock()
 
 std::shared_ptr<syntax::ReturnStatement> Parser::parseReturnStatement()
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<syntax::ReturnStatement> node = std::make_shared<syntax::ReturnStatement>();
     this->accept({TokenType::Return});
 
@@ -284,6 +308,8 @@ std::shared_ptr<syntax::ReturnStatement> Parser::parseReturnStatement()
 
 std::shared_ptr<syntax::VarDeclaration> Parser::parseVarDeclaration()
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<syntax::VarDeclaration> node = std::make_shared<syntax::VarDeclaration>();
     this->accept({TokenType::Var});
 
@@ -300,7 +326,12 @@ std::shared_ptr<syntax::VarDeclaration> Parser::parseVarDeclaration()
     if (this->peek({TokenType::Assignment}))
     {
         this->accept({TokenType::Assignment});
-        node->setValue(this->parseAssignable());
+
+        // String or others.
+        if (typeToken._type == TokenType::String)
+            node->setValue(this->parseString());
+        else
+            node->setValue(this->parseAssignable());
     }
 
     // Finish assign or empty declaration with a semicolon.
@@ -311,6 +342,8 @@ std::shared_ptr<syntax::VarDeclaration> Parser::parseVarDeclaration()
 
 std::shared_ptr<syntax::ConstDeclaration> Parser::parseConstDeclaration()
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<syntax::ConstDeclaration> node = std::make_shared<syntax::ConstDeclaration>();
     this->accept({TokenType::Const});
 
@@ -328,7 +361,11 @@ std::shared_ptr<syntax::ConstDeclaration> Parser::parseConstDeclaration()
     {
         this->accept({TokenType::Assignment});
 
-        node->setValue(this->parseAssignable());
+        // String or others.
+        if (typeToken._type == TokenType::String)
+            node->setValue(this->parseString());
+        else
+            node->setValue(this->parseAssignable());
     }
 
     // Finish assign or empty declaration with a semicolon.
@@ -339,6 +376,8 @@ std::shared_ptr<syntax::ConstDeclaration> Parser::parseConstDeclaration()
 
 std::shared_ptr<syntax::RValue> Parser::parseAssignable()
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<syntax::RValue> node;
 
     // Check for name, which can be function call.
@@ -365,6 +404,8 @@ std::shared_ptr<syntax::RValue> Parser::parseAssignable()
 
 std::shared_ptr<syntax::Call> Parser::parseFunctionCall(const std::string & name)
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<syntax::Call> node = std::make_shared<syntax::Call>();
 
     // Call operator "()" required.
@@ -412,6 +453,8 @@ std::shared_ptr<syntax::Call> Parser::parseFunctionCall(const std::string & name
 
 std::shared_ptr<syntax::RValue> Parser::parseExpression(const Token & initToken)
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<syntax::RValue> node = std::make_shared<syntax::RValue>();
 
     // Try parsing arithmetic expression.
@@ -433,6 +476,8 @@ std::shared_ptr<syntax::RValue> Parser::parseExpression(const Token & initToken)
 
 std::shared_ptr<syntax::RValue> Parser::parseLogicalExpression(const Token & initToken)
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<syntax::LogicalExpression> node = std::make_shared<syntax::LogicalExpression>();
 
     // Check if this is correct logical expression (could be arithmetic).
@@ -463,6 +508,8 @@ std::shared_ptr<syntax::RValue> Parser::parseLogicalExpression(const Token & ini
 
 std::shared_ptr<syntax::RValue> Parser::parseArithmeticExpression(const Token & initToken)
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<syntax::ArithmeticExpression> node = std::make_shared<syntax::ArithmeticExpression>();
 
     // Check if this is correct arithmetic expression (could be logical).
@@ -495,6 +542,8 @@ std::shared_ptr<syntax::RValue> Parser::parseArithmeticExpression(const Token & 
 
 std::shared_ptr<syntax::ArithmeticExpression> Parser::parseStrongArithmeticExpression(const Token & initToken)
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<syntax::ArithmeticExpression> node = std::make_shared<syntax::ArithmeticExpression>();
 
     // Check if this is correct arithmetic operand.
@@ -525,6 +574,8 @@ std::shared_ptr<syntax::ArithmeticExpression> Parser::parseStrongArithmeticExpre
 
 NodePtr Parser::parseArithmeticOperand(const Token & initToken)
 {
+    CHECK_FAIL(nullptr);
+
     // This happens, when TokenType::Name was received as first token of the expression.
     if (initToken._type != TokenType::Undefined)
     {
@@ -562,6 +613,8 @@ NodePtr Parser::parseArithmeticOperand(const Token & initToken)
 
 std::shared_ptr<syntax::LogicalExpression> Parser::parseStrongLogicalExpression(const Token & initToken)
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<syntax::LogicalExpression> node = std::make_shared<syntax::LogicalExpression>();
 
     // Check if this is correct logical operand.
@@ -589,6 +642,8 @@ std::shared_ptr<syntax::LogicalExpression> Parser::parseStrongLogicalExpression(
 
 std::shared_ptr<syntax::LogicalExpression> Parser::parseRelationExpression(const Token & initToken)
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<syntax::LogicalExpression> node = std::make_shared<syntax::LogicalExpression>();
 
     // Check if this is correct logical operand.
@@ -602,7 +657,7 @@ std::shared_ptr<syntax::LogicalExpression> Parser::parseRelationExpression(const
         TokenType::GreaterOrEqual, TokenType::Equality, TokenType::Inequality}))
     {
         auto operatorToken = this->accept({TokenType::Less, TokenType::Greater, TokenType::LessOrEqual,
-                                         TokenType::GreaterOrEqual, TokenType::Equality, TokenType::Inequality});
+                                          TokenType::GreaterOrEqual, TokenType::Equality, TokenType::Inequality});
         node->setOperator(operatorToken._type);
 
         // Check if this is correct logical operand.
@@ -619,6 +674,8 @@ std::shared_ptr<syntax::LogicalExpression> Parser::parseRelationExpression(const
 
 NodePtr Parser::parseLogicalOperand(const Token & initToken)
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<syntax::LogicalExpression> node = std::make_shared<syntax::LogicalExpression>();
 
     // Check for negation operator.
@@ -667,6 +724,8 @@ NodePtr Parser::parseLogicalOperand(const Token & initToken)
 
 std::shared_ptr<syntax::IfStatement> Parser::parseIfStatement()
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<syntax::IfStatement> node = std::make_shared<syntax::IfStatement>();
 
     // Start IF statement
@@ -679,7 +738,7 @@ std::shared_ptr<syntax::IfStatement> Parser::parseIfStatement()
     // Close if condition set block for true condition.
     this->accept({TokenType::ParenthClose});
     node->setTrueBlock(this->parseStatementBlock());    // TODO Add parseSingleInstruction
-                                                        // when peek for bracket is false
+    // when peek for bracket is false
 
     // Parse optional 'else' statement.
     // TODO Add 'else if' block
@@ -694,6 +753,8 @@ std::shared_ptr<syntax::IfStatement> Parser::parseIfStatement()
 
 std::shared_ptr<syntax::WhileStatement> Parser::parseWhileStatement()
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<syntax::WhileStatement> node = std::make_shared<syntax::WhileStatement>();
 
     // Start WHILE statement.
@@ -715,6 +776,8 @@ std::shared_ptr<syntax::WhileStatement> Parser::parseWhileStatement()
 
 std::shared_ptr<syntax::Variable> Parser::parseVariable(const Token & identifierToken)
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<syntax::Variable> node = std::make_shared<syntax::Variable>();
 
     // If there was nothing to assing, get new token.
@@ -733,6 +796,8 @@ std::shared_ptr<syntax::Variable> Parser::parseVariable(const Token & identifier
 
 NodePtr Parser::parseLiteral()
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<syntax::Literal> node = std::make_shared<syntax::Literal>();
 
     // Simple choice: string, bool or number.
@@ -753,6 +818,8 @@ NodePtr Parser::parseLiteral()
 
 std::shared_ptr<syntax::Literal> Parser::parseString()
 {
+    CHECK_FAIL(nullptr);
+
     auto token = this->accept({TokenType::StringLiteral});
 
     // Parse token and get its value to the node.
@@ -764,6 +831,8 @@ std::shared_ptr<syntax::Literal> Parser::parseString()
 
 std::shared_ptr<syntax::Literal> Parser::parseBool()
 {
+    CHECK_FAIL(nullptr);
+
     auto token = this->accept({TokenType::True, TokenType::False});
 
     // Parse token and get its value to the node.
@@ -775,6 +844,8 @@ std::shared_ptr<syntax::Literal> Parser::parseBool()
 
 std::shared_ptr<syntax::Literal> Parser::parseNumber()
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<syntax::Number> node = std::make_shared<syntax::Number>();
 
     double value = 0;
@@ -807,6 +878,8 @@ std::shared_ptr<syntax::Literal> Parser::parseNumber()
 
 NodePtr Parser::parseAssignmentOrFunctionCall()
 {
+    CHECK_FAIL(nullptr);
+
     NodePtr node;
 
     // Get identifier and try to match with function call.

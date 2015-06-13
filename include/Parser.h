@@ -8,8 +8,11 @@
                     std::to_string(token._line), \
                     std::to_string(token._col), \
                     _lexer.getLine(token._lineStart), \
-                    std::string(token._col, ' ').append("^")) )
-#define FAIL (this->_parsingSucceeded = false)
+                    getErrorIndicator(token._col, _lexer.getLine(token._lineStart))) )
+#define FAIL (_parsingSucceeded = false)
+#define CHECK_FAIL(_RET_) \
+    if (!_parsingSucceeded) \
+        return _RET_
 
 class Lexer;
 
@@ -44,7 +47,7 @@ private:
     void peekFail();
 
     // Return "^" character to indicate place where the error occurs.
-    const std::string getErrorIndicator(const unsigned int & pos);
+    const std::string getErrorIndicator(const unsigned int & pos, const std::string & line);
 
     // Some buffer managing methods.
     bool hasBufferedToken() const;

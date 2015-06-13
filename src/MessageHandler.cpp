@@ -20,8 +20,18 @@ void MessageHandler::info(const std::string & message)
 
 void MessageHandler::debug(const std::string & message)
 {
+#ifdef _DEBUG
     MessageHandler::printLabel(DEBUG);
     MessageHandler::print(message);
+#endif
+}
+
+void MessageHandler::token(const std::string & name)
+{
+#ifdef _DEBUG
+    MessageHandler::printLabel(TOKEN);
+    MessageHandler::print(name);
+#endif
 }
 
 void MessageHandler::unexpectedToken(const std::string name, const std::string line,
@@ -44,7 +54,7 @@ void MessageHandler::printLabel(const Type type)
     {
         case INFO:
             colorCode = 34;
-            label = "INFO";
+            label = " INFO  ";
             break;
         case WARNING:
             colorCode = 33;
@@ -52,14 +62,18 @@ void MessageHandler::printLabel(const Type type)
             break;
         case ERROR:
             colorCode = 31;
-            label = "ERROR";
+            label = " ERROR ";
             break;
         case DEBUG:
-            colorCode = 31;
-            label = "DEBUG";
+            colorCode = 35;
+            label = " DEBUG ";
+            break;
+        case TOKEN:
+            colorCode = 32;
+            label = " TOKEN ";
             break;
         default:
-            colorCode = 36;
+            colorCode = 37;
             label = "DEFAULT";
             break;
 
