@@ -282,6 +282,50 @@ std::shared_ptr<syntax::StatementBlock> Parser::parseStatementBlock()
     return node;
 }
 
+std::shared_ptr<syntax::StatementBlock> Parser::parseSingleInstruction()
+{
+    CHECK_FAIL(nullptr);
+
+    std::shared_ptr<syntax::StatementBlock> node = std::make_shared<syntax::StatementBlock>();
+    Token token;
+
+    // Check for instruction, declaratios, assignment or line comment.
+    if (!this->peek({TokenType::If, TokenType::While, TokenType::Return,
+        TokenType::Var, TokenType::Const, TokenType::Name, TokenType::Comment}))
+    {
+        FAIL;
+        return nullptr;
+    }
+
+    token = this->getPeeked();
+
+    switch (token._type)
+    {
+        case TokenType::If:
+            node->addInstruction(parseIfStatement());
+            break;
+        case TokenType::While:
+            node->addInstruction(parseWhileStatement());
+            break;
+        case TokenType::Return:
+            node->addInstruction(parseReturnStatement());
+            break;
+        case TokenType::Var:
+            node->addInstruction(parseVarDeclaration());
+            break;
+        case TokenType::Const:
+            node->addInstruction(parseConstDeclaration());
+            break;
+        case TokenType::Name:
+            node->addInstruction(parseAssignmentOrFunctionCall());
+            break;
+        default:
+            break;
+    }
+
+    return node;
+}
+
 
 
 std::shared_ptr<syntax::ReturnStatement> Parser::parseReturnStatement()
@@ -737,15 +781,20 @@ std::shared_ptr<syntax::IfStatement> Parser::parseIfStatement()
 
     // Close if condition set block for true condition.
     this->accept({TokenType::ParenthClose});
-    node->setTrueBlock(this->parseStatementBlock());    // TODO Add parseSingleInstruction
-    // when peek for bracket is false
+
+    if (this->peek({TokenType::BracketOpen}))
+        node->setTrueBlock(this->parseStatementBlock());
+    else
+        node->setTrueBlock(this->parseSingleInstruction());
 
     // Parse optional 'else' statement.
-    // TODO Add 'else if' block
     if (this->peek({TokenType::Else}))
     {
         this->accept({TokenType::Else});
-        node->setFalseBlock(this->parseStatementBlock());
+        if (this->peek({TokenType::BracketOpen}))
+            node->setFalseBlock(this->parseStatementBlock());
+        else
+            node->setFalseBlock(this->parseSingleInstruction());
     }
 
     return node;
@@ -765,9 +814,11 @@ std::shared_ptr<syntax::WhileStatement> Parser::parseWhileStatement()
     node->setCondition(std::dynamic_pointer_cast<syntax::LogicalExpression>(this->parseLogicalExpression()));
 
     // Close it and update instruction block.
-    // TODO Check for single instruction instead of block.
     this->accept({TokenType::ParenthClose});
-    node->setBlock(this->parseStatementBlock());
+    if (this->peek({TokenType::BracketOpen}))
+        node->setBlock(this->parseStatementBlock());
+    else
+        node->setBlock(this->parseSingleInstruction());
 
     return node;
 }
@@ -893,7 +944,14 @@ NodePtr Parser::parseAssignmentOrFunctionCall()
         // Get name, then '=' and then value.
         assignmentNode->setVariable(this->parseVariable(token));
         this->accept({TokenType::Assignment});
-        assignmentNode->setValue(this->parseAssignable());
+
+        // String or others.
+        if (this->peek({TokenType::StringLiteral}))
+            assignmentNode->setValue(this->parseString());
+        else if (this->peek({TokenType::True, TokenType::False}))
+            assignmentNode->setValue(this->parseBool());
+        else
+            assignmentNode->setValue(this->parseAssignable());
 
         node = assignmentNode;
     }

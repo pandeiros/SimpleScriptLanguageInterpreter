@@ -59,6 +59,7 @@ private:
     std::shared_ptr<syntax::FunctionDefinition> parseFunction();
     bool parseParameters(std::vector<std::string> & types, std::vector<std::string> & names);
     std::shared_ptr<syntax::StatementBlock> parseStatementBlock();
+    std::shared_ptr<syntax::StatementBlock> parseSingleInstruction();
 
     // Basic instructions.
     std::shared_ptr<syntax::ReturnStatement> parseReturnStatement();

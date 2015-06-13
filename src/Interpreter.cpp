@@ -43,10 +43,10 @@ void Interpreter::run()
 
     MessageHandler::debug("Parsing started.");
     auto program = parser.parse();
-    return;
 
     if (program.get()->_functions.size() > 0 && parser.getParsingSucceeded())
     {
+        return;
         MessageHandler::debug("Semantic analysis started.");
 
         // TODO Pass 'program' function arguments.
