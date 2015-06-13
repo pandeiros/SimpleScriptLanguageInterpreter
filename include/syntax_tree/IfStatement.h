@@ -3,8 +3,6 @@
 
 #include "LogicalExpression.h"
 
-//class StatementBlock;
-
 namespace syntax
 {
     class IfStatement : public Node

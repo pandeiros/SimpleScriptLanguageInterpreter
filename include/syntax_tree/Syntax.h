@@ -1,5 +1,5 @@
-#ifndef __SYNTAX_INCLUDES_H__
-#define __SYNTAX_INCLUDES_H__
+#ifndef __SYNTAX_H__
+#define __SYNTAX_H__
 
 #include "Node.h"
 
@@ -22,4 +22,4 @@
 #include "Variable.h"
 #include "WhileStatement.h"
 
-#endif // __SYNTAX_INCLUDES_H__
+#endif // __SYNTAX_H__

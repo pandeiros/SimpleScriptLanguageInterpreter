@@ -111,13 +111,7 @@
     <ClInclude Include="..\include\intermediate\Instruction.h">
       <Filter>Header Files\Intermediate</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\intermediate\IR.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\intermediate\Literal.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\intermediate\LoopJumpInstr.h">
       <Filter>Header Files\Intermediate</Filter>
     </ClInclude>
     <ClInclude Include="..\include\intermediate\ReturnInstr.h">
@@ -156,9 +150,6 @@
     <ClInclude Include="..\include\syntax_tree\Number.h">
       <Filter>Header Files\SyntaxTree</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\syntax_tree\Includes.h">
-      <Filter>Header Files\SyntaxTree</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\syntax_tree\SyntaxString.h">
       <Filter>Header Files\SyntaxTree</Filter>
     </ClInclude>
@@ -172,6 +163,12 @@
       <Filter>Header Files\SyntaxTree</Filter>
     </ClInclude>
     <ClInclude Include="..\include\syntax_tree\RValue.h">
+      <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\Intermediate.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\syntax_tree\Syntax.h">
       <Filter>Header Files\SyntaxTree</Filter>
     </ClInclude>
   </ItemGroup>

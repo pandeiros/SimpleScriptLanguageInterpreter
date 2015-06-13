@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "Instruction.h"
-#include "Variable.h"
+#include "intermediate/Variable.h"
 #include "Assignable.h"
 #include "Executable.h"
 
@@ -12,15 +12,18 @@ namespace inter
 {
     struct AssignmentInstr: public inter::Instruction
     {
-        std::shared_ptr<inter::Variable> variable = std::make_shared<inter::Variable>();
-        std::shared_ptr<inter::Assignable> value;
-
         virtual std::shared_ptr<Literal> execute(
             ScopeInstance * scope,
             std::unordered_map<std::string, std::shared_ptr<Function>>& functions
-        )
+            )
         {
-            if (!this->variable->indexArg1)
+            // TODO change
+            return nullptr;
+        }
+
+        std::shared_ptr<inter::Variable> _variable = std::make_shared<inter::Variable>();
+        std::shared_ptr<inter::Assignable> _value;
+            /*if (!this->variable->indexArg1)
             {
                 scope->setVariable(variable->name, value->execute(scope, functions));
                 return nullptr;
@@ -103,7 +106,7 @@ namespace inter
             rowRef.at(indexArgVal->data.at(0).at(0)) = newVal->data.at(0).at(0);
 
             return nullptr;
-        }
+        }*/
     };
 }
 

@@ -81,9 +81,8 @@
     <ClInclude Include="..\include\intermediate\Function.h" />
     <ClInclude Include="..\include\intermediate\IfInstr.h" />
     <ClInclude Include="..\include\intermediate\Instruction.h" />
-    <ClInclude Include="..\include\intermediate\IR.h" />
+    <ClInclude Include="..\include\intermediate\Intermediate.h" />
     <ClInclude Include="..\include\intermediate\Literal.h" />
-    <ClInclude Include="..\include\intermediate\LoopJumpInstr.h" />
     <ClInclude Include="..\include\intermediate\ReturnInstr.h" />
     <ClInclude Include="..\include\intermediate\ScopeInstance.h" />
     <ClInclude Include="..\include\intermediate\ScopePrototype.h" />
@@ -104,7 +103,7 @@
     <ClInclude Include="..\include\syntax_tree\ArithmeticExpression.h" />
     <ClInclude Include="..\include\syntax_tree\FunctionDefinition.h" />
     <ClInclude Include="..\include\syntax_tree\IfStatement.h" />
-    <ClInclude Include="..\include\syntax_tree\Includes.h" />
+    <ClInclude Include="..\include\syntax_tree\Syntax.h" />
     <ClInclude Include="..\include\syntax_tree\Literal.h" />
     <ClInclude Include="..\include\syntax_tree\Node.h" />
     <ClInclude Include="..\include\syntax_tree\Number.h" />

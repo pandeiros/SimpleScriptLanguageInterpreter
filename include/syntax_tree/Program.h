@@ -3,8 +3,6 @@
 
 #include "FunctionDefinition.h"
 
-//class FunctionDefinition;
-
 namespace syntax
 {
     class Program : public Node

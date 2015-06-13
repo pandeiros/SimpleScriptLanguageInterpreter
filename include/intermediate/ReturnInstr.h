@@ -9,27 +9,28 @@
 
 namespace inter
 {
-    struct ReturnInstr: public Instruction
+    class ReturnInstr: public Instruction
     {
-        std::shared_ptr<Assignable> value;
-
+    public:
         virtual std::shared_ptr<Literal> execute(
             ScopeInstance* scope,
             std::unordered_map<std::string, std::shared_ptr<Function>>& functions
         )
         {
-            if (isEmpty)
+            if (_isEmpty)
+                // TODO Maybe return nullptr?
                 return std::make_shared<inter::Literal>();
 
-            return this->value->execute(scope, functions);
+            return this->_value->execute(scope, functions);
         }
 
-        virtual bool canDoReturn()
+        virtual bool canReturn()
         {
             return true;
         }
 
-        bool isEmpty = false;
+        bool _isEmpty = false;
+        std::shared_ptr<Assignable> _value;
     };
 }
 

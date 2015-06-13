@@ -7,7 +7,7 @@ namespace inter
 {
     struct Instruction: virtual public Executable
     {
-        virtual bool canDoReturn()
+        virtual bool canReturn()
         {
             return false;
         }

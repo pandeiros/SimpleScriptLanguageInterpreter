@@ -42,19 +42,19 @@ bool SemanticChecker::scanFunctionDefinitions()
 
         // Prepare function.
         auto & exeFunction = _definedFunctions.at(function->_name);
-        exeFunction->name = function->_name;
+        exeFunction->_name = function->_name;
 
         // Parse variables. check for duplicates.
         for (unsigned int i = 0; i < function->_names.size(); ++i)
-        //for (auto & variable : function->names)
+            //for (auto & variable : function->names)
         {
-            if (!exeFunction->scopePrototype.addVariable(function->_types[i], function->_names[i]))
+            if (!exeFunction->_scopePrototype.addVariable(function->_types[i], function->_names[i]))
             {
                 MessageHandler::error(std::string("Duplicated definition of parameter \"")
                                       .append(function->_names[i]).append("\" of function \"").append(function->_name).append("\""));
                 return false;
             }
-            exeFunction->scopePrototype.setVariableDefined(function->_names[i]);
+            exeFunction->_scopePrototype.setVariableDefined(function->_names[i]);
         }
     }
 
@@ -95,47 +95,52 @@ std::shared_ptr<inter::Function> SemanticChecker::checkFunction(syntax::Function
 {
     auto & function = _definedFunctions.at(functionDef._name);
 
-    function->instructions.push_back(this->checkBlock(function->scopePrototype, *(functionDef._block)));
+    // Insert block of instructions to the function.
+    function->_instructions.push_back(this->checkBlock(function->_scopePrototype, *(functionDef._block)));
 
     return function;
 }
 
-std::shared_ptr<inter::Block> SemanticChecker::checkBlock(inter::ScopePrototype & scopePrototype, syntax::StatementBlock& blockNode)
+std::shared_ptr<inter::Block> SemanticChecker::checkBlock(inter::ScopePrototype & scopePrototype, syntax::StatementBlock & syntaxBlock)
 {
     std::shared_ptr<inter::Block> block = std::make_shared<inter::Block>();
-    block->scopePrototype.upperScope = &scopePrototype;
 
-    for (auto& instruction : blockNode._instructions)
+    // Set upper scope to this given.
+    block->_scopePrototype._upperScope = &scopePrototype;
+
+    // Check every instruction.
+    for (auto & instruction : syntaxBlock._instructions)
     {
         switch (instruction->getType())
         {
             case syntax::Node::Type::VarDeclaration:
             {
                 auto node = static_cast<syntax::VarDeclaration*>(instruction.get());
-                this->checkVarDeclaration(block->scopePrototype, node->_name, node->_type);
+                this->checkVarDeclaration(block->_scopePrototype, node->_name, node->_type);
 
+                // If variable was assigned, push its value as well.
                 if (node->_value)
                 {
-                    block->instructions.push_back(this->checkAssignment(block->scopePrototype, node->_name, *(node->_value)));
+                    block->_instructions.push_back(this->checkAssignment(block->_scopePrototype, node->_name, *(node->_value)));
                 }
                 break;
             }
             case syntax::Node::Type::Assignment:
             {
                 auto node = static_cast<syntax::Assignment*>(instruction.get());
-                block->instructions.push_back(this->checkAssignment(block->scopePrototype, *(node->_variable), *(node->_value)));
+                block->_instructions.push_back(this->checkAssignment(block->_scopePrototype, *(node->_variable), *(node->_value)));
                 break;
             }
             case syntax::Node::Type::ReturnStatement:
             {
                 auto node = static_cast<syntax::ReturnStatement*>(instruction.get());
                 if (!node->_isEmpty)
-                    block->instructions.push_back(this->checkReturnStatement(block->scopePrototype, *(node->_value)));
+                    block->_instructions.push_back(this->checkReturnStatement(block->_scopePrototype, *(node->_value)));
                 else
                 {
                     auto & ret = std::make_shared<inter::ReturnInstr>();
-                    ret->isEmpty = true;
-                    block->instructions.push_back(ret);
+                    ret->_isEmpty = true;
+                    block->_instructions.push_back(ret);
                 }
 
                 break;
@@ -143,34 +148,34 @@ std::shared_ptr<inter::Block> SemanticChecker::checkBlock(inter::ScopePrototype 
             case syntax::Node::Type::Call:
             {
                 auto node = static_cast<syntax::Call*>(instruction.get());
-                block->instructions.push_back(this->checkFunctionCall(block->scopePrototype, *node));
+                block->_instructions.push_back(this->checkFunctionCall(block->_scopePrototype, *node));
                 break;
             }
             case syntax::Node::Type::StatementBlock:
             {
                 auto node = static_cast<syntax::StatementBlock*>(instruction.get());
-                block->instructions.push_back(this->checkBlock(block->scopePrototype, *node));
+                block->_instructions.push_back(this->checkBlock(block->_scopePrototype, *node));
                 break;
             }
             case syntax::Node::Type::IfStatement:
             {
                 auto node = static_cast<syntax::IfStatement*>(instruction.get());
-                block->instructions.push_back(this->checkIfStatement(block->scopePrototype, *node));
+                block->_instructions.push_back(this->checkIfStatement(block->_scopePrototype, *node));
                 break;
             }
             case syntax::Node::Type::WhileStatement:
             {
                 auto node = static_cast<syntax::WhileStatement*>(instruction.get());
-                block->instructions.push_back(this->checkWhileStatement(block->scopePrototype, *node));
+                block->_instructions.push_back(this->checkWhileStatement(block->_scopePrototype, *node));
                 break;
             }
             // TODO REMOVE
             /*case syntax::Node::Type::LoopJump:
             {
-                auto node = std::make_shared<inter::LoopJumpInstr>();
-                node->isBreak = (static_cast<syntax::LoopJump*>(instruction.get()))->isBreak;
-                block->instructions.push_back(node);
-                break;
+            auto node = std::make_shared<inter::LoopJumpInstr>();
+            node->isBreak = (static_cast<syntax::LoopJump*>(instruction.get()))->isBreak;
+            block->instructions.push_back(node);
+            break;
             }*/
             default:
             {
@@ -184,98 +189,90 @@ std::shared_ptr<inter::Block> SemanticChecker::checkBlock(inter::ScopePrototype 
     return block;
 }
 
+
+
 void SemanticChecker::checkVarDeclaration(inter::ScopePrototype & scopePrototype, const std::string & type, const std::string & name)
 {
     if (!scopePrototype.addVariable(type, name))
     {
-        MessageHandler::error(
-            std::string("Redeclaration of variable: ")
-            .append(name)
-            );
+        MessageHandler::error(std::string("Variable redeclared:  ").append(name));
     }
 }
 
-std::shared_ptr<inter::AssignmentInstr> SemanticChecker::checkAssignment(inter::ScopePrototype & scopePrototype, const std::string& variable, syntax::RValue& assignable)
+std::shared_ptr<inter::AssignmentInstr> SemanticChecker::checkAssignment(inter::ScopePrototype & scopePrototype, const std::string & variable, syntax::RValue & rvalue)
 {
     std::shared_ptr<inter::AssignmentInstr> node = std::make_shared<inter::AssignmentInstr>();
 
+    // Check whether variable is declared in scope.
     if (!scopePrototype.hasVariable(variable))
     {
-        MessageHandler::error(
-            std::string("Assignment to undefined variable: ")
-            .append(variable)
-            );
-
+        MessageHandler::error(std::string("Cannot assign to undeclared variable: ").append(variable));
         return nullptr;
     }
 
-    node->variable->name = variable;
-    node->value = this->checkAssignable(scopePrototype, assignable);
-
+    // Assign and set its value as defined.
+    node->_variable->_name = variable;
+    node->_value = this->checkAssignable(scopePrototype, rvalue);
     scopePrototype.setVariableDefined(variable);
 
     return node;
 }
 
-
-std::shared_ptr<inter::AssignmentInstr> SemanticChecker::checkAssignment(inter::ScopePrototype & scopePrototype, syntax::Variable& variable, syntax::RValue& assignable)
+std::shared_ptr<inter::AssignmentInstr> SemanticChecker::checkAssignment(inter::ScopePrototype & scopePrototype, syntax::Variable & variable, syntax::RValue & rvalue)
 {
     std::shared_ptr<inter::AssignmentInstr> node = std::make_shared<inter::AssignmentInstr>();
 
+    // Check whether variable is declared in scope.
     if (!scopePrototype.hasVariable(variable._name))
     {
-        MessageHandler::error(
-            std::string("Assignment to undefined variable: ")
-            .append(variable._name)
-            );
-
+        MessageHandler::error(std::string("Cannot assign to undeclared variable: ").append(variable._name));
         return nullptr;
     }
 
-   /* if (variable.indexArg1 && !scopePrototype.isVariableDefined(variable.variableName))
+    /* if (variable.indexArg1 && !scopePrototype.isVariableDefined(variable.variableName))
     {
-        MessageHandler::error(
-            std::string("Indexed assignment to empty variable: ")
-            .append(variable.variableName)
-            );
+    MessageHandler::error(
+    std::string("Indexed assignment to empty variable: ")
+    .append(variable.variableName)
+    );
 
-        return nullptr;
+    return nullptr;
     }*/
 
- /*   node->variable->name = variable.variableName;
+    /*   node->variable->name = variable.variableName;
     if (variable.indexArg1)
     {
-        if (variable.indexArg1->getType() == syntax::Node::Type::Call)
-        {
-            node->variable->indexArg1 = this->checkFunctionCall(scopePrototype, *(static_cast<syntax::Call*>(variable.indexArg1.get())));
-        }
-        else if (variable.indexArg1->getType() == syntax::Node::Type::ArithmeticExpression)
-        {
-            node->variable->indexArg1 = this->checkExpression(scopePrototype, *(static_cast<syntax::ArithmeticExpression*>(variable.indexArg1.get())));
-        }
-        else
-        {
-            MessageHandler::error(
-                std::string("Invalid assignable value")
-                );
-        }
+    if (variable.indexArg1->getType() == syntax::Node::Type::Call)
+    {
+    node->variable->indexArg1 = this->checkFunctionCall(scopePrototype, *(static_cast<syntax::Call*>(variable.indexArg1.get())));
+    }
+    else if (variable.indexArg1->getType() == syntax::Node::Type::ArithmeticExpression)
+    {
+    node->variable->indexArg1 = this->checkExpression(scopePrototype, *(static_cast<syntax::ArithmeticExpression*>(variable.indexArg1.get())));
+    }
+    else
+    {
+    MessageHandler::error(
+    std::string("Invalid assignable value")
+    );
+    }
     }
     if (variable.indexArg2)
     {
-        if (variable.indexArg2->getType() == syntax::Node::Type::Call)
-        {
-            node->variable->indexArg2 = this->checkFunctionCall(scopePrototype, *(static_cast<syntax::Call*>(variable.indexArg2.get())));
-        }
-        else if (variable.indexArg2->getType() == syntax::Node::Type::ArithmeticExpression)
-        {
-            node->variable->indexArg2 = this->checkExpression(scopePrototype, *(static_cast<syntax::ArithmeticExpression*>(variable.indexArg2.get())));
-        }
-        else
-        {
-            MessageHandler::error(
-                std::string("Invalid assignable value")
-                );
-        }
+    if (variable.indexArg2->getType() == syntax::Node::Type::Call)
+    {
+    node->variable->indexArg2 = this->checkFunctionCall(scopePrototype, *(static_cast<syntax::Call*>(variable.indexArg2.get())));
+    }
+    else if (variable.indexArg2->getType() == syntax::Node::Type::ArithmeticExpression)
+    {
+    node->variable->indexArg2 = this->checkExpression(scopePrototype, *(static_cast<syntax::ArithmeticExpression*>(variable.indexArg2.get())));
+    }
+    else
+    {
+    MessageHandler::error(
+    std::string("Invalid assignable value")
+    );
+    }
     }
     node->value = this->checkAssignable(scopePrototype, assignable);
 
@@ -283,6 +280,8 @@ std::shared_ptr<inter::AssignmentInstr> SemanticChecker::checkAssignment(inter::
 
     return node;
 }
+
+
 
 std::shared_ptr<inter::Assignable> SemanticChecker::checkAssignable(inter::ScopePrototype & scopePrototype, syntax::RValue& assignable)
 {
@@ -316,13 +315,13 @@ std::shared_ptr<inter::CallInstr> SemanticChecker::checkFunctionCall(inter::Scop
     if (_definedFunctions.count(call._name) == 1)
     {
         auto &functionDef = _definedFunctions.at(call._name);
-        if (functionDef->scopePrototype.variables.size() != call._arguments.size())
+        if (functionDef->_scopePrototype._variables.size() != call._arguments.size())
         {
             MessageHandler::error(
                 std::string("Invalid arguments count for function \"")
                 .append(call._name)
                 .append("\", expected ")
-                .append(std::to_string(functionDef->scopePrototype.variables.size()))
+                .append(std::to_string(functionDef->_scopePrototype._variables.size()))
                 .append(", got ")
                 .append(std::to_string(call._arguments.size()))
                 );
@@ -365,24 +364,24 @@ std::shared_ptr<inter::Expression> SemanticChecker::checkExpression(inter::Scope
 
     for (auto& operand : expression._operands)
     {
-       /* if (operand->getType() == syntax::Node::Type::Matrix)
-        {
-            obj->operands.push_back(this->checkMatrixLiteral(*(static_cast<syntax::Matrix*>(operand.get()))));
-        }
-        else */if (operand->getType() == syntax::Node::Type::ArithmeticExpression)
-        {
-            obj->operands.push_back(this->checkExpression(scopePrototype, *(static_cast<syntax::ArithmeticExpression*>(operand.get()))));
-        }
-        else if (operand->getType() == syntax::Node::Type::Variable)
-        {
-            obj->operands.push_back(this->checkVariable(scopePrototype, *(static_cast<syntax::Variable*>(operand.get()))));
-        }
-        else
-        {
-            MessageHandler::error(
-                std::string("Invalid expression operand")
-                );
-        }
+        /* if (operand->getType() == syntax::Node::Type::Matrix)
+         {
+         obj->operands.push_back(this->checkMatrixLiteral(*(static_cast<syntax::Matrix*>(operand.get()))));
+         }
+         else */if (operand->getType() == syntax::Node::Type::ArithmeticExpression)
+         {
+             obj->operands.push_back(this->checkExpression(scopePrototype, *(static_cast<syntax::ArithmeticExpression*>(operand.get()))));
+         }
+         else if (operand->getType() == syntax::Node::Type::Variable)
+         {
+             obj->operands.push_back(this->checkVariable(scopePrototype, *(static_cast<syntax::Variable*>(operand.get()))));
+         }
+         else
+         {
+             MessageHandler::error(
+                 std::string("Invalid expression operand")
+                 );
+         }
     }
 
     return obj;
@@ -412,34 +411,34 @@ std::shared_ptr<inter::Variable> SemanticChecker::checkVariable(inter::ScopeProt
         return nullptr;
     }
 
-   /* if (variable.indexArg1 && !scopePrototype.isVariableDefined(variable._variableName))
-    {
-        MessageHandler::error(
-            std::string("Indexed usage of empty variable: ")
-            .append(variable.variableName)
-            );
+    /* if (variable.indexArg1 && !scopePrototype.isVariableDefined(variable._variableName))
+     {
+     MessageHandler::error(
+     std::string("Indexed usage of empty variable: ")
+     .append(variable.variableName)
+     );
 
-        return nullptr;
-    }*/
+     return nullptr;
+     }*/
 
-   /* obj->name = variable.variableName;
-    if (variable.indexArg1)
-    {
-        obj->indexArg1 = this->checkAssignable(scopePrototype, *(variable.indexArg1));
-    }
-    if (variable.indexArg2)
-    {
-        obj->indexArg2 = this->checkAssignable(scopePrototype, *(variable.indexArg2));
-    }
+    /* obj->name = variable.variableName;
+     if (variable.indexArg1)
+     {
+     obj->indexArg1 = this->checkAssignable(scopePrototype, *(variable.indexArg1));
+     }
+     if (variable.indexArg2)
+     {
+     obj->indexArg2 = this->checkAssignable(scopePrototype, *(variable.indexArg2));
+     }
 
-    return obj;*/
+     return obj;*/
 }
 
 std::shared_ptr<inter::ReturnInstr> SemanticChecker::checkReturnStatement(inter::ScopePrototype & scopePrototype, syntax::RValue& assignable)
 {
     std::shared_ptr<inter::ReturnInstr> obj = std::make_shared<inter::ReturnInstr>();
 
-    obj->value = this->checkAssignable(scopePrototype, assignable);
+    obj->_value = this->checkAssignable(scopePrototype, assignable);
 
     return obj;
 }
@@ -463,9 +462,9 @@ std::shared_ptr<inter::WhileInstr> SemanticChecker::checkWhileStatement(inter::S
 {
     std::shared_ptr<inter::WhileInstr> obj = std::make_shared<inter::WhileInstr>();
 
-    obj->condition = checkCondition(scopePrototype, *(stmt._condition));
+    obj->_condition = checkCondition(scopePrototype, *(stmt._condition));
 
-    obj->block = checkBlock(scopePrototype, *(stmt._block));
+    obj->_block = checkBlock(scopePrototype, *(stmt._block));
 
     return obj;
 }

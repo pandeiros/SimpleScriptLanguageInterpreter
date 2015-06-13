@@ -6,9 +6,6 @@
 
 namespace syntax
 {
-    //class Variable;
-    //class Assignable;
-
     class Assignment : public Node
     {
     public:

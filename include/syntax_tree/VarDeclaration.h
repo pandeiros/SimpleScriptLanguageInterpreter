@@ -30,7 +30,7 @@ namespace syntax
 
         std::string _type;
         std::string _name;
-        std::shared_ptr<RValue> _value;
+        std::shared_ptr<RValue> _value = nullptr;
     };
 }
 

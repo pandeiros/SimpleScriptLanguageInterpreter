@@ -51,17 +51,17 @@ Library::callFunction(const std::string& name, Arguments& arguments)
 std::shared_ptr<inter::Literal> Library::funPrint(Arguments & arguments)
 {
     // TODO change to normal, non-matrix print.
-    for (auto & arg : arguments.at(0)->data)
+    /*for (auto & arg : arguments.at(0)->data)
     {
         for (auto & rowIt : arg)
         {
             std::cout << rowIt << " ";
         }
         std::cout << std::endl;
-    }
+    }*/
 
     auto result = std::make_shared<inter::Literal>();
-    result->data = {{1}};
+    //result->data = {{1}};
     return result;
 }
 
@@ -70,6 +70,7 @@ std::shared_ptr<inter::Literal> Library::funNewLine(Arguments & arguments)
     std::cout << std::endl;
 
     auto result = std::make_shared<inter::Literal>();
-    result->data = {{1}};
+    // TODO Verify
+    //result->data = {{1}};
     return result;
 }

@@ -6,66 +6,69 @@
 #include <memory>
 #include <vector>
 
+#include "intermediate/Variable.h"
+//#include "intermediate/Literal.h"
+
 #include "MessageHandler.h"
-
-typedef std::pair<std::string, std::string> VarType;
-
-class Var : public std::string
-{
-public:
-    Var() = default;
-    Var(std::string type, std::string name) : name(name), type(type)
-    {}
-
-    std::string type;
-    std::string name;
-};
+//
+//class Var : public std::string
+//{
+//public:
+//    Var() = default;
+//    Var(std::string type, std::string name) : _name(name), _type(type)
+//    {}
+//
+//    std::string _type;
+//    std::string _name;
+//};
 
 namespace inter
 {
-    struct Literal;
+    /*struct Literal;*/
 
-    struct ScopeInstance
+    class ScopeInstance
     {
-        ScopeInstance* upperScope = nullptr;
-        std::map<Var, std::shared_ptr<Literal>> variables;
-        std::vector<std::string> varOrder;
-
+    public:
         std::shared_ptr<Literal> getVariable(const std::string & name)
         {
-            for (auto & var : variables)
+            for (auto & var : _variables)
             {
-                if (var.first.name == name)
+                if (var.first._name == name)
                     return var.second;
             }
 
-            if (this->upperScope != nullptr)
+            if (_upperScope != nullptr)
             {
-                return this->upperScope->getVariable(name);
+                return _upperScope->getVariable(name);
             }
 
+            MessageHandler::error(std::string("Accessing undefined variable!"));
             return nullptr;
         }
 
         void setVariable(const std::string & name, std::shared_ptr<Literal> literal)
         {
-            for (auto & var : variables)
+            for (auto & var : _variables)
             {
-                if (var.first.name == name)
+                if (var.first._name == name)
                 {
                     var.second = literal;
                     return;
                 }
             }
 
-            if (this->upperScope != nullptr)
+            if (_upperScope != nullptr)
             {
-                this->upperScope->setVariable(name, literal);
+                _upperScope->setVariable(name, literal);
                 return;
             }
 
-            MessageHandler::error(std::string("Setting undefined variable"));
+            MessageHandler::error(std::string("Modifying undefined variable!"));
         }
+
+        ScopeInstance * _upperScope = nullptr;
+        std::map<Variable, std::shared_ptr<Literal>> _variables;
+        std::vector<std::string> _variableOrder;
     };
 }
 

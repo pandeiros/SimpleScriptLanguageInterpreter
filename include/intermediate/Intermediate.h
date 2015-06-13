@@ -1,10 +1,11 @@
-#ifndef __IR_H__
-#define __IR_H__
+#ifndef __INTERMEDIATE_H__
+#define __INTERMEDIATE_H__
+
+#include "Executable.h"
 
 #include "Assignable.h"
 #include "Condition.h"
 #include "ConditionOperand.h"
-#include "Executable.h"
 #include "Expression.h"
 #include "ExpressionOperand.h"
 #include "Function.h"
@@ -15,8 +16,7 @@
 #include "AssignmentInstr.h"
 #include "CallInstr.h"
 #include "IfInstr.h"
-#include "LoopJumpInstr.h"
 #include "ReturnInstr.h"
 #include "WhileInstr.h"
 
-#endif // __IR_H__
+#endif // __INTERMEDIATE_H__

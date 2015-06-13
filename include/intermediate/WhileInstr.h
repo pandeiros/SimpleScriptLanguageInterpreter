@@ -4,35 +4,23 @@
 #include <memory>
 #include <iostream>
 
-#include "Instruction.h"
 #include "Condition.h"
 #include "Block.h"
-#include "Executable.h"
+//#include "intermediate/Literal.h"
 
 namespace inter
 {
-    struct WhileInstr: public Instruction
+    class WhileInstr : public Instruction
     {
-        std::shared_ptr<Condition> condition;
-        std::shared_ptr<Block> block;
-
-        virtual std::shared_ptr<Literal> execute(
-            ScopeInstance* scope,
-            std::unordered_map<std::string, std::shared_ptr<Function>>& functions
-        )
+    public:
+        virtual std::shared_ptr<Literal> execute(ScopeInstance * scope,
+                                                 std::unordered_map<std::string, std::shared_ptr<Function>> & functions)
         {
-            while (this->condition->execute(scope, functions)->isTruthy())
+            while (_condition->execute(scope, functions)->isTruthy())
             {
-                auto result = this->block->execute(scope, functions);
-                if (result && result->loopJump)
-                {
-                    if (result->isBreak)
-                    {
-                        break;
-                    }
-                    continue;
-                }
-                if (result && this->block->canDoReturn())
+                auto result = _block->execute(scope, functions);
+
+                if (result && _block->canReturn())
                 {
                     return result;
                 }
@@ -41,10 +29,13 @@ namespace inter
             return nullptr;
         }
 
-        virtual bool canDoReturn()
+        virtual bool canReturn()
         {
             return true;
         }
+
+        std::shared_ptr<Condition> _condition;
+        std::shared_ptr<Block> _block;
     };
 }
 

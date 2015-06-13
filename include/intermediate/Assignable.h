@@ -5,7 +5,7 @@
 
 namespace inter
 {
-    struct Assignable: virtual public Executable
+    class Assignable: virtual public Executable
     {};
 }
 

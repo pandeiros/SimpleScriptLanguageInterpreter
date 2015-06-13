@@ -8,13 +8,14 @@
 #include <vector>
 #include <utility>
 
-#include "Literal.h"
+#include "intermediate/Literal.h"
 
 /*
  * Set of predefined library functions, such as print.
  */
-struct Library
+class Library
 {
+public:
     // Function arguments and function type.
     typedef const std::vector<std::shared_ptr<inter::Literal>> Arguments;
     typedef std::function<std::shared_ptr<inter::Literal>(Arguments &)> LibFunction;

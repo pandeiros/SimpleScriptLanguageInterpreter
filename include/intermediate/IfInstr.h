@@ -4,15 +4,16 @@
 #include <memory>
 #include <iostream>
 
-#include "Instruction.h"
+//#include "Instruction.h"
 #include "Condition.h"
 #include "Block.h"
-#include "Executable.h"
+//#include "Executable.h"
 
 namespace inter
 {
-    struct IfInstr : public Instruction
+    class IfInstr : public Instruction
     {
+    public:
         std::shared_ptr<Condition> condition;
         std::shared_ptr<Block> trueBlock;
         std::shared_ptr<Block> falseBlock;
@@ -34,7 +35,7 @@ namespace inter
             return nullptr;
         }
 
-        virtual bool canDoReturn()
+        virtual bool canReturn()
         {
             return true;
         }

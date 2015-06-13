@@ -5,8 +5,6 @@
 
 namespace syntax
 {
-    //class StatementBlock;
-
     class FunctionDefinition : public Node
     {
     public:

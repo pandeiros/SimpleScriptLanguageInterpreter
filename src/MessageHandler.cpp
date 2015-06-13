@@ -65,7 +65,7 @@ void MessageHandler::printLabel(const Type type)
 
     }
 
-    std::cout << "[\e[" << colorCode << "m" << label << "\e[0m] ";
+    std::cout << "<<\e[" << colorCode << "m" << label << "\e[0m>> ";
 }
 
 void MessageHandler::print(const std::string & message)

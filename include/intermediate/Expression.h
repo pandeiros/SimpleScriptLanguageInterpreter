@@ -30,7 +30,7 @@ namespace inter
             unsigned int i = 0;
             for(auto& op: this->operations)
             {
-                auto& it = this->operands.at(i + 1);
+                /*auto& it = this->operands.at(i + 1);
                 i++;
 
                 if (op == TokenType::Plus)
@@ -59,7 +59,7 @@ namespace inter
                         std::string("Invalid expression operator")
                     );
                     return nullptr;
-                }
+                }*/
             }
 
             return result;

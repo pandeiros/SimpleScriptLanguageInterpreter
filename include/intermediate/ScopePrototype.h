@@ -7,39 +7,38 @@
 #include <memory>
 #include <vector>
 
+//#include "intermediate/Variable.h"
 #include "ScopeInstance.h"
 
 namespace inter
 {
-    struct ScopePrototype
+    class ScopePrototype
     {
-        ScopePrototype * upperScope = nullptr;
-        std::map<Var, bool> variables;
-        std::vector<std::string> varOrder;
-
+    public:
         bool addVariable(const std::string & type, const std::string & name)
         {
             if (this->hasVariable(name))
             {
                 return false;
             }
-            std::pair<Var, bool> newPair(Var(type, name), false);
-            this->variables.insert(newPair);
-            this->varOrder.push_back(name);
+
+            std::pair<Variable, bool> newPair(Variable(type, name), false);
+            _variables.insert(newPair);
+            _variableOrder.push_back(name);
             return true;
         }
 
         bool * getVariable(const std::string & name)
         {
-            for (auto & var : variables)
+            for (auto & var : _variables)
             {
-                if (var.first.name == name)
+                if (var.first._name == name)
                     return &(var.second);
             }
 
-            if (this->upperScope != nullptr)
+            if (_upperScope != nullptr)
             {
-                return this->upperScope->getVariable(name);
+                return _upperScope->getVariable(name);
             }
 
             return nullptr;
@@ -54,9 +53,9 @@ namespace inter
                 return;
             }
 
-            for (auto & var : variables)
+            for (auto & var : _variables)
             {
-                if (var.first.name == name)
+                if (var.first._name == name)
                     var.second = true;
             }
         }
@@ -75,9 +74,9 @@ namespace inter
                 return false;
             }
 
-            for (auto & var : variables)
+            for (auto & var : _variables)
             {
-                if (var.first.name == name)
+                if (var.first._name == name)
                     var.second = true;
             }
         }
@@ -85,17 +84,22 @@ namespace inter
         ScopeInstance instantiate(ScopeInstance * upperScope)
         {
             auto instance = ScopeInstance();
-            instance.upperScope = upperScope;
-            instance.varOrder = this->varOrder;
+            instance._upperScope = upperScope;
+            instance._variableOrder = _variableOrder;
 
-            for(auto & it : this->variables)
+            for(auto & it : _variables)
             {
-                std::pair<Var, std::shared_ptr<Literal>> newPair(it.first, std::make_shared<inter::Literal>());
-                instance.variables.insert(newPair);
+                std::pair<Variable, std::shared_ptr<Literal>> newPair(it.first, std::make_shared<inter::Literal>());
+                instance._variables.insert(newPair);
             }
 
             return instance;
         }
+
+        ScopePrototype * _upperScope = nullptr;
+        std::map<Variable, bool> _variables;
+        std::vector<std::string> _variableOrder;
+
     };
 }
 

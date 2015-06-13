@@ -2,7 +2,7 @@
 #define __SEMANTIC_CHECKER_H__
 
 #include "Parser.h"
-#include "IR.h"
+#include "Intermediate.h"
 
 /*
  * Checks semantic of given program syntax tree.
@@ -27,12 +27,17 @@ private:
     // Main check function. Traverse all nodes.
     std::vector<std::shared_ptr<inter::Function>> traverseAll();
 
-    /* Other check functions. */
-    std::shared_ptr<inter::Function> checkFunction(syntax::FunctionDefinition& functionDef);
+    /* Other check methods. */
 
-    std::shared_ptr<inter::Block> checkBlock(inter::ScopePrototype & scopePrototype, syntax::StatementBlock& blockNode);
-    std::shared_ptr<inter::AssignmentInstr> checkAssignment(inter::ScopePrototype & scopePrototype, const std::string& variable, syntax::RValue& assignable);
-    std::shared_ptr<inter::AssignmentInstr> checkAssignment(inter::ScopePrototype & scopePrototype, syntax::Variable& variable, syntax::RValue& assignable);
+    // Functions and blocks/
+    std::shared_ptr<inter::Function> checkFunction(syntax::FunctionDefinition & functionDef);
+    std::shared_ptr<inter::Block> checkBlock(inter::ScopePrototype & scopePrototype, syntax::StatementBlock & syntaxBlock);
+
+    // Variables and assignments.
+    void checkVarDeclaration(inter::ScopePrototype & scopePrototype, const std::string & type, const std::string & name);
+    std::shared_ptr<inter::AssignmentInstr> checkAssignment(inter::ScopePrototype & scopePrototype, const std::string & variable, syntax::RValue & rvalue);
+    std::shared_ptr<inter::AssignmentInstr> checkAssignment(inter::ScopePrototype & scopePrototype, syntax::Variable & variable, syntax::RValue & rvalue);
+
     std::shared_ptr<inter::Assignable> checkAssignable(inter::ScopePrototype & scopePrototype, syntax::RValue& assignable);
     std::shared_ptr<inter::CallInstr> checkFunctionCall(inter::ScopePrototype & scopePrototype, syntax::Call& call);
     std::shared_ptr<inter::Expression> checkExpression(inter::ScopePrototype & scopePrototype, syntax::ArithmeticExpression& call);
@@ -42,7 +47,7 @@ private:
     std::shared_ptr<inter::WhileInstr> checkWhileStatement(inter::ScopePrototype & scopePrototype, syntax::WhileStatement& stmt);
     std::shared_ptr<inter::Condition> checkCondition(inter::ScopePrototype & scopePrototype, syntax::LogicalExpression& condition);
     //std::shared_ptr<inter::Literal> checkMatrixLiteral(syntax::Matrix& matrixLiteral);
-    void checkVarDeclaration(inter::ScopePrototype & scopePrototype, const std::string & type, const std::string & name);
+    
 
     // Members.
     syntax::Program * _syntaxTree;

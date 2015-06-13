@@ -7,27 +7,23 @@
 
 #include "Executable.h"
 #include "ScopePrototype.h"
+#include "intermediate/Literal.h"
 #include "Instruction.h"
-#include "Literal.h"
 
 namespace inter
 {
-    struct Block: public Instruction
+    class Block: public Instruction
     {
-        ScopePrototype scopePrototype;
-        std::vector<std::shared_ptr<Instruction>> instructions;
-
-        virtual std::shared_ptr<Literal> execute(
-            ScopeInstance * scope,
-            std::unordered_map<std::string, std::shared_ptr<Function>>& functions
-        )
+    public:
+        virtual std::shared_ptr<Literal> execute(ScopeInstance * scope,
+                                                 std::unordered_map<std::string, std::shared_ptr<Function>> & functions)
         {
-            auto thisScope = this->scopePrototype.instantiate(scope);
+            auto thisScope = _scopePrototype.instantiate(scope);
 
-            for(auto& it: this->instructions)
+            for(auto & instruction : _instructions)
             {
-                auto result = it->execute(&thisScope, functions);
-                if (result && ( result->loopJump || it->canDoReturn()))
+                auto result = instruction->execute(&thisScope, functions);
+                if (result && instruction->canReturn())
                 {
                     return result;
                 }
@@ -36,10 +32,13 @@ namespace inter
             return nullptr;
         }
 
-        virtual bool canDoReturn()
+        virtual bool canReturn()
         {
             return true;
         }
+
+        ScopePrototype _scopePrototype;
+        std::vector<std::shared_ptr<Instruction>> _instructions;
     };
 }
 
