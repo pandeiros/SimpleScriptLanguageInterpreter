@@ -10,7 +10,7 @@
 
 namespace inter
 {
-    class Variable : public LogicalOperand, public ArithmeticOperand, public std::string
+    class Variable : public LogicalOperand, public ArithmeticOperand
     {
     public:
         Variable() = default;
@@ -27,6 +27,7 @@ namespace inter
 
         std::string _type;
         std::string _name;
+        bool _isDefined = false;
         bool _isConstant = false;
     };
 };

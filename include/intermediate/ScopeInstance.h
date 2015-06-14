@@ -33,8 +33,8 @@ namespace inter
         {
             for (auto & var : _variables)
             {
-                if (var.first._name == name)
-                    return var.second;
+                if (var.first == name)
+                    return var.second.second;
             }
 
             if (_upperScope != nullptr)
@@ -50,9 +50,9 @@ namespace inter
         {
             for (auto & var : _variables)
             {
-                if (var.first._name == name)
+                if (var.first == name)
                 {
-                    var.second = literal;
+                    var.second.second = literal;
                     return;
                 }
             }
@@ -67,7 +67,7 @@ namespace inter
         }
 
         ScopeInstance * _upperScope = nullptr;
-        std::map<Variable, std::shared_ptr<Literal>> _variables;
+        std::map<std::string, std::pair<Variable, std::shared_ptr<Literal> > > _variables;
         std::vector<std::string> _variableOrder;
     };
 }

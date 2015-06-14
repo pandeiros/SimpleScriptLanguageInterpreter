@@ -12,7 +12,7 @@ ReturnInstr         = "return" [ RValue ]
 
 --- Statements ------------------------------------------
 - In conditional statements, implicit conversions to bool
-  are not performed and allowed.
+  are not performed nor allowed.
 ---------------------------------------------------------
 Statement           = Instruction | IfBlock | WhileStatement | LineComment
 Instruction         = (VarDeclaration | ConstDeclaration | Assignment | FuncCall | ReturnInstr) ";"

@@ -144,14 +144,19 @@ std::shared_ptr<inter::Block> SemanticChecker::checkBlock(inter::ScopePrototype 
             case syntax::Node::Type::Assignment:
             {
                 auto node = static_cast<syntax::Assignment*>(instruction.get());
+
+                // Push assignment (checks assignment to constant).
                 block->_instructions.push_back(this->checkAssignment(block->_scopePrototype, *(node->_variable), *(node->_value)));
                 break;
             }
             case syntax::Node::Type::ReturnStatement:
             {
                 auto node = static_cast<syntax::ReturnStatement*>(instruction.get());
+
+                // Return with a value.
                 if (!node->_isEmpty)
                     block->_instructions.push_back(this->checkReturnStatement(block->_scopePrototype, *(node->_value)));
+                // Empty return.
                 else
                 {
                     auto & ret = std::make_shared<inter::ReturnInstr>();
@@ -187,7 +192,9 @@ std::shared_ptr<inter::Block> SemanticChecker::checkBlock(inter::ScopePrototype 
             }
             default:
             {
-                MessageHandler::error(std::string("Invalid instruction"));
+                MessageHandler::error(std::string("Invalid instruction."));
+                FAIL;
+                return nullptr;
             }
         }
     }
@@ -272,6 +279,8 @@ std::shared_ptr<inter::AssignmentInstr> SemanticChecker::checkAssignment(inter::
 
 std::shared_ptr<inter::Assignable> SemanticChecker::checkAssignable(inter::ScopePrototype & scopePrototype, syntax::RValue & rvalue)
 {
+    CHECK_FAIL(nullptr);
+
     if (rvalue.getType() == syntax::Node::Type::Call)
     {
         return this->checkFunctionCall(scopePrototype, *(static_cast<syntax::Call*>(&rvalue)));
@@ -284,63 +293,63 @@ std::shared_ptr<inter::Assignable> SemanticChecker::checkAssignable(inter::Scope
     {
         return this->checkLogicalExpression(scopePrototype, *(static_cast<syntax::LogicalExpression*>(&rvalue)));
     }
-    else if (rvalue.getType() == syntax::Node::Type::Literal)
+    else
     {
-        return this->checkLiteral(scopePrototype, *(static_cast<syntax::Literal*>(&rvalue)));
+        typedef syntax::Node::Type Type;
+        Type type = rvalue.getType();
+        if (type == Type::String || type == Type::Number || type == Type::Bool)
+            return this->checkLiteral(scopePrototype, *(static_cast<syntax::Literal*>(&rvalue)));
     }
 
     MessageHandler::error(std::string("Invalid RValue assignment."));
+    FAIL;
     return nullptr;
 }
 
 std::shared_ptr<inter::CallInstr> SemanticChecker::checkFunctionCall(inter::ScopePrototype & scopePrototype, syntax::Call & function)
 {
+    CHECK_FAIL(nullptr);
+
+    // Check if functions was defined by user or is defined within library.
     if (_definedFunctions.count(function._name) == 0 && !Library::hasFunction(function._name))
     {
-        MessageHandler::error(
-            std::string("Call to undefined function: ")
-            .append(function._name)
-            );
+        MessageHandler::error(std::string("Undefined function call: ").append(function._name));
+        FAIL;
         return nullptr;
     }
 
+    // Check, whether all function arguments were given.
     if (_definedFunctions.count(function._name) == 1)
     {
-        auto &functionDef = _definedFunctions.at(function._name);
+        auto & functionDef = _definedFunctions.at(function._name);
         if (functionDef->_scopePrototype._variables.size() != function._arguments.size())
         {
-            MessageHandler::error(
-                std::string("Invalid arguments count for function \"")
-                .append(function._name)
-                .append("\", expected ")
-                .append(std::to_string(functionDef->_scopePrototype._variables.size()))
-                .append(", got ")
-                .append(std::to_string(function._arguments.size()))
-                );
+            MessageHandler::error(std::string("Invalid number of arguments for user function '").append(function._name)
+                                  .append("'. Expected ").append(std::to_string(functionDef->_scopePrototype._variables.size()))
+                                  .append(" arguments, but received ").append(std::to_string(function._arguments.size())).append("."));
+            FAIL;
             return nullptr;
         }
     }
+    // Function not defined by user, so it has to be library function.
     else
     {
         unsigned int requiredArgs = Library::getFunctionParamsCount(function._name);
         if (requiredArgs != function._arguments.size())
         {
-            MessageHandler::error(
-                std::string("Invalid arguments count for function \"")
-                .append(function._name)
-                .append("\", expected ")
-                .append(std::to_string(requiredArgs))
-                .append(", got ")
-                .append(std::to_string(function._arguments.size()))
-                );
+            MessageHandler::error(std::string("Invalid number of arguments for library function '").append(function._name)
+                                  .append("'. Expected ").append(std::to_string(requiredArgs)).
+                                  append(" arguments, but received ").append(std::to_string(function._arguments.size())));
+            FAIL;
             return nullptr;
         }
     }
 
     std::shared_ptr<inter::CallInstr> obj = std::make_shared<inter::CallInstr>();
-    obj->name = function._name;
 
-    for (auto& argument : function._arguments)
+    // Set function call name and its arguments.
+    obj->name = function._name;
+    for (auto & argument : function._arguments)
     {
         obj->arguments.push_back(this->checkAssignable(scopePrototype, *argument));
     }
@@ -441,25 +450,25 @@ std::shared_ptr<inter::Literal> SemanticChecker::checkLiteral(inter::ScopeProtot
 {
     std::shared_ptr<inter::Literal> obj = std::make_shared<inter::Literal>();
 
-   /* if (!scopePrototype.hasVariable(literal._name))
-    {
-        MessageHandler::error(
-            std::string("Usage of undefined variable: ")
-            .append(literal._name)
-            );
+    /* if (!scopePrototype.hasVariable(literal._name))
+     {
+     MessageHandler::error(
+     std::string("Usage of undefined variable: ")
+     .append(literal._name)
+     );
 
-        return nullptr;
-    }
+     return nullptr;
+     }
 
-    if (!scopePrototype.isVariableDefined(literal._name))
-    {
-        MessageHandler::error(
-            std::string("Usage of empty variable: ")
-            .append(literal._name)
-            );
+     if (!scopePrototype.isVariableDefined(literal._name))
+     {
+     MessageHandler::error(
+     std::string("Usage of empty variable: ")
+     .append(literal._name)
+     );
 
-        return nullptr;
-    }*/
+     return nullptr;
+     }*/
 
     return obj;
 

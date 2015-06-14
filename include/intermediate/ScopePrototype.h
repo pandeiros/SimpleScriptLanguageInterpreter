@@ -22,9 +22,12 @@ namespace inter
                 return false;
             }
 
-            std::pair<Variable, bool> newPair(Variable(type, name, true), false);
-            _variables.insert(newPair);
-            _variableOrder.push_back(name);
+            std::pair<std::string, Variable> newPair(name, Variable(type, name, isConstant));
+            auto & result = _variables.insert(newPair);
+            if (result.second)
+                _variableOrder.push_back(name);
+            else
+                MessageHandler::error("Variable insertion into scope failed!");
             return true;
         }
 
@@ -32,8 +35,8 @@ namespace inter
         {
             for (auto & var : _variables)
             {
-                if (var.first._name == name)
-                    return &(var.second);
+                if (var.second._name == name)
+                    return &(var.second._isDefined);
             }
 
             if (_upperScope != nullptr)
@@ -55,8 +58,8 @@ namespace inter
 
             for (auto & var : _variables)
             {
-                if (var.first._name == name)
-                    var.second = true;
+                if (var.second._name == name)
+                    var.second._isDefined = true;
             }
         }
 
@@ -76,8 +79,8 @@ namespace inter
 
             for (auto & var : _variables)
             {
-                if (var.first._name == name)
-                    return var.second;
+                if (var.second._name == name)
+                    return var.second._isDefined;
             }
 
             return false;
@@ -87,8 +90,8 @@ namespace inter
         {
             for (auto & var : _variables)
             {
-                if (var.first._name == name)
-                    return var.first._isConstant;
+                if (var.second._name == name)
+                    return var.second._isConstant;
             }
 
             return false;
@@ -100,9 +103,12 @@ namespace inter
             instance._upperScope = upperScope;
             instance._variableOrder = _variableOrder;
 
-            for(auto & it : _variables)
+            for (auto & variable : _variables)
             {
-                std::pair<Variable, std::shared_ptr<Literal>> newPair(it.first, std::make_shared<inter::Literal>());
+                std::pair<std::string, std::pair<Variable, std::shared_ptr<Literal>>> newPair(
+                    variable.first,
+                    std::make_pair(variable.second, std::make_shared<inter::Literal>()));
+
                 instance._variables.insert(newPair);
             }
 
@@ -110,7 +116,7 @@ namespace inter
         }
 
         ScopePrototype * _upperScope = nullptr;
-        std::map<Variable, bool> _variables;
+        std::map<std::string, Variable> _variables;
         std::vector<std::string> _variableOrder;
 
     };

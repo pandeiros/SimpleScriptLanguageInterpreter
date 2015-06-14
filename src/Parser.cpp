@@ -128,6 +128,16 @@ void Parser::resetPreviousToken()
     this->_previousToken._col = 0;
 }
 
+void Parser::typeFail(const std::string & type)
+{
+    Token & token = this->_previousToken;
+    std::string value;
+    token._type == TokenType::StringLiteral ? value = "\"" + token._value + "\"" : value = token._value;
+    MessageHandler::error(std::string("Type-Value mismatch: cannot assign ").append(value)
+                          .append(" to type <").append(type).append(">."));
+    FAIL;
+}
+
 
 /* Decomposition procedures */
 
@@ -385,7 +395,7 @@ std::shared_ptr<syntax::VarDeclaration> Parser::parseVarDeclaration()
         if (typeToken._type == TokenType::String)
             node->setValue(this->parseString());
         else
-            node->setValue(this->parseAssignable());
+            node->setValue(this->parseAssignable(typeToken._value));
     }
 
     // Finish assign or empty declaration with a semicolon.
@@ -416,10 +426,10 @@ std::shared_ptr<syntax::ConstDeclaration> Parser::parseConstDeclaration()
         this->accept({TokenType::Assignment});
 
         // String or others.
-        if (typeToken._type == TokenType::String)
-            node->setValue(this->parseString());
-        else
-            node->setValue(this->parseAssignable());
+        //if (typeToken._type == TokenType::String)
+        //    node->setValue(this->parseString());
+        //else
+            node->setValue(this->parseAssignable(typeToken._value));
     }
     else
     {
@@ -432,7 +442,7 @@ std::shared_ptr<syntax::ConstDeclaration> Parser::parseConstDeclaration()
     return node;
 }
 
-std::shared_ptr<syntax::RValue> Parser::parseAssignable()
+std::shared_ptr<syntax::RValue> Parser::parseAssignable(std::string type)
 {
     CHECK_FAIL(nullptr);
 
@@ -454,7 +464,38 @@ std::shared_ptr<syntax::RValue> Parser::parseAssignable()
     }
     else if (this->peek({TokenType::StringLiteral}))
     {
-        node = this->parseString();
+        if (type == "bool" || type == "int" || type == "float")
+            this->typeFail(type);
+        else
+            this->parseString(type);
+      /*  if (type == "string" || type == "")
+            node = this->parseString(type);
+        else
+            this->typeFail(type);*/
+    }
+    else if (this->peek({TokenType::True, TokenType::False}))
+    {
+        //if (type == "bool" || type == "")
+            node = this->parseBool(type);
+        //else if (type == "int" || type == "float")
+        //    node = this->parseNumber(type);
+        //else if (type == "string")
+        //    node = this->parseString(type);
+        //else
+        //    this->typeFail(type);
+    }
+    else if (this->peek({TokenType::NumberLiteral}))
+    {
+        if (type == "bool")
+            this->typeFail(type);
+        else
+            node = this->parseNumber(type);
+        /*if (type == "int" || type == "float" || type == "")
+            node = this->parseNumber(type);
+        else if (type == "string")
+            node = this->parseString(type);
+        else
+            this->typeFail(type);*/
     }
     else
     {
@@ -524,6 +565,10 @@ std::shared_ptr<syntax::RValue> Parser::parseExpression(const Token & initToken)
 
     if (!node)
     {
+        // Give one more chance for another expression type.
+        if (!_processSucceeded)
+            _processSucceeded = true;
+
         node = this->parseLogicalExpression(initToken);
 
         if (!node)
@@ -531,6 +576,24 @@ std::shared_ptr<syntax::RValue> Parser::parseExpression(const Token & initToken)
             return nullptr;
             FAIL;
         }
+        else
+        {
+            // Retrieve pure RValue out of LogicalExpression
+            std::shared_ptr<syntax::LogicalExpression> expr = std::dynamic_pointer_cast<syntax::LogicalExpression>(node);
+            std::shared_ptr<syntax::RValue> rvalue = expr->retrieveRValue();
+
+            if (rvalue)
+                return rvalue;
+        }
+    }
+    else
+    {
+        // Retrieve pure RValue out of ArithmeticExpression
+        std::shared_ptr<syntax::ArithmeticExpression> expr = std::dynamic_pointer_cast<syntax::ArithmeticExpression>(node);
+        std::shared_ptr<syntax::RValue> rvalue = expr->retrieveRValue();
+
+        if (rvalue)
+            return rvalue;
     }
 
     return node;
@@ -878,7 +941,7 @@ NodePtr Parser::parseLiteral()
     return node;
 }
 
-std::shared_ptr<syntax::Literal> Parser::parseString()
+std::shared_ptr<syntax::Literal> Parser::parseString(std::string type)
 {
     CHECK_FAIL(nullptr);
 
@@ -891,20 +954,37 @@ std::shared_ptr<syntax::Literal> Parser::parseString()
     return node;
 }
 
-std::shared_ptr<syntax::Literal> Parser::parseBool()
+std::shared_ptr<syntax::Literal> Parser::parseBool(std::string type)
 {
     CHECK_FAIL(nullptr);
 
     auto token = this->accept({TokenType::True, TokenType::False});
 
-    // Parse token and get its value to the node.
-    std::shared_ptr<syntax::Bool> node = std::make_shared<syntax::Bool>();
-    node->_value = token._value == "true" ? true : false;
-
-    return node;
+    // No conversion.
+    if (type == "bool" || type == "")
+    {
+        std::shared_ptr<syntax::Bool> node = std::make_shared<syntax::Bool>();
+        node->_value = token._type == TokenType::True ? true : false;
+        return node;
+    }
+    // Implicit upward conversion.
+    else if (type == "string")
+    {
+        std::shared_ptr<syntax::String> node = std::make_shared<syntax::String>();
+        node->_value = token._type == TokenType::True ? "true" : "false";
+        return node;
+    }
+    else if (type == "int" || type == "float")
+    {
+        std::shared_ptr<syntax::Number> node = std::make_shared<syntax::Number>();
+        node->_value = token._type == TokenType::True ? 1 : 0;
+        return node;
+    }
+    else
+        return nullptr;
 }
 
-std::shared_ptr<syntax::Literal> Parser::parseNumber()
+std::shared_ptr<syntax::Literal> Parser::parseNumber(std::string type)
 {
     CHECK_FAIL(nullptr);
 
@@ -920,12 +1000,18 @@ std::shared_ptr<syntax::Literal> Parser::parseNumber()
         negative = true;
     }
 
+    Token token;
     // Get value and convert it from string.
-    auto token = this->accept({TokenType::NumberLiteral});
-    if (token._value != "")
+    if (this->peek({TokenType::NumberLiteral}))
     {
-        value = std::stod(token._value);
+        token = this->accept({TokenType::NumberLiteral});
+        if (token._value != "")
+        {
+            value = std::stod(token._value);
+        }
     }
+    else
+        return nullptr;
 
     // If negative, change the sign.
     if (negative)
@@ -933,9 +1019,29 @@ std::shared_ptr<syntax::Literal> Parser::parseNumber()
         value *= -1;
     }
 
-    // Assign the value.
-    node->_value = value;
-    return node;
+    // No conversion.
+    if (type == "int" || type == "float" || type == "")
+    {
+        if (std::floor(value) != value && type == "int")
+        {
+            this->_previousToken = token;
+            this->typeFail(type);
+            return nullptr;
+        }
+
+        std::shared_ptr<syntax::Number> node = std::make_shared<syntax::Number>();
+        node->_value = value;
+        return node;
+    }
+    // Implicit upward conversion.
+    else if (type == "string")
+    {
+        std::shared_ptr<syntax::String> node = std::make_shared<syntax::String>();
+        node->_value = token._value;
+        return node;
+    }
+    else
+        return nullptr;
 }
 
 NodePtr Parser::parseAssignmentOrFunctionCall()

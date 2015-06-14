@@ -52,6 +52,7 @@ private:
     // Some buffer managing methods.
     bool hasBufferedToken() const;
     void resetPreviousToken();
+    void typeFail(const std::string & type);
 
     /* Decomposition procedures */
 
@@ -65,7 +66,7 @@ private:
     std::shared_ptr<syntax::ReturnStatement> parseReturnStatement();
     std::shared_ptr<syntax::VarDeclaration> parseVarDeclaration();
     std::shared_ptr<syntax::ConstDeclaration> parseConstDeclaration();
-    std::shared_ptr<syntax::RValue> parseAssignable();
+    std::shared_ptr<syntax::RValue> parseAssignable(std::string type = "");
     std::shared_ptr<syntax::Call> parseFunctionCall(const std::string & identifier);
 
     // Expressions
@@ -89,9 +90,9 @@ private:
     // Variables and literals
     std::shared_ptr<syntax::Variable> parseVariable(const Token& firstToken = Token(TokenType::Undefined));
     NodePtr parseLiteral();
-    std::shared_ptr<syntax::Literal> parseString();
-    std::shared_ptr<syntax::Literal> parseBool();
-    std::shared_ptr<syntax::Literal> parseNumber();
+    std::shared_ptr<syntax::Literal> parseString(std::string type = "");
+    std::shared_ptr<syntax::Literal> parseBool(std::string type = "");
+    std::shared_ptr<syntax::Literal> parseNumber(std::string type = "");
     NodePtr parseAssignmentOrFunctionCall();
     NodePtr parseVariableOrFunctionCall();
 

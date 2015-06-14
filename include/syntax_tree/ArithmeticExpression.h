@@ -24,6 +24,31 @@ namespace syntax
             _operations.push_back(operation);
         }
 
+        std::shared_ptr<syntax::RValue> retrieveRValue()
+        {
+            if (_operations.size() == 0 &&
+                _operands.size() == 1)
+            {
+                std::shared_ptr<syntax::ArithmeticExpression> expr =
+                    std::dynamic_pointer_cast<syntax::ArithmeticExpression>(_operands.at(0));
+
+                if (expr)
+                {
+                    if (expr->_operations.size() == 0 &&
+                        expr->_operands.size() == 1)
+                    {
+                        return std::dynamic_pointer_cast<syntax::RValue>(expr->_operands.at(0));
+                    }
+                    else
+                        return nullptr;
+                }
+                else
+                    return nullptr;
+            }
+            else
+                return nullptr;
+        }
+
         std::vector<TokenType> _operations;
         std::vector<NodePtr> _operands;
     };
