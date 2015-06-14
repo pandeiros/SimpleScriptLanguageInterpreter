@@ -25,7 +25,7 @@ namespace syntax
 
         void setValue(const std::shared_ptr<RValue> & rvalue)
         {
-            this->_value = rvalue;
+            _value = rvalue;
         }
 
         std::string _type;

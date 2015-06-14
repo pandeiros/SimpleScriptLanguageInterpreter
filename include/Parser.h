@@ -9,9 +9,9 @@
                     std::to_string(token._col), \
                     _lexer.getLine(token._lineStart), \
                     getErrorIndicator(token._col, _lexer.getLine(token._lineStart))) )
-#define FAIL (_parsingSucceeded = false)
+#define FAIL (_processSucceeded = false)
 #define CHECK_FAIL(_RET_) \
-    if (!_parsingSucceeded) \
+    if (!_processSucceeded) \
         return _RET_
 
 class Lexer;
@@ -31,7 +31,7 @@ public:
     // Success flag getter.
     inline bool getParsingSucceeded()
     {
-        return _parsingSucceeded;
+        return _processSucceeded;
     }
 
 private:
@@ -102,7 +102,7 @@ private:
     Token _previousToken;
 
     // Success flag.
-    bool _parsingSucceeded = true;
+    bool _processSucceeded = true;
 };
 
 #endif // __PARSER_H__

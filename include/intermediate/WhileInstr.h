@@ -4,7 +4,7 @@
 #include <memory>
 #include <iostream>
 
-#include "Condition.h"
+#include "LogicalExpression.h"
 #include "Block.h"
 //#include "intermediate/Literal.h"
 
@@ -34,7 +34,7 @@ namespace inter
             return true;
         }
 
-        std::shared_ptr<Condition> _condition;
+        std::shared_ptr<LogicalExpression> _condition;
         std::shared_ptr<Block> _block;
     };
 }

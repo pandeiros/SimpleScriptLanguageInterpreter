@@ -6,16 +6,14 @@
 #include <iostream>
 #include <utility>
 
-#include "ConditionOperand.h"
-#include "ExpressionOperand.h"
-#include "Executable.h"
-//#include "intermediate/Function.h"
+#include "LogicalOperand.h"
+#include "ArithmeticOperand.h"
 
 #include "MessageHandler.h"
 
 namespace inter
 {
-    class Literal : public ConditionOperand, public ExpressionOperand
+    class Literal : public LogicalOperand, public ArithmeticOperand
     {
     public:
         virtual std::shared_ptr<Literal> execute(ScopeInstance * scope,

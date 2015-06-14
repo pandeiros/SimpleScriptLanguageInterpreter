@@ -15,14 +15,14 @@ namespace inter
     class ScopePrototype
     {
     public:
-        bool addVariable(const std::string & type, const std::string & name)
+        bool addVariable(const std::string & type, const std::string & name, bool isConstant = false)
         {
             if (this->hasVariable(name))
             {
                 return false;
             }
 
-            std::pair<Variable, bool> newPair(Variable(type, name), false);
+            std::pair<Variable, bool> newPair(Variable(type, name, true), false);
             _variables.insert(newPair);
             _variableOrder.push_back(name);
             return true;
@@ -78,6 +78,17 @@ namespace inter
             {
                 if (var.first._name == name)
                     return var.second;
+            }
+
+            return false;
+        }
+
+        bool isConstant(const std::string & name)
+        {
+            for (auto & var : _variables)
+            {
+                if (var.first._name == name)
+                    return var.first._isConstant;
             }
 
             return false;

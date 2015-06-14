@@ -6,20 +6,21 @@
 #include <iostream>
 
 #include "Executable.h"
-#include "ConditionOperand.h"
-#include "Literal.h"
+#include "LogicalOperand.h"
+#include "intermediate/Literal.h"
 #include "TokenType.h"
 
 #include "MessageHandler.h"
 
 namespace inter
 {
-    class Condition : public ConditionOperand
+    // TODO Change to LogicalExpression
+    class LogicalExpression : public LogicalOperand
     {
     public:
         bool negated = false;
         TokenType operation = TokenType::Undefined;
-        std::vector<std::shared_ptr<ConditionOperand>> operands;
+        std::vector<std::shared_ptr<LogicalOperand>> operands;
 
         virtual std::shared_ptr<Literal> execute(ScopeInstance * scope,
                                                  std::unordered_map<std::string, std::shared_ptr<Function>> & functions)

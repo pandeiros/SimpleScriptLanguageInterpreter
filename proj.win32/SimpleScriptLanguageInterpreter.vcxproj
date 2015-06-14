@@ -44,7 +44,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\include\; $(ProjectDir)..\include\tokens\; $(ProjectDir)..\include\syntax_tree\; $(ProjectDir)..\include\intermediate\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\include\; $(ProjectDir)..\include\tokens\; $(ProjectDir)..\include\syntax_tree\; </AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WIN32;_DEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -58,7 +58,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\include\; $(ProjectDir)..\include\tokens\; $(ProjectDir)..\include\syntax_tree\; $(ProjectDir)..\include\intermediate\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\include\; $(ProjectDir)..\include\tokens\; $(ProjectDir)..\include\syntax_tree\; </AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WIN32;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -74,11 +74,11 @@
     <ClInclude Include="..\include\intermediate\AssignmentInstr.h" />
     <ClInclude Include="..\include\intermediate\Block.h" />
     <ClInclude Include="..\include\intermediate\CallInstr.h" />
-    <ClInclude Include="..\include\intermediate\Condition.h" />
-    <ClInclude Include="..\include\intermediate\ConditionOperand.h" />
+    <ClInclude Include="..\include\intermediate\LogicalExpression.h" />
+    <ClInclude Include="..\include\intermediate\LogicalOperand.h" />
     <ClInclude Include="..\include\intermediate\Executable.h" />
-    <ClInclude Include="..\include\intermediate\Expression.h" />
-    <ClInclude Include="..\include\intermediate\ExpressionOperand.h" />
+    <ClInclude Include="..\include\intermediate\ArithmeticExpression.h" />
+    <ClInclude Include="..\include\intermediate\ArithmeticOperand.h" />
     <ClInclude Include="..\include\intermediate\Function.h" />
     <ClInclude Include="..\include\intermediate\IfInstr.h" />
     <ClInclude Include="..\include\intermediate\Instruction.h" />

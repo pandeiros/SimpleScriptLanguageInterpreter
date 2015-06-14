@@ -6,15 +6,15 @@
 #include <iostream>
 
 #include "Assignable.h"
-#include "ExpressionOperand.h"
+#include "ArithmeticOperand.h"
 #include "TokenType.h"
 
 namespace inter
 {
-    struct Expression: public Assignable, public ExpressionOperand
+    struct ArithmeticExpression : public ArithmeticOperand
     {
         std::vector<TokenType> operations;
-        std::vector<std::shared_ptr<ExpressionOperand>> operands;
+        std::vector<std::shared_ptr<ArithmeticOperand>> operands;
 
         virtual std::shared_ptr<Literal> execute(
             ScopeInstance* scope,

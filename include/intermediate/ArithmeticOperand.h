@@ -1,11 +1,11 @@
 #ifndef __INTER_EXPRESSION_OPERAND_H__
 #define __INTER_EXPRESSION_OPERAND_H__
 
-#include "Executable.h"
+#include "Assignable.h"
 
 namespace inter
 {
-    struct ExpressionOperand: virtual public Executable
+    struct ArithmeticOperand: virtual public Assignable
     {};
 }
 

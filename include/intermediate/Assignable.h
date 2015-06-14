@@ -5,8 +5,14 @@
 
 namespace inter
 {
-    class Assignable: virtual public Executable
-    {};
+    class Assignable: public Executable
+    {
+    public:
+        virtual bool isTruthy()
+        {
+            return false;
+        }
+    };
 }
 
 #endif  // __INTER_ASSIGNABLE_H__

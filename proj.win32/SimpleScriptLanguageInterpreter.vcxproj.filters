@@ -90,19 +90,7 @@
     <ClInclude Include="..\include\intermediate\CallInstr.h">
       <Filter>Header Files\Intermediate</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\intermediate\Condition.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\intermediate\ConditionOperand.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\intermediate\Executable.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\intermediate\Expression.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\intermediate\ExpressionOperand.h">
       <Filter>Header Files\Intermediate</Filter>
     </ClInclude>
     <ClInclude Include="..\include\intermediate\Function.h">
@@ -170,6 +158,18 @@
     </ClInclude>
     <ClInclude Include="..\include\syntax_tree\Syntax.h">
       <Filter>Header Files\SyntaxTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\LogicalOperand.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\ArithmeticOperand.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\ArithmeticExpression.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\LogicalExpression.h">
+      <Filter>Header Files\Intermediate</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

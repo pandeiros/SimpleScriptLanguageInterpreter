@@ -1,11 +1,11 @@
 #ifndef __INTER_CONDITION_OPERAND_H__
 #define __INTER_CONDITION_OPERAND_H__
 
-#include "Executable.h"
+#include "Assignable.h"
 
 namespace inter
 {
-    struct ConditionOperand: virtual public Executable
+    struct LogicalOperand: virtual public Assignable
     {
         virtual bool isTruthy()
         {

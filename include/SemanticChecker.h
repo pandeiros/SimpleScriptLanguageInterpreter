@@ -2,7 +2,7 @@
 #define __SEMANTIC_CHECKER_H__
 
 #include "Parser.h"
-#include "Intermediate.h"
+#include "intermediate/Intermediate.h"
 
 /*
  * Checks semantic of given program syntax tree.
@@ -16,7 +16,7 @@ public:
     // Success flag getter.
     inline bool getCheckSucceeded()
     {
-        return _checkSucceeded;
+        return _processSucceeded;
     }
 
 private:
@@ -33,19 +33,26 @@ private:
     std::shared_ptr<inter::Function> checkFunction(syntax::FunctionDefinition & functionDef);
     std::shared_ptr<inter::Block> checkBlock(inter::ScopePrototype & scopePrototype, syntax::StatementBlock & syntaxBlock);
 
-    // Variables and assignments.
+    // Basic instructions.
     void checkVarDeclaration(inter::ScopePrototype & scopePrototype, const std::string & type, const std::string & name);
+    void checkConstDeclaration(inter::ScopePrototype & scopePrototype, const std::string & type, const std::string & name);
     std::shared_ptr<inter::AssignmentInstr> checkAssignment(inter::ScopePrototype & scopePrototype, const std::string & variable, syntax::RValue & rvalue);
     std::shared_ptr<inter::AssignmentInstr> checkAssignment(inter::ScopePrototype & scopePrototype, syntax::Variable & variable, syntax::RValue & rvalue);
+    std::shared_ptr<inter::Assignable> checkAssignable(inter::ScopePrototype & scopePrototype, syntax::RValue & rvalue);
+    std::shared_ptr<inter::CallInstr> checkFunctionCall(inter::ScopePrototype & scopePrototype, syntax::Call & function);
+    std::shared_ptr<inter::ReturnInstr> checkReturnStatement(inter::ScopePrototype & scopePrototype, syntax::RValue & rvalue);
 
-    std::shared_ptr<inter::Assignable> checkAssignable(inter::ScopePrototype & scopePrototype, syntax::RValue& assignable);
-    std::shared_ptr<inter::CallInstr> checkFunctionCall(inter::ScopePrototype & scopePrototype, syntax::Call& call);
-    std::shared_ptr<inter::Expression> checkExpression(inter::ScopePrototype & scopePrototype, syntax::ArithmeticExpression& call);
+    // Expressions.
+    std::shared_ptr<inter::ArithmeticExpression> checkArithmeticExpression(inter::ScopePrototype & scopePrototype, syntax::ArithmeticExpression & expression);
+    std::shared_ptr<inter::LogicalExpression> checkLogicalExpression(inter::ScopePrototype & scopePrototype, syntax::LogicalExpression & expression);
+
+
     std::shared_ptr<inter::Variable> checkVariable(inter::ScopePrototype & scopePrototype, syntax::Variable& variable);
-    std::shared_ptr<inter::ReturnInstr> checkReturnStatement(inter::ScopePrototype & scopePrototype, syntax::RValue& assignable);
+    std::shared_ptr<inter::Literal> checkLiteral(inter::ScopePrototype & scopePrototype, syntax::Literal & literal);
+
     std::shared_ptr<inter::IfInstr> checkIfStatement(inter::ScopePrototype & scopePrototype, syntax::IfStatement& stmt);
     std::shared_ptr<inter::WhileInstr> checkWhileStatement(inter::ScopePrototype & scopePrototype, syntax::WhileStatement& stmt);
-    std::shared_ptr<inter::Condition> checkCondition(inter::ScopePrototype & scopePrototype, syntax::LogicalExpression& condition);
+
     //std::shared_ptr<inter::Literal> checkMatrixLiteral(syntax::Matrix& matrixLiteral);
 
 
@@ -54,7 +61,7 @@ private:
     std::unordered_map<std::string, std::shared_ptr<inter::Function>> _definedFunctions;
 
     // Success flag.
-    bool _checkSucceeded = true;
+    bool _processSucceeded = true;
 };
 
 #endif // __SEMANTIC_CHECKER_H__

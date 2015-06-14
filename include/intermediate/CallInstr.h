@@ -13,7 +13,7 @@
 
 namespace inter
 {
-    struct CallInstr: public Instruction, public Assignable
+    struct CallInstr: public Instruction, public LogicalOperand, public ArithmeticOperand
     {
         std::string name;
         std::vector<std::shared_ptr<inter::Assignable>> arguments;

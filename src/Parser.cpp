@@ -421,6 +421,10 @@ std::shared_ptr<syntax::ConstDeclaration> Parser::parseConstDeclaration()
         else
             node->setValue(this->parseAssignable());
     }
+    else
+    {
+        MessageHandler::warning("Constant declaration without assignment.");
+    }
 
     // Finish assign or empty declaration with a semicolon.
     this->accept({TokenType::Semicolon});
@@ -548,8 +552,7 @@ std::shared_ptr<syntax::RValue> Parser::parseLogicalExpression(const Token & ini
     while (this->peek({TokenType::Or}))
     {
         auto operatorToken = this->accept({TokenType::Or});
-        if (!_parsingSucceeded)
-            return nullptr;
+        CHECK_FAIL(nullptr);
 
         node->setOperator(TokenType::Or);
 
@@ -581,8 +584,8 @@ std::shared_ptr<syntax::RValue> Parser::parseArithmeticExpression(const Token & 
     while (this->peek({TokenType::Plus, TokenType::Minus}))
     {
         auto operatorToken = this->accept({TokenType::Plus, TokenType::Minus});
-        if (!_parsingSucceeded)
-            return nullptr;
+        CHECK_FAIL(nullptr);
+
         node->addOperator(operatorToken._type);
 
         // Check again if this is correct arithmetic expression.
@@ -615,8 +618,8 @@ std::shared_ptr<syntax::ArithmeticExpression> Parser::parseStrongArithmeticExpre
     while (this->peek({TokenType::Multiply, TokenType::Divide, TokenType::Modulo}))
     {
         auto operatorToken = this->accept({TokenType::Multiply, TokenType::Divide, TokenType::Modulo});
-        if (!_parsingSucceeded)
-            return nullptr;
+        CHECK_FAIL(nullptr);
+
         node->addOperator(operatorToken._type);
 
         // Check again if this is correct arithmetic operand.

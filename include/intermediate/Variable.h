@@ -5,20 +5,18 @@
 #include <memory>
 
 #include "intermediate/Function.h"
-#include "ConditionOperand.h"
-#include "ExpressionOperand.h"
+#include "LogicalOperand.h"
+#include "ArithmeticOperand.h"
 
 namespace inter
 {
-    class Variable : public ConditionOperand, public ExpressionOperand, public std::string
+    class Variable : public LogicalOperand, public ArithmeticOperand, public std::string
     {
     public:
         Variable() = default;
-        Variable(std::string type, std::string name) : _name(name), _type(type)
+        Variable(std::string type, std::string name, bool isConstant = false) 
+            : _name(name), _type(type), _isConstant(isConstant)
         {}
-
-        std::string _type;
-        std::string _name;
 
         virtual std::shared_ptr<Literal> execute(ScopeInstance * scope,
                                                  std::unordered_map<std::string, std::shared_ptr<Function>> & functions)
@@ -26,6 +24,10 @@ namespace inter
             // TODO Change
             return nullptr;
         }
+
+        std::string _type;
+        std::string _name;
+        bool _isConstant = false;
     };
 };
 

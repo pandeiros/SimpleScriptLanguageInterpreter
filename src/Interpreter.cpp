@@ -46,7 +46,6 @@ bool Interpreter::run()
 
     if (program.get()->_functions.size() > 0 && parser.getParsingSucceeded())
     {
-        return true;
         MessageHandler::debug(" ::: Semantic analysis started :::");
 
         // TODO Pass 'program' function arguments.
@@ -54,6 +53,7 @@ bool Interpreter::run()
 
         if (checkResult.size() > 0 && semCheck.getCheckSucceeded())
         {
+            return true;
             MessageHandler::debug("Executing started.");
             executor.execute(checkResult);
         }

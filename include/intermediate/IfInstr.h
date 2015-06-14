@@ -5,7 +5,7 @@
 #include <iostream>
 
 //#include "Instruction.h"
-#include "Condition.h"
+#include "LogicalExpression.h"
 #include "Block.h"
 //#include "Executable.h"
 
@@ -14,7 +14,7 @@ namespace inter
     class IfInstr : public Instruction
     {
     public:
-        std::shared_ptr<Condition> condition;
+        std::shared_ptr<LogicalExpression> condition;
         std::shared_ptr<Block> trueBlock;
         std::shared_ptr<Block> falseBlock;
 

@@ -20,7 +20,7 @@ namespace syntax
 
         void setType(const std::string & type)
         {
-           _type = type;
+            _type = type;
         }
 
         void setValue(const std::shared_ptr<RValue> & rvalue)
@@ -30,7 +30,7 @@ namespace syntax
 
         std::string _type;
         std::string _name;
-        std::shared_ptr<RValue> _value;
+        std::shared_ptr<RValue> _value = nullptr;
     };
 }
 
