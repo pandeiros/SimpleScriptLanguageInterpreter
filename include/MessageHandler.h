@@ -23,14 +23,15 @@ public:
 private:
     enum Type
     {
-        INFO,
-        WARNING,
-        ERROR,
-        DEBUG,
-        TOKEN
+        _INFO_,
+        _WARNING_,
+        _ERROR_,
+        _DEBUG_,
+        _TOKEN_
     };
 
     static void printLabel(const Type type);
+    static int getColorAndLabel(const Type type, std::string & label);
 };
 
 #endif // __MESSAGE_HANDLER__

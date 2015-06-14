@@ -14,7 +14,7 @@ class Interpreter
 public:
     Interpreter(int argc, char * argv[]);
 
-    void run();
+    bool run();
 
 private:
     // Parameters control members.

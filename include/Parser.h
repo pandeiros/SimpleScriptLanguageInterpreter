@@ -93,6 +93,7 @@ private:
     std::shared_ptr<syntax::Literal> parseBool();
     std::shared_ptr<syntax::Literal> parseNumber();
     NodePtr parseAssignmentOrFunctionCall();
+    NodePtr parseVariableOrFunctionCall();
 
     // Lexer for receiving tokens.
     Lexer & _lexer;

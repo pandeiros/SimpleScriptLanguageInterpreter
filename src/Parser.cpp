@@ -271,6 +271,9 @@ std::shared_ptr<syntax::StatementBlock> Parser::parseStatementBlock()
             case TokenType::Name:
                 node->addInstruction(parseAssignmentOrFunctionCall());
                 break;
+            case TokenType::Comment:
+                this->accept({TokenType::Comment});
+                break;
             default:
                 break;
         }
@@ -289,39 +292,46 @@ std::shared_ptr<syntax::StatementBlock> Parser::parseSingleInstruction()
     std::shared_ptr<syntax::StatementBlock> node = std::make_shared<syntax::StatementBlock>();
     Token token;
 
-    // Check for instruction, declaratios, assignment or line comment.
-    if (!this->peek({TokenType::If, TokenType::While, TokenType::Return,
-        TokenType::Var, TokenType::Const, TokenType::Name, TokenType::Comment}))
+    do
     {
-        FAIL;
-        return nullptr;
-    }
+        // Check for instruction, declaratios, assignment or line comment.
+        if (!this->peek({TokenType::If, TokenType::While, TokenType::Return,
+            TokenType::Var, TokenType::Const, TokenType::Name, TokenType::Comment}))
+        {
+            FAIL;
+            return nullptr;
+        }
 
-    token = this->getPeeked();
+        token = this->getPeeked();
 
-    switch (token._type)
-    {
-        case TokenType::If:
-            node->addInstruction(parseIfStatement());
-            break;
-        case TokenType::While:
-            node->addInstruction(parseWhileStatement());
-            break;
-        case TokenType::Return:
-            node->addInstruction(parseReturnStatement());
-            break;
-        case TokenType::Var:
-            node->addInstruction(parseVarDeclaration());
-            break;
-        case TokenType::Const:
-            node->addInstruction(parseConstDeclaration());
-            break;
-        case TokenType::Name:
-            node->addInstruction(parseAssignmentOrFunctionCall());
-            break;
-        default:
-            break;
+        switch (token._type)
+        {
+            case TokenType::If:
+                node->addInstruction(parseIfStatement());
+                break;
+            case TokenType::While:
+                node->addInstruction(parseWhileStatement());
+                break;
+            case TokenType::Return:
+                node->addInstruction(parseReturnStatement());
+                break;
+            case TokenType::Var:
+                node->addInstruction(parseVarDeclaration());
+                break;
+            case TokenType::Const:
+                node->addInstruction(parseConstDeclaration());
+                break;
+            case TokenType::Name:
+                node->addInstruction(parseAssignmentOrFunctionCall());
+                break;
+            case TokenType::Comment:
+                this->accept({TokenType::Comment});
+                break;
+            default:
+                break;
+        }
     }
+    while (token._type == TokenType::Comment);
 
     return node;
 }
@@ -437,6 +447,10 @@ std::shared_ptr<syntax::RValue> Parser::parseAssignable()
             // Otherwise, has to be expression.
             node = this->parseExpression(token);
         }
+    }
+    else if (this->peek({TokenType::StringLiteral}))
+    {
+        node = this->parseString();
     }
     else
     {
@@ -738,16 +752,10 @@ NodePtr Parser::parseLogicalOperand(const Token & initToken)
         node->addOperand(this->parseLogicalExpression());
         this->accept({TokenType::ParenthClose});
     }
-    //// Or any assignable.
-    //else
-    //{
-    //    node->addOperand(this->parseAssignable());
-    //}
-
     // Or a variable
     else if (this->peek({TokenType::Name}))
     {
-        node->addOperand(this->parseVariable());
+        node->addOperand(this->parseVariableOrFunctionCall());
     }
     // Or a literal.
     else
@@ -958,6 +966,24 @@ NodePtr Parser::parseAssignmentOrFunctionCall()
 
     // End instruction.
     this->accept({TokenType::Semicolon});
+
+    return node;
+}
+
+NodePtr Parser::parseVariableOrFunctionCall()
+{
+    CHECK_FAIL(nullptr);
+
+    NodePtr node;
+
+    // Get identifier and try to match with function call.
+    auto token = this->accept({TokenType::Name});
+    node = this->parseFunctionCall(token._value);
+    if (!node)
+    {
+        // Its not a function call, so its a variable.
+        node = this->parseVariable(token);
+    }
 
     return node;
 }

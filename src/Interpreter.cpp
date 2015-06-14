@@ -30,7 +30,7 @@ Interpreter::Interpreter(int argc, char* argv[]) : _argCount(argc)
     }
 }
 
-void Interpreter::run()
+bool Interpreter::run()
 {
 #ifdef _DEBUG
     this->printParams();
@@ -41,13 +41,13 @@ void Interpreter::run()
     SemanticChecker semCheck;
     Executor executor;
 
-    MessageHandler::debug("Parsing started.");
+    MessageHandler::debug(" ::: Parsing started :::");
     auto program = parser.parse();
 
     if (program.get()->_functions.size() > 0 && parser.getParsingSucceeded())
     {
-        return;
-        MessageHandler::debug("Semantic analysis started.");
+        return true;
+        MessageHandler::debug(" ::: Semantic analysis started :::");
 
         // TODO Pass 'program' function arguments.
         auto checkResult = semCheck.checkAll(program);
@@ -58,10 +58,16 @@ void Interpreter::run()
             executor.execute(checkResult);
         }
         else
+        {
             MessageHandler::error(" ::: SEMANTIC ANALYSIS FAILED! :::");
+            return false;
+        }
     }
     else
     {
         MessageHandler::error(" ::: PARSING FAILED! :::");
+        return false;
     }
+
+    return true;
 }

@@ -50,7 +50,6 @@ enum class TokenType
     Multiply,
     Divide,
     Modulo,
-    Infinity,
     Dot,
 
     Comment,
@@ -83,7 +82,6 @@ const std::unordered_map<TokenType, std::string> tokenTypeNames =
     {TokenType::True, "True"},
     {TokenType::False, "False"},
     {TokenType::StringLiteral, "StringLiteral"},
-    // {TokenType::Type, "Type"},
 
     {TokenType::SquareBracketOpen, "SquareBracketOpen"},
     {TokenType::SquareBracketClose, "SquareBracketClose"},
@@ -104,7 +102,6 @@ const std::unordered_map<TokenType, std::string> tokenTypeNames =
     {TokenType::Multiply, "Multiply"},
     {TokenType::Divide, "Divide"},
     {TokenType::Modulo, "Modulo"},
-    {TokenType::Infinity, "Infinity"},
     {TokenType::Dot, "Dot"},
     {TokenType::NumberLiteral, "NumberLiteral"},
 
@@ -132,9 +129,6 @@ static const std::unordered_map<std::string, TokenType> & keywords =
     {"if", TokenType::If},
     {"while", TokenType::While},
     {"else", TokenType::Else},
-    {"or", TokenType::Or},
-    {"and", TokenType::And},
-    {"infinity", TokenType::Infinity}
 };
 
 static const std::unordered_map<char, TokenType> & simpleSigns =

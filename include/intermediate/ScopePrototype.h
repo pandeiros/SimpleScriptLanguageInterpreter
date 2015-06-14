@@ -77,8 +77,10 @@ namespace inter
             for (auto & var : _variables)
             {
                 if (var.first._name == name)
-                    var.second = true;
+                    return var.second;
             }
+
+            return false;
         }
 
         ScopeInstance instantiate(ScopeInstance * upperScope)

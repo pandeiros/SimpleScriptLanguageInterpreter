@@ -411,6 +411,8 @@ std::shared_ptr<inter::Variable> SemanticChecker::checkVariable(inter::ScopeProt
         return nullptr;
     }
 
+    return obj;
+
     /* if (variable.indexArg1 && !scopePrototype.isVariableDefined(variable._variableName))
      {
      MessageHandler::error(
