@@ -78,53 +78,11 @@
     <ClInclude Include="..\include\SemanticChecker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\intermediate\Assignable.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\intermediate\AssignmentInstr.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\intermediate\Block.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\intermediate\CallInstr.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\intermediate\Executable.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\intermediate\Function.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\intermediate\Instruction.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\intermediate\Literal.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\intermediate\ReturnInstr.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\intermediate\Variable.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\Library.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\include\Executor.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\intermediate\ScopePrototype.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\intermediate\ScopeInstance.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\intermediate\IfInstr.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\intermediate\WhileInstr.h">
-      <Filter>Header Files\Intermediate</Filter>
     </ClInclude>
     <ClInclude Include="..\include\syntax_tree\FunctionDefinition.h">
       <Filter>Header Files\SyntaxTree</Filter>
@@ -153,22 +111,64 @@
     <ClInclude Include="..\include\syntax_tree\RValue.h">
       <Filter>Header Files\SyntaxTree</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\intermediate\Intermediate.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\syntax_tree\Syntax.h">
       <Filter>Header Files\SyntaxTree</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\intermediate\LogicalOperand.h">
-      <Filter>Header Files\Intermediate</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\intermediate\ArithmeticOperand.h">
+    <ClInclude Include="..\include\intermediate\WhileInstr.h">
       <Filter>Header Files\Intermediate</Filter>
     </ClInclude>
     <ClInclude Include="..\include\intermediate\ArithmeticExpression.h">
       <Filter>Header Files\Intermediate</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\intermediate\ArithmeticOperand.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\Assignable.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\AssignmentInstr.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\Block.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\CallInstr.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\Executable.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\Function.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\IfInstr.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\Instruction.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\Intermediate.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\Literal.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
     <ClInclude Include="..\include\intermediate\LogicalExpression.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\LogicalOperand.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\ReturnInstr.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\ScopeInstance.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\ScopePrototype.h">
+      <Filter>Header Files\Intermediate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\intermediate\Variable.h">
       <Filter>Header Files\Intermediate</Filter>
     </ClInclude>
   </ItemGroup>

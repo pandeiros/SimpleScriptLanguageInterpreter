@@ -99,7 +99,7 @@ namespace inter
                 return 0;
         }
 
-        void doOperation(const Literal & other, Operation type)
+        void doOperation(Literal & other, Operation type)
         {
             if (this->_type == "string" || other._type == "string")
             {
@@ -167,7 +167,7 @@ namespace inter
                             MessageHandler::error("Division by zero!");
                         else
                             //_boolValue = _boolValue;  DO NOTHING
-                        break;
+                            break;
                     case MOD:
                         if (!_boolValue)
                             MessageHandler::error("Modulo by zero!");
@@ -183,24 +183,24 @@ namespace inter
                 switch (type)
                 {
                     case ADD:
-                        _type = "int";
-                        _intValue = val1 + val2;
+                        _type = other._type = "int";
+                        _intValue = static_cast<int>(val1)+static_cast<int>(val2);
                         break;
                     case SUB:
-                        _type = "int";
-                        _intValue = val1 - val2;
+                        _type = other._type = "int";
+                        _intValue = static_cast<int>(val1)-static_cast<int>(val2);
                         break;
                     case MUL:
-                        _type = "int";
-                        _intValue = val1 * val2;
+                        _type = other._type = "int";
+                        _intValue = static_cast<int>(val1) * static_cast<int>(val2);
                         break;
                     case DIV:
                         if (!val2)
                             MessageHandler::error("Division by zero!");
                         else
                         {
-                            _type = "int";
-                            _intValue = val1 / val2;
+                            _type = other._type = "int";
+                            _intValue = static_cast<int>(val1) / static_cast<int>(val2);
                         }
                         break;
                     case MOD:
@@ -208,7 +208,7 @@ namespace inter
                             MessageHandler::error("Modulo by zero!");
                         else
                         {
-                            _type = "int";
+                            _type = other._type = "int";
                             _intValue = static_cast<int>(val1) % static_cast<int>(val2);
                         }
                         break;
@@ -221,15 +221,15 @@ namespace inter
                 switch (type)
                 {
                     case ADD:
-                        _type = "float";
+                        _type = other._type = "float";
                         _floatValue = val1 + val2;
                         break;
                     case SUB:
-                        _type = "float";
+                        _type = other._type = "float";
                         _floatValue = val1 - val2;
                         break;
                     case MUL:
-                        _type = "float";
+                        _type = other._type = "float";
                         _floatValue = val1 * val2;
                         break;
                     case DIV:
@@ -237,7 +237,7 @@ namespace inter
                             MessageHandler::error("Division by zero!");
                         else
                         {
-                            _type = "float";
+                            _type = other._type = "float";
                             _floatValue = val1 / val2;
                         }
                         break;
@@ -253,31 +253,31 @@ namespace inter
             }
         }
 
-        Literal & operator+=(const Literal & other)
+        Literal & operator+=(Literal & other)
         {
             this->doOperation(other, ADD);
             return *this;
         }
 
-        Literal & operator-=(const Literal& other)
+        Literal & operator-=(Literal& other)
         {
             this->doOperation(other, SUB);
             return *this;
         }
 
-        Literal & operator*=(const Literal& other)
+        Literal & operator*=(Literal& other)
         {
             this->doOperation(other, MUL);
             return *this;
         }
 
-        Literal & operator/=(const Literal& other)
+        Literal & operator/=(Literal& other)
         {
             this->doOperation(other, DIV);
             return *this;
         }
 
-        Literal & operator%=(const Literal& other)
+        Literal & operator%=(Literal& other)
         {
             this->doOperation(other, MOD);
             return *this;

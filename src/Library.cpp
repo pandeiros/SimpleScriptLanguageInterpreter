@@ -15,6 +15,7 @@ const std::unordered_map<std::string, std::pair<unsigned int, Library::LibFuncti
     {
         static const std::unordered_map<std::string, std::pair<unsigned int, Library::LibFunction>> list = {
             {"print", {1, Library::LibFunction(&Library::functionPrint)}},
+            {"println", {1, Library::LibFunction(&Library::functionPrintln)}},
             {"nl", {0, Library::LibFunction(&Library::functionNewLine)}}
         };
 
@@ -62,6 +63,13 @@ std::shared_ptr<inter::Literal> Library::functionPrint(Arguments & arguments)
         else
             std::cout << "Unknown";
     }
+
+    return arguments.at(0);
+}
+
+std::shared_ptr<inter::Literal> Library::functionPrintln(Arguments & arguments)
+{
+    Library::functionPrint(arguments);
 
     std::cout << "\n";
 

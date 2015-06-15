@@ -12,8 +12,6 @@ enum class TokenType
     ParenthClose,
     BracketOpen,
     BracketClose,
-    SquareBracketOpen,
-    SquareBracketClose,
     Semicolon,
     Return,
 
@@ -81,8 +79,6 @@ const std::unordered_map<TokenType, std::string> tokenTypeNames =
     {TokenType::False, "False"},
     {TokenType::StringLiteral, "StringLiteral"},
 
-    {TokenType::SquareBracketOpen, "SquareBracketOpen"},
-    {TokenType::SquareBracketClose, "SquareBracketClose"},
     {TokenType::If, "If"},
     {TokenType::While, "While"},
     {TokenType::Else, "Else"},
@@ -137,8 +133,6 @@ static const std::unordered_map<char, TokenType> & simpleSigns =
     {'}', TokenType::BracketClose},
     {';', TokenType::Semicolon},
 
-    {'[', TokenType::SquareBracketOpen},
-    {']', TokenType::SquareBracketClose},
     {',', TokenType::Comma},
     {'+', TokenType::Plus},
     {'-', TokenType::Minus},

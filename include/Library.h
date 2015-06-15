@@ -33,6 +33,7 @@ private:
     // Defined standard library functions.
     static std::shared_ptr<inter::Literal> functionPrint(Arguments & arguments);
     static std::shared_ptr<inter::Literal> functionNewLine(Arguments & arguments);
+    static std::shared_ptr<inter::Literal> functionPrintln(Arguments & arguments);
 
     // Function container with argument count and functor.
     static std::unordered_map<std::string, std::pair<unsigned int, Library::LibFunction>> functions;

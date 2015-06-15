@@ -1,11 +1,11 @@
 --- Program ---
-Program             = "program" Name FuncArgs FuncBody { Function }
+Program             = { LineComment } "program" Name FuncArgs FuncBody { Function }
 
 --- Functions -----------------------------------------------
 - Return instruction at then end of the function is required
   (due to clarity and consistency of different functions).
 -------------------------------------------------------------
-Function           = "function" Name FuncArgs FuncBody
+Function            = { LineComment } "function" Name FuncArgs FuncBody { LineComment }
 FuncArgs            = "(" ( [Type Name] | (Type Name { "," Type Name }) ) ")"
 FuncBody            = "{" { Statement } ReturnInstr ";" "}"
 ReturnInstr         = "return" [ RValue ]
@@ -32,7 +32,7 @@ LineComment         = "//" String "\n"
 VarDeclaration      = "var" ( (Type Name) | TypeAssignment )
 ConstDeclaration    = "const" TypeAssignment
 FuncCall            = Name "(" ([ RValue ] | RValue { "," RValue }) ")"
-Assignment          = Name AssignmentOp [ "<" Type ">" ] RValue
+Assignment          = Name AssignmentOp [ "<" Type ">" ] RValueAssign
 TypeAssignment      = IntAssign | FloatAssign | StringAssignment | BoolAssign
 IntAssign           = IntType Name AssignmentOp [ "<" IntType | FloatType | BoolType ">" ] RValue
 FloatAssign         = FloatType Name AssignmentOp [ "<" IntType | FloatType ">" ] RValue
@@ -74,6 +74,7 @@ BoolType            = "bool"
 Body                = "{" { Statement } "}"
 SingleInstr         = {LineComment} Statement {LineComment}
 RValue              = Value | Name | ArithmeticExpr | LogicalExpr
+RValueAssign        = Value | Name | “(“ ArithmeticExpr “)” | “(“ LogicalExpr “)”
 Name                = (Letter | "_") {Letter | Digit | "_" }
 Value               = String | Number | BoolValue
 String              = """ { AsciiChar } """
