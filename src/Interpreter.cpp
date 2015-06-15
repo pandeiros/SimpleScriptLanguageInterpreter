@@ -53,7 +53,6 @@ bool Interpreter::run()
 
         if (checkResult.size() > 0 && semCheck.getCheckSucceeded())
         {
-            //return true;
             MessageHandler::debug(" ::: Execution started :::");
             executor.execute(checkResult);
         }

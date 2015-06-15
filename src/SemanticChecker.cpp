@@ -380,6 +380,8 @@ std::shared_ptr<inter::CallInstr> SemanticChecker::checkFunctionCall(inter::Scop
 
 std::shared_ptr<inter::ReturnInstr> SemanticChecker::checkReturnStatement(inter::ScopePrototype & scopePrototype, syntax::RValue & rvalue)
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<inter::ReturnInstr> obj = std::make_shared<inter::ReturnInstr>();
 
     obj->_value = this->checkAssignable(scopePrototype, rvalue);
@@ -391,6 +393,8 @@ std::shared_ptr<inter::ReturnInstr> SemanticChecker::checkReturnStatement(inter:
 
 std::shared_ptr<inter::ArithmeticExpression> SemanticChecker::checkArithmeticExpression(inter::ScopePrototype & scopePrototype, syntax::ArithmeticExpression & expression)
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<inter::ArithmeticExpression> obj = std::make_shared<inter::ArithmeticExpression>();
 
     obj->operations = expression._operations;
@@ -426,6 +430,8 @@ std::shared_ptr<inter::ArithmeticExpression> SemanticChecker::checkArithmeticExp
 
 std::shared_ptr<inter::LogicalExpression> SemanticChecker::checkLogicalExpression(inter::ScopePrototype & scopePrototype, syntax::LogicalExpression & condition)
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<inter::LogicalExpression> obj = std::make_shared<inter::LogicalExpression>();
 
     obj->operation = condition._operation;
@@ -473,6 +479,8 @@ std::shared_ptr<inter::LogicalExpression> SemanticChecker::checkLogicalExpressio
 
 std::shared_ptr<inter::Variable> SemanticChecker::checkVariable(inter::ScopePrototype & scopePrototype, syntax::Variable & variable)
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<inter::Variable> obj = std::make_shared<inter::Variable>();
     obj->_name = variable._name;
 
@@ -496,6 +504,8 @@ std::shared_ptr<inter::Variable> SemanticChecker::checkVariable(inter::ScopeProt
 std::shared_ptr<inter::Literal> SemanticChecker::checkLiteral(inter::ScopePrototype & scopePrototype,
                                                               syntax::Literal & lit, const std::string & type)
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<inter::Literal> obj = std::make_shared<inter::Literal>();
 
     typedef syntax::Node::Type Type;
@@ -631,6 +641,8 @@ std::shared_ptr<inter::Literal> SemanticChecker::checkLiteral(inter::ScopeProtot
 
 std::shared_ptr<inter::IfInstr> SemanticChecker::checkIfStatement(inter::ScopePrototype & scopePrototype, syntax::IfStatement & statement)
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<inter::IfInstr> obj = std::make_shared<inter::IfInstr>();
 
     obj->condition = checkLogicalExpression(scopePrototype, *(statement._condition));
@@ -646,6 +658,8 @@ std::shared_ptr<inter::IfInstr> SemanticChecker::checkIfStatement(inter::ScopePr
 
 std::shared_ptr<inter::WhileInstr> SemanticChecker::checkWhileStatement(inter::ScopePrototype & scopePrototype, syntax::WhileStatement & statement)
 {
+    CHECK_FAIL(nullptr);
+
     std::shared_ptr<inter::WhileInstr> obj = std::make_shared<inter::WhileInstr>();
 
     obj->_condition = checkLogicalExpression(scopePrototype, *(statement._condition));

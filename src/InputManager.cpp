@@ -36,7 +36,6 @@ const char InputManager::nextCharacter(bool isComment)
     }
 }
 
-// TODO Use buffer instead.
 void InputManager::rewind()
 {
     _handler.unget().unget();

@@ -44,7 +44,7 @@ const Token Lexer::nextToken()
         }
         while (isalnum(character) || character == '_');
 
-        _inputManager.rewind();   // TODO Change
+        _inputManager.rewind();
 
         if (keywords.count(buffer) == 1)
         {

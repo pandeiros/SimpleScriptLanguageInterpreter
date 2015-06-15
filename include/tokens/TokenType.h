@@ -26,7 +26,6 @@ enum class TokenType
     Bool,
     Name,
     Type,
-    Quotation,
     True,
     False,
     StringLiteral,
@@ -78,7 +77,6 @@ const std::unordered_map<TokenType, std::string> tokenTypeNames =
     {TokenType::String, "String"},
     {TokenType::Name, "Name"},
     {TokenType::Comma, "Comma"},
-    {TokenType::Quotation, "Quotation"},    // TODO Check if used 
     {TokenType::True, "True"},
     {TokenType::False, "False"},
     {TokenType::StringLiteral, "StringLiteral"},
@@ -148,7 +146,6 @@ static const std::unordered_map<char, TokenType> & simpleSigns =
     {'/', TokenType::Divide},
     {'%', TokenType::Modulo},
     {'.', TokenType::Dot},
-    {'"', TokenType::Quotation} // TODO Check if used 
 };
 
 

@@ -812,7 +812,6 @@ NodePtr Parser::parseLogicalOperand(const Token & initToken)
         node->addOperand(this->parseLiteral());
     }
 
-    // TODO Understand this
     if (!node->isNegated())
     {
         return node->getLeftSide();

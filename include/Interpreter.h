@@ -14,6 +14,7 @@ class Interpreter
 public:
     Interpreter(int argc, char * argv[]);
 
+    // Main program control function.
     bool run();
 
 private:

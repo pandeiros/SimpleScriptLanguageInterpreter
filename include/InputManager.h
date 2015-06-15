@@ -14,7 +14,7 @@ public:
 
     // Input controllers.
     const char nextCharacter(bool isComment = false);
-    void rewind();              // TODO REMOVE,  USE BUFFER
+    void rewind();
 
     // Getters.
     const bool hasFinished() const;

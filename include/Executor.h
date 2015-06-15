@@ -14,4 +14,4 @@ public:
     void execute(const std::vector<std::shared_ptr<inter::Function>> & functions);
 };
 
-#endif
+#endif // __EXECUTOR_H__
