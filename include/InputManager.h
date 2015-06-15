@@ -29,7 +29,7 @@ public:
     inline void setSourceFile(const std::string sourceFile)
     {
         this->_sourceFile = sourceFile;
-        _handler = std::ifstream(sourceFile);
+        _handler.open (_sourceFile, std::ifstream::in);
     }
 
 private:

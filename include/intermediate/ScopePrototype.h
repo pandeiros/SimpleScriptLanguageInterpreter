@@ -21,8 +21,9 @@ namespace inter
                 return false;
             }
 
-            std::pair<std::string, Variable> newPair(name, Variable(type, name, isConstant));
-            auto & result = _variables.insert(newPair);
+            //std::pair<std::string, Variable> newPair(name, Variable(type, name, isConstant));
+            //Variable var(type, name, isConstant);
+            auto & result = _variables.emplace(name, Variable(type, name, isConstant));
             if (result.second)
                 _variableOrder.push_back(name);
             else
@@ -134,7 +135,7 @@ namespace inter
         }
 
         ScopePrototype * _upperScope = nullptr;
-        std::map<std::string, Variable> _variables;
+        std::unordered_map<std::string, Variable> _variables;
         std::vector<std::string> _variableOrder;
 
     };

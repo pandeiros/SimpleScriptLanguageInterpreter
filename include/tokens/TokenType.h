@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <map>
 
 enum class TokenType
 {
@@ -55,7 +56,7 @@ enum class TokenType
     Undefined
 };
 
-const std::unordered_map<TokenType, std::string> tokenTypeNames =
+const std::map<TokenType, std::string> tokenTypeNames =
 {
     {TokenType::Program, "MainProgram"},
     {TokenType::Function, "Function"},
@@ -105,7 +106,7 @@ const std::unordered_map<TokenType, std::string> tokenTypeNames =
     {TokenType::Undefined, "Undefined"}
 };
 
-static const std::unordered_map<std::string, TokenType> & keywords =
+static const std::map<std::string, TokenType> & keywords =
 {
     {"function", TokenType::Function},
     {"program", TokenType::Program},
@@ -125,7 +126,7 @@ static const std::unordered_map<std::string, TokenType> & keywords =
     {"else", TokenType::Else},
 };
 
-static const std::unordered_map<char, TokenType> & simpleSigns =
+static const std::map<char, TokenType> & simpleSigns =
 {
     {'(', TokenType::ParenthOpen},
     {')', TokenType::ParenthClose},
