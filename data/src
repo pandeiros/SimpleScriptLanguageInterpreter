@@ -1,0 +1,84 @@
+program check (int arg)
+{
+	var bool b;
+	var int i;
+	var float f;
+	var string s;
+
+	var bool b1 = false;
+	//var bool b2 = 2;
+	//var bool b3 = 3.1415;
+	//var bool b4 = "bool";
+
+	var int i1 = true;
+	const int i2 = 0000;
+	//const int i3 = 2.5;
+	//const int i4 = "int";
+
+	var float f1 = true;
+	var float f2 = 1;
+	var float f3 = 2.5;
+	//var float f4 = "float";
+
+	var string s1 = false;
+	const string s2 = 4;
+	const string s3 = 2.73;
+	const string s4 = "string";
+
+	b1 = true;
+	//b1 = 2;
+	//b1 = 2.5;
+	//b1 = "bool";
+
+	i1 = false;
+	i1 = 123456;
+	//i1 = 3.5;
+	//i1 = "int";
+
+	f1 = true;
+	f1 = 4;
+	f1 = 4.5678;
+	//f1 = "float";
+
+	s1 = false;
+	s1 = 10;
+	s1 = 456.345;
+	s1 = "string";
+
+	print(b1);
+	print(i2);
+	print(f1);
+	print(s4);
+
+	print(true);
+	print(false);
+	print(1);
+	print(2.345);
+	print("ROFL");
+
+	i1 = 3;
+	if (i1 < 3)
+		print("tak");
+	else
+		print("nie");
+
+	i1 = 100;
+	while (i1 > 3)
+	{
+		var int local = 1;
+		print(" to infinity...");
+		print(i1);
+		i1 = MyDivision(i1);
+		print(i1);
+		nl();
+	}
+
+
+	return;
+}
+
+function MyDivision (float x)
+{
+	const float result = x / 5;
+	return result;
+}
