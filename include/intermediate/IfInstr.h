@@ -4,10 +4,8 @@
 #include <memory>
 #include <iostream>
 
-//#include "Instruction.h"
 #include "LogicalExpression.h"
 #include "Block.h"
-//#include "Executable.h"
 
 namespace inter
 {

@@ -43,7 +43,7 @@ Library::getFunctionParamsCount(const std::string& name)
 }
 
 std::shared_ptr<inter::Literal>
-Library::callFunction(const std::string& name, Arguments& arguments)
+Library::callFunction(const std::string& name, Arguments & arguments)
 {
     return ((Library::getStandardFunction(name))(arguments));
 }
@@ -63,6 +63,8 @@ std::shared_ptr<inter::Literal> Library::funPrint(Arguments & arguments)
             std::cout << arg->_floatValue;
         else if (arg->_type == "string")
             std::cout << arg->_stringValue;
+        else
+            std::cout << "Unknown";
     }
 
     std::cout << "\n";

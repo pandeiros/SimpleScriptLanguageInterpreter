@@ -593,6 +593,37 @@ std::shared_ptr<inter::Literal> SemanticChecker::checkLiteral(inter::ScopeProtot
             return nullptr;
         }
     }
+    else if (type == "")
+    {
+        switch (nodeType)
+        {
+            case Type::Bool:
+                obj->_type = "bool";
+                obj->_boolValue = dynamic_cast<syntax::Bool*>(&lit)->_value;
+                break;
+            case Type::Number:
+            {
+                syntax::Number * numberNode = dynamic_cast<syntax::Number*>(&lit);
+                if (numberNode->_isInteger)
+                {
+                    obj->_type = "int";
+                    obj->_intValue = static_cast<int>(numberNode->_value);
+                }
+                else
+                {
+                    obj->_type = "float";
+                    obj->_floatValue = numberNode->_value;
+                }
+                break;
+            }
+            case Type::String:
+                obj->_type = "string";
+                obj->_stringValue = dynamic_cast<syntax::String*>(&lit)->_value;
+                break;
+            default:
+                obj->_type = "";
+        }
+    }
 
     return obj;
 }

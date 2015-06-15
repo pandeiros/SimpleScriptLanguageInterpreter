@@ -38,10 +38,56 @@ namespace inter
 
         virtual bool isEqualToTrue()
         {
-            if (_boolValue || _intValue == 1 || _floatValue == 1.0)
+            if (_boolValue || _intValue >= 1 || _floatValue != 0.0)
                 return true;
             else
                 return false;
+        }
+
+        virtual int compare(std::shared_ptr<LogicalOperand> other)
+        {
+            std::shared_ptr<Literal> lit = std::dynamic_pointer_cast<Literal>(other);
+
+            if (_type == "string" && lit->_type == "string")
+                return _stringValue.compare(lit->_stringValue);
+
+            if (_type == "bool" && lit->_type == "bool")
+            {
+                if (_boolValue == lit->_boolValue)
+                    return 0;
+                else if (_boolValue == true)
+                    return 1;
+                else
+                    return -1;
+            }
+
+            if (_type == "string" && lit->_type != "string" ||
+                _type != "string" && lit->_type == "string")
+                return -2;
+
+            double val1;
+            double val2;
+
+            if (_type == "bool")
+                val1 = _boolValue;
+            else if (_type == "int")
+                val1 = _intValue;
+            else
+                val1 = _floatValue;
+
+            if (lit->_type == "bool")
+                val2 = lit->_boolValue;
+            if (lit->_type == "int")
+                val2 = lit->_intValue;
+            else
+                val2 = lit->_floatValue;
+
+            if (val1 < val2)
+                return -1;
+            else if (val1 > val2)
+                return 1;
+            else
+                return 0;
         }
 
         std::string _type = "";

@@ -11,6 +11,11 @@ namespace inter
         {
             return false;
         }
+
+        virtual int compare(std::shared_ptr<LogicalOperand> other)
+        {
+            return -2;
+        }
     };
 }
 

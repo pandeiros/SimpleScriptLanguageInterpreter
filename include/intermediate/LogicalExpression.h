@@ -25,203 +25,188 @@ namespace inter
         virtual std::shared_ptr<Literal> execute(ScopeInstance * scope,
                                                  std::unordered_map<std::string, std::shared_ptr<Function>> & functions)
         {
-            // TODO change
-            return nullptr;
+            auto result = std::make_shared<Literal>();
+            result->_type = "bool";
+
+            if (this->operation == TokenType::Undefined)
+            {
+                if (!this->negated)
+                {
+                    return this->operands.at(0)->execute(scope, functions);
+                }
+                else
+                {
+                    result->_boolValue = this->operands.at(0)->execute(scope, functions)->isEqualToTrue() ? false : true;
+                    return result;
+                }
+            }
+            else if (this->operation == TokenType::Or)
+            {
+                for (auto & operand : this->operands)
+                {
+                    if (operand->execute(scope, functions)->isEqualToTrue())
+                    {
+                        result->_boolValue = true;
+                        return result;
+                    }
+                }
+                return result;
+            }
+            else if (this->operation == TokenType::And)
+            {
+                for (auto & operand : this->operands)
+                {
+                    if (!operand->execute(scope, functions)->isEqualToTrue())
+                    {
+                        result->_boolValue = false;
+                        return result;
+                    }
+                }
+                result->_boolValue = true;
+                return result;
+            }
+            else if (this->operation == TokenType::Equality)
+            {
+                auto left = this->operands.at(0)->execute(scope, functions);
+                auto right = this->operands.at(1)->execute(scope, functions);
+
+                int comparison = left->compare(right);
+                if (comparison == 0)
+                {
+                    result->_boolValue = true;
+                }
+                else if (comparison != -2)
+                    result->_boolValue = false;
+                else
+                {
+                    MessageHandler::error(std::string("Comparison (Equality) failed."));
+                    return nullptr;
+                }
+
+                return result;
+            }
+            else if (this->operation == TokenType::Inequality)
+            {
+                auto left = this->operands.at(0)->execute(scope, functions);
+                auto right = this->operands.at(1)->execute(scope, functions);
+
+                int comparison = left->compare(right);
+                if (comparison != -2)
+                {
+                    if (comparison != 0)
+                    {
+                        result->_boolValue = true;
+                    }
+                    else
+                        result->_boolValue = false;
+                }
+                else
+                {
+                    MessageHandler::error(std::string("Comparison (Inequality) failed."));
+                    return nullptr;
+                }
+
+                return result;
+            }
+            else if (this->operation == TokenType::Less)
+            {
+                auto left = this->operands.at(0)->execute(scope, functions);
+                auto right = this->operands.at(1)->execute(scope, functions);
+
+                int comparison = left->compare(right);
+                if (comparison != -2)
+                {
+                    if (comparison == -1)
+                    {
+                        result->_boolValue = true;
+                    }
+                    else
+                        result->_boolValue = false;
+                }
+                else
+                {
+                    MessageHandler::error(std::string("Comparison (Less) failed."));
+                    return nullptr;
+                }
+
+                return result;
+            }
+            else if (this->operation == TokenType::LessOrEqual)
+            {
+                auto left = this->operands.at(0)->execute(scope, functions);
+                auto right = this->operands.at(1)->execute(scope, functions);
+
+                int comparison = left->compare(right);
+                if (comparison != -2)
+                {
+                    if (comparison <= 0)
+                    {
+                        result->_boolValue = true;
+                    }
+                    else
+                        result->_boolValue = false;
+                }
+                else
+                {
+                    MessageHandler::error(std::string("Comparison (LessOrEqual) failed."));
+                    return nullptr;
+                }
+
+                return result;
+            }
+            else if (this->operation == TokenType::Greater)
+            {
+                auto left = this->operands.at(0)->execute(scope, functions);
+                auto right = this->operands.at(1)->execute(scope, functions);
+
+                int comparison = left->compare(right);
+                if (comparison != -2)
+                {
+                    if (comparison == 1)
+                    {
+                        result->_boolValue = true;
+                    }
+                    else
+                        result->_boolValue = false;
+                }
+                else
+                {
+                    MessageHandler::error(std::string("Comparison (Greater) failed."));
+                    return nullptr;
+                }
+
+                return result;
+            }
+            else if (this->operation == TokenType::GreaterOrEqual)
+            {
+                auto left = this->operands.at(0)->execute(scope, functions);
+                auto right = this->operands.at(1)->execute(scope, functions);
+
+                int comparison = left->compare(right);
+                if (comparison != -2)
+                {
+                    if (comparison >= 0)
+                    {
+                        result->_boolValue = true;
+                    }
+                    else
+                        result->_boolValue = false;
+                }
+                else
+                {
+                    MessageHandler::error(std::string("Comparison (GreaterOrEqual) failed."));
+                    return nullptr;
+                }
+
+                return result;
+            }
+            else
+            {
+                MessageHandler::error(std::string("Invalid Logical operator!"));
+                return nullptr;
+            }
         }
     };
 }
-
-/*if (this->operation == TokenType::Undefined)
-{
-if (!this->negated)
-{
-return this->operands.at(0)->execute(scope, functions);
-}
-else
-{
-auto result = std::make_shared<Literal>();
-result->castedToBool = true;
-result->data = { { this->operands.at(0)->execute(scope, functions)->isEqualToTrue() ? 0.0 : 1.0 } };
-return result;
-}
-}
-
-else if (this->operation == TokenType::Or)
-{
-auto result = std::make_shared<inter::Literal>();
-result->castedToBool = true;
-for(auto& it: this->operands)
-{
-if (it->execute(scope, functions)->isEqualToTrue())
-{
-result->data = { { 1.0 } };
-return result;
-}
-}
-result->data = { { 0.0 } };
-return result;
-}
-else if (this->operation == TokenType::And)
-{
-auto result = std::make_shared<inter::Literal>();
-result->castedToBool = true;
-for(auto& it: this->operands)
-{
-if (!it->execute(scope, functions)->isEqualToTrue())
-{
-result->data = { { 0.0 } };
-return result;
-}
-}
-result->data = { { 1.0 } };
-return result;
-}
-else if (this->operation == TokenType::Equality)
-{
-auto result = std::make_shared<inter::Literal>();
-result->castedToBool = true;
-
-auto left = this->operands.at(0)->execute(scope, functions);
-auto right = this->operands.at(1)->execute(scope, functions);
-
-if (left->castedToBool && right->castedToBool)
-{
-result->data = { { left->isEqualToTrue() == right->isEqualToTrue() ? 1.0 : 0.0 } };
-}
-else if (!left->castedToBool && !right->castedToBool)
-{
-result->data = { { *left == *right ? 1.0 : 0.0 } };
-}
-else
-{
-MessageHandler::error(
-std::string("Tried to compare matrix with bool matrix")
-);
-return nullptr;
-}
-
-return result;
-}
-else if (this->operation == TokenType::Inequality)
-{
-auto result = std::make_shared<inter::Literal>();
-result->castedToBool = true;
-
-auto left = this->operands.at(0)->execute(scope, functions);
-auto right = this->operands.at(1)->execute(scope, functions);
-
-if (left->castedToBool && right->castedToBool)
-{
-result->data = { { left->isEqualToTrue() != right->isEqualToTrue() ? 1.0 : 0.0 } };
-}
-else if (!left->castedToBool && !right->castedToBool)
-{
-result->data = { { *left != *right ? 1.0 : 0.0 } };
-}
-else
-{
-MessageHandler::error(
-std::string("Tried to compare matrix with bool matrix")
-);
-return nullptr;
-}
-
-return result;
-}
-else if (this->operation == TokenType::Less)
-{
-auto result = std::make_shared<inter::Literal>();
-result->castedToBool = true;
-
-auto left = this->operands.at(0)->execute(scope, functions);
-auto right = this->operands.at(1)->execute(scope, functions);
-
-if (!left->castedToBool && !right->castedToBool)
-{
-result->data = { { *left < *right ? 1.0 : 0.0 } };
-}
-else
-{
-MessageHandler::error(
-std::string("Cannot compare bool matrices")
-);
-return nullptr;
-}
-
-return result;
-}
-else if (this->operation == TokenType::LessOrEqual)
-{
-auto result = std::make_shared<inter::Literal>();
-result->castedToBool = true;
-
-auto left = this->operands.at(0)->execute(scope, functions);
-auto right = this->operands.at(1)->execute(scope, functions);
-
-if (!left->castedToBool && !right->castedToBool)
-{
-result->data = { { *left <= *right ? 1.0 : 0.0 } };
-}
-else
-{
-MessageHandler::error(
-std::string("Cannot compare bool matrices")
-);
-return nullptr;
-}
-
-return result;
-}
-else if (this->operation == TokenType::Greater)
-{
-auto result = std::make_shared<inter::Literal>();
-result->castedToBool = true;
-
-auto left = this->operands.at(0)->execute(scope, functions);
-auto right = this->operands.at(1)->execute(scope, functions);
-
-if (!left->castedToBool && !right->castedToBool)
-{
-result->data = { { *left > *right ? 1.0 : 0.0 } };
-}
-else
-{
-MessageHandler::error(
-std::string("Cannot compare bool matrices")
-);
-return nullptr;
-}
-
-return result;
-}
-else if (this->operation == TokenType::GreaterOrEqual)
-{
-auto result = std::make_shared<inter::Literal>();
-result->castedToBool = true;
-
-auto left = this->operands.at(0)->execute(scope, functions);
-auto right = this->operands.at(1)->execute(scope, functions);
-
-if (!left->castedToBool && !right->castedToBool)
-{
-result->data = { { *left >= *right ? 1.0 : 0.0 } };
-}
-else
-{
-MessageHandler::error(
-std::string("Cannot compare bool matrices")
-);
-return nullptr;
-}
-
-return result;
-}
-else
-{
-MessageHandler::error(
-std::string("Invalid condition operator")
-);
-return nullptr;
-}*/
 
 #endif // __INTER_CONDITION_H__
