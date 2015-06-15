@@ -12,6 +12,8 @@ namespace syntax
         {
             return Node::Type::Literal;
         }
+
+        std::string _name;
     };
 }
 

@@ -391,11 +391,7 @@ std::shared_ptr<syntax::VarDeclaration> Parser::parseVarDeclaration()
     {
         this->accept({TokenType::Assignment});
 
-        // String or others.
-        if (typeToken._type == TokenType::String)
-            node->setValue(this->parseString());
-        else
-            node->setValue(this->parseAssignable(typeToken._value));
+        node->setValue(this->parseAssignable(typeToken._value));
     }
 
     // Finish assign or empty declaration with a semicolon.
@@ -425,11 +421,7 @@ std::shared_ptr<syntax::ConstDeclaration> Parser::parseConstDeclaration()
     {
         this->accept({TokenType::Assignment});
 
-        // String or others.
-        //if (typeToken._type == TokenType::String)
-        //    node->setValue(this->parseString());
-        //else
-            node->setValue(this->parseAssignable(typeToken._value));
+        node->setValue(this->parseAssignable(typeToken._value));
     }
     else
     {
@@ -467,22 +459,11 @@ std::shared_ptr<syntax::RValue> Parser::parseAssignable(std::string type)
         if (type == "bool" || type == "int" || type == "float")
             this->typeFail(type);
         else
-            this->parseString(type);
-      /*  if (type == "string" || type == "")
             node = this->parseString(type);
-        else
-            this->typeFail(type);*/
     }
     else if (this->peek({TokenType::True, TokenType::False}))
     {
-        //if (type == "bool" || type == "")
-            node = this->parseBool(type);
-        //else if (type == "int" || type == "float")
-        //    node = this->parseNumber(type);
-        //else if (type == "string")
-        //    node = this->parseString(type);
-        //else
-        //    this->typeFail(type);
+        node = this->parseBool(type);
     }
     else if (this->peek({TokenType::NumberLiteral}))
     {
@@ -490,12 +471,6 @@ std::shared_ptr<syntax::RValue> Parser::parseAssignable(std::string type)
             this->typeFail(type);
         else
             node = this->parseNumber(type);
-        /*if (type == "int" || type == "float" || type == "")
-            node = this->parseNumber(type);
-        else if (type == "string")
-            node = this->parseString(type);
-        else
-            this->typeFail(type);*/
     }
     else
     {
@@ -978,6 +953,7 @@ std::shared_ptr<syntax::Literal> Parser::parseBool(std::string type)
     {
         std::shared_ptr<syntax::Number> node = std::make_shared<syntax::Number>();
         node->_value = token._type == TokenType::True ? 1 : 0;
+        node->_isInteger = true;
         return node;
     }
     else
@@ -1022,14 +998,23 @@ std::shared_ptr<syntax::Literal> Parser::parseNumber(std::string type)
     // No conversion.
     if (type == "int" || type == "float" || type == "")
     {
-        if (std::floor(value) != value && type == "int")
+        std::shared_ptr<syntax::Number> node = std::make_shared<syntax::Number>();
+
+        double integerPart;
+        if (std::modf(value, &integerPart) != 0.0)
         {
-            this->_previousToken = token;
-            this->typeFail(type);
-            return nullptr;
+            if (type == "int")
+            {
+                this->_previousToken = token;
+                this->typeFail(type);
+                return nullptr;
+            }
+        }
+        else
+        {
+            node->_isInteger = true;
         }
 
-        std::shared_ptr<syntax::Number> node = std::make_shared<syntax::Number>();
         node->_value = value;
         return node;
     }

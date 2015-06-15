@@ -59,7 +59,10 @@ namespace inter
             for (auto & var : _variables)
             {
                 if (var.second._name == name)
+                {
                     var.second._isDefined = true;
+                    break;
+                }
             }
         }
 
@@ -95,6 +98,17 @@ namespace inter
             }
 
             return false;
+        }
+
+        std::string getType(const std::string & name)
+        {
+            for (auto & var : _variables)
+            {
+                if (var.second._name == name)
+                    return var.second._type;
+            }
+
+            return "";
         }
 
         ScopeInstance instantiate(ScopeInstance * upperScope)

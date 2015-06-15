@@ -16,7 +16,7 @@ namespace inter
         virtual std::shared_ptr<Literal> execute(ScopeInstance * scope,
                                                  std::unordered_map<std::string, std::shared_ptr<Function>> & functions)
         {
-            while (_condition->execute(scope, functions)->isTruthy())
+            while (_condition->execute(scope, functions)->isEqualToTrue())
             {
                 auto result = _block->execute(scope, functions);
 

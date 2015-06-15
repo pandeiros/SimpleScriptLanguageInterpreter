@@ -8,6 +8,7 @@
 
 #include "intermediate/Variable.h"
 //#include "intermediate/Literal.h"
+//#include "Executable.h"
 
 #include "MessageHandler.h"
 //
@@ -24,7 +25,7 @@
 
 namespace inter
 {
-    /*struct Literal;*/
+    //class Variable;
 
     class ScopeInstance
     {
@@ -42,7 +43,7 @@ namespace inter
                 return _upperScope->getVariable(name);
             }
 
-            MessageHandler::error(std::string("Accessing undefined variable!"));
+            MessageHandler::error(std::string("Accessing undefined variable: ").append(name));
             return nullptr;
         }
 

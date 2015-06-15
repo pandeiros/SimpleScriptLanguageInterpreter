@@ -41,7 +41,7 @@ else
 {
 auto result = std::make_shared<Literal>();
 result->castedToBool = true;
-result->data = { { this->operands.at(0)->execute(scope, functions)->isTruthy() ? 0.0 : 1.0 } };
+result->data = { { this->operands.at(0)->execute(scope, functions)->isEqualToTrue() ? 0.0 : 1.0 } };
 return result;
 }
 }
@@ -52,7 +52,7 @@ auto result = std::make_shared<inter::Literal>();
 result->castedToBool = true;
 for(auto& it: this->operands)
 {
-if (it->execute(scope, functions)->isTruthy())
+if (it->execute(scope, functions)->isEqualToTrue())
 {
 result->data = { { 1.0 } };
 return result;
@@ -67,7 +67,7 @@ auto result = std::make_shared<inter::Literal>();
 result->castedToBool = true;
 for(auto& it: this->operands)
 {
-if (!it->execute(scope, functions)->isTruthy())
+if (!it->execute(scope, functions)->isEqualToTrue())
 {
 result->data = { { 0.0 } };
 return result;
@@ -86,7 +86,7 @@ auto right = this->operands.at(1)->execute(scope, functions);
 
 if (left->castedToBool && right->castedToBool)
 {
-result->data = { { left->isTruthy() == right->isTruthy() ? 1.0 : 0.0 } };
+result->data = { { left->isEqualToTrue() == right->isEqualToTrue() ? 1.0 : 0.0 } };
 }
 else if (!left->castedToBool && !right->castedToBool)
 {
@@ -112,7 +112,7 @@ auto right = this->operands.at(1)->execute(scope, functions);
 
 if (left->castedToBool && right->castedToBool)
 {
-result->data = { { left->isTruthy() != right->isTruthy() ? 1.0 : 0.0 } };
+result->data = { { left->isEqualToTrue() != right->isEqualToTrue() ? 1.0 : 0.0 } };
 }
 else if (!left->castedToBool && !right->castedToBool)
 {

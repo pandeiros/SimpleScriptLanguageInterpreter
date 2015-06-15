@@ -50,19 +50,24 @@ Library::callFunction(const std::string& name, Arguments& arguments)
 
 std::shared_ptr<inter::Literal> Library::funPrint(Arguments & arguments)
 {
-    // TODO change to normal, non-matrix print.
-    /*for (auto & arg : arguments.at(0)->data)
-    {
-        for (auto & rowIt : arg)
-        {
-            std::cout << rowIt << " ";
-        }
-        std::cout << std::endl;
-    }*/
+    if (arguments.size() == 0)
+        return nullptr;
 
-    auto result = std::make_shared<inter::Literal>();
-    //result->data = {{1}};
-    return result;
+    for (auto & arg : arguments)
+    {
+        if (arg->_type == "bool")
+            std::cout << std::boolalpha << arg->_boolValue;
+        else if (arg->_type == "int")
+            std::cout << arg->_intValue;
+        else if (arg->_type == "float")
+            std::cout << arg->_floatValue;
+        else if (arg->_type == "string")
+            std::cout << arg->_stringValue;
+    }
+
+    std::cout << "\n";
+
+    return arguments.at(0);
 }
 
 std::shared_ptr<inter::Literal> Library::funNewLine(Arguments & arguments)

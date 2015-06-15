@@ -4,26 +4,28 @@
 #include <vector>
 #include <memory>
 
-#include "intermediate/Function.h"
+//#include "intermediate/Function.h"
 #include "LogicalOperand.h"
 #include "ArithmeticOperand.h"
 
+//#include "Executable.h"
+//#include "ScopeInstance.h"
+
 namespace inter
 {
+    class ScopeInstance;
+    class Literal;
+
     class Variable : public LogicalOperand, public ArithmeticOperand
     {
     public:
         Variable() = default;
-        Variable(std::string type, std::string name, bool isConstant = false) 
+        Variable(std::string type, std::string name, bool isConstant = false)
             : _name(name), _type(type), _isConstant(isConstant)
         {}
 
         virtual std::shared_ptr<Literal> execute(ScopeInstance * scope,
-                                                 std::unordered_map<std::string, std::shared_ptr<Function>> & functions)
-        {
-            // TODO Change
-            return nullptr;
-        }
+                                                 std::unordered_map<std::string, std::shared_ptr<Function>> & functions);
 
         std::string _type;
         std::string _name;

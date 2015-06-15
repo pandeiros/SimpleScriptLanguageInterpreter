@@ -10,6 +10,8 @@
 
 #include "MessageHandler.h"
 
+#include "intermediate/Variable.h"
+
 namespace inter
 {
     class Function : public Block
@@ -30,8 +32,7 @@ namespace inter
             unsigned int argumentIndex = 0;
             for (auto & argument : arguments)
             {
-                std::shared_ptr<inter::Literal> copy = std::make_shared<inter::Literal>();
-                copy->_data = argument->_data;
+                std::shared_ptr<inter::Literal> copy = argument->makeCopy();
 
                 std::string name = scopeInstance._variableOrder.at(argumentIndex);
 

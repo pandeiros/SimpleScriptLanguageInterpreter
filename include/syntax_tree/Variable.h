@@ -25,7 +25,6 @@ namespace syntax
 
         std::string _name;
         std::shared_ptr<Literal> _value;
-        //bool _isConstant = false;  TODO Remove
     };
 }
 

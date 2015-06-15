@@ -1,6 +1,8 @@
 #ifndef __INTER_EXECUTABLE_H__
 #define __INTER_EXECUTABLE_H__
 
+#include <unordered_map>
+
 namespace inter
 {
     class Literal;

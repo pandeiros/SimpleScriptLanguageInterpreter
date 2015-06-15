@@ -45,7 +45,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)..\include\; $(ProjectDir)..\include\tokens\; $(ProjectDir)..\include\syntax_tree\; </AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WIN32;_DEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>EXIT_ON_FAIL;_WIN32;_DEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -59,7 +59,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)..\include\; $(ProjectDir)..\include\tokens\; $(ProjectDir)..\include\syntax_tree\; </AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WIN32;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>EXIT_ON_FAIL;_WIN32;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -128,6 +128,7 @@
     <ClCompile Include="..\src\MessageHandler.cpp" />
     <ClCompile Include="..\src\Parser.cpp" />
     <ClCompile Include="..\src\SemanticChecker.cpp" />
+    <ClCompile Include="..\src\Variable.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -23,7 +23,7 @@ namespace inter
             std::unordered_map<std::string, std::shared_ptr<Function>>& functions
         )
         {
-            if (this->condition->execute(scope, functions)->isTruthy())
+            if (this->condition->execute(scope, functions)->isEqualToTrue())
             {
                 return this->trueBlock->execute(scope, functions);
             }

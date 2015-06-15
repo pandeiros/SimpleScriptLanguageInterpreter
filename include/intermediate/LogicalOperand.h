@@ -7,7 +7,7 @@ namespace inter
 {
     struct LogicalOperand: virtual public Assignable
     {
-        virtual bool isTruthy()
+        virtual bool isEqualToTrue()
         {
             return false;
         }

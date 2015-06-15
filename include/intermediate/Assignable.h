@@ -8,7 +8,7 @@ namespace inter
     class Assignable: public Executable
     {
     public:
-        virtual bool isTruthy()
+        virtual bool isEqualToTrue()
         {
             return false;
         }

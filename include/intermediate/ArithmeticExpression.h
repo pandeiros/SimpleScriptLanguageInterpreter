@@ -11,7 +11,7 @@
 
 namespace inter
 {
-    struct ArithmeticExpression : public ArithmeticOperand
+    struct ArithmeticExpression : public ArithmeticOperand, public LogicalOperand
     {
         std::vector<TokenType> operations;
         std::vector<std::shared_ptr<ArithmeticOperand>> operands;

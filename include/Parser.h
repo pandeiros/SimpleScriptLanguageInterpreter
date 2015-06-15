@@ -10,9 +10,14 @@
                     _lexer.getLine(token._lineStart), \
                     getErrorIndicator(token._col, _lexer.getLine(token._lineStart))) )
 #define FAIL (_processSucceeded = false)
+
+#ifdef EXIT_ON_FAIL
 #define CHECK_FAIL(_RET_) \
     if (!_processSucceeded) \
         return _RET_
+#else
+#define CHECK_FAIL(_RET_)
+#endif
 
 class Lexer;
 

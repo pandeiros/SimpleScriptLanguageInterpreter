@@ -14,6 +14,7 @@ namespace syntax
         }
 
         double _value;
+        bool _isInteger = false;
     };
 }
 
