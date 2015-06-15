@@ -12,8 +12,6 @@ namespace syntax
         {
             return Node::Type::Assignable;
         }
-
-        //typedef std::shared_ptr<RValue> ptr;
     };
 }
 

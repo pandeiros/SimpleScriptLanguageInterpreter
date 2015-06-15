@@ -6,7 +6,6 @@
 
 #include "LogicalExpression.h"
 #include "Block.h"
-//#include "intermediate/Literal.h"
 
 namespace inter
 {

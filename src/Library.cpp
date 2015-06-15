@@ -14,8 +14,8 @@ const std::unordered_map<std::string, std::pair<unsigned int, Library::LibFuncti
     if (functions.size() == 0)
     {
         static const std::unordered_map<std::string, std::pair<unsigned int, Library::LibFunction>> list = {
-            {"print", {1, Library::LibFunction(&Library::funPrint)}},
-            {"nl", {0, Library::LibFunction(&Library::funNewLine)}}
+            {"print", {1, Library::LibFunction(&Library::functionPrint)}},
+            {"nl", {0, Library::LibFunction(&Library::functionNewLine)}}
         };
 
         functions = list;
@@ -24,31 +24,27 @@ const std::unordered_map<std::string, std::pair<unsigned int, Library::LibFuncti
     return functions;
 }
 
-const Library::LibFunction&
-Library::getStandardFunction(const std::string& name)
+const Library::LibFunction & Library::getStandardFunction(const std::string & name)
 {
     return (Library::getStandardFunctions()).at(name).second;
 }
 
-bool
-Library::hasFunction(const std::string& name)
+bool Library::hasFunction(const std::string & name)
 {
     return (Library::getStandardFunctions()).count(name) == 1;
 }
 
-unsigned int
-Library::getFunctionParamsCount(const std::string& name)
+unsigned int Library::getFunctionParamsCount(const std::string & name)
 {
     return (Library::getStandardFunctions()).at(name).first;
 }
 
-std::shared_ptr<inter::Literal>
-Library::callFunction(const std::string& name, Arguments & arguments)
+std::shared_ptr<inter::Literal> Library::callFunction(const std::string & name, Arguments & arguments)
 {
     return ((Library::getStandardFunction(name))(arguments));
 }
 
-std::shared_ptr<inter::Literal> Library::funPrint(Arguments & arguments)
+std::shared_ptr<inter::Literal> Library::functionPrint(Arguments & arguments)
 {
     if (arguments.size() == 0)
         return nullptr;
@@ -72,12 +68,9 @@ std::shared_ptr<inter::Literal> Library::funPrint(Arguments & arguments)
     return arguments.at(0);
 }
 
-std::shared_ptr<inter::Literal> Library::funNewLine(Arguments & arguments)
+std::shared_ptr<inter::Literal> Library::functionNewLine(Arguments & arguments)
 {
     std::cout << std::endl;
 
-    auto result = std::make_shared<inter::Literal>();
-    // TODO Verify
-    //result->data = {{1}};
-    return result;
+    return std::make_shared<inter::Literal>();
 }

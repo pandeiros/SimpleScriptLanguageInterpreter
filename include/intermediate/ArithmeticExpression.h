@@ -28,38 +28,36 @@ namespace inter
 
             auto result = this->operands.at(0)->execute(scope, functions);
             unsigned int i = 0;
-            for(auto& op: this->operations)
+            for(auto & op: this->operations)
             {
-                /*auto& it = this->operands.at(i + 1);
+                auto & operand = this->operands.at(i + 1);
                 i++;
 
                 if (op == TokenType::Plus)
                 {
-                    *result += *(it->execute(scope, functions));
+                    *result += *(operand->execute(scope, functions));
                 }
                 else if (op == TokenType::Minus)
                 {
-                    *result -= *(it->execute(scope, functions));
+                    *result -= *(operand->execute(scope, functions));
                 }
                 else if (op == TokenType::Multiply)
                 {
-                    *result *= *(it->execute(scope, functions));
+                    *result *= *(operand->execute(scope, functions));
                 }
                 else if (op == TokenType::Divide)
                 {
-                    *result /= *(it->execute(scope, functions));
+                    *result /= *(operand->execute(scope, functions));
                 }
                 else if (op == TokenType::Modulo)
                 {
-                    *result %= *(it->execute(scope, functions));
+                    *result %= *(operand->execute(scope, functions));
                 }
                 else
                 {
-                    MessageHandler::error(
-                        std::string("Invalid expression operator")
-                    );
+                    MessageHandler::error(std::string("Invalid arithmetical expression operator!"));
                     return nullptr;
-                }*/
+                }
             }
 
             return result;

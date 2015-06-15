@@ -5,8 +5,9 @@
 
 namespace inter
 {
-    struct Instruction: virtual public Executable
+    class Instruction: virtual public Executable
     {
+    public:
         virtual bool canReturn()
         {
             return false;

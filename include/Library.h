@@ -28,8 +28,8 @@ public:
     static std::shared_ptr<inter::Literal> callFunction(const std::string& name, Arguments & arguments);
 
 private:
-    static std::shared_ptr<inter::Literal> funPrint(Arguments & arguments);
-    static std::shared_ptr<inter::Literal> funNewLine(Arguments & arguments);
+    static std::shared_ptr<inter::Literal> functionPrint(Arguments & arguments);
+    static std::shared_ptr<inter::Literal> functionNewLine(Arguments & arguments);
 
     static std::unordered_map<std::string, std::pair<unsigned int, Library::LibFunction>> functions;
 };

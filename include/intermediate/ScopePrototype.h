@@ -7,7 +7,6 @@
 #include <memory>
 #include <vector>
 
-//#include "intermediate/Variable.h"
 #include "ScopeInstance.h"
 
 namespace inter
@@ -86,6 +85,11 @@ namespace inter
                     return var.second._isDefined;
             }
 
+            if (_upperScope != nullptr)
+            {
+                return _upperScope->isVariableDefined(name);
+            }
+
             return false;
         }
 
@@ -119,9 +123,9 @@ namespace inter
 
             for (auto & variable : _variables)
             {
-                std::pair<std::string, std::pair<Variable, std::shared_ptr<Literal>>> newPair(
+                std::pair<std::string, std::pair<std::shared_ptr<Variable>, std::shared_ptr<Literal>>> newPair(
                     variable.first,
-                    std::make_pair(variable.second, std::make_shared<inter::Literal>()));
+                    std::make_pair(std::make_shared<inter::Variable>(variable.second), std::make_shared<inter::Literal>()));
 
                 instance._variables.insert(newPair);
             }

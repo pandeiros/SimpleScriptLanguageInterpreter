@@ -18,8 +18,7 @@ namespace inter
         )
         {
             if (_isEmpty)
-                // TODO Maybe return nullptr?
-                return std::make_shared<inter::Literal>();
+                return std::make_shared<inter::Literal>();  // Maybe nullptr?
 
             return this->_value->execute(scope, functions);
         }

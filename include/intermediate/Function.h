@@ -38,7 +38,7 @@ namespace inter
 
                 for (auto & var : scopeInstance._variables)
                 {
-                    if (var.second.first._name == name)
+                    if (var.second.first->_name == name)
                         var.second.second = copy;
                 }
                 ++argumentIndex;

@@ -9,7 +9,7 @@ std::shared_ptr<Literal> Variable::execute(ScopeInstance * scope,
                                  std::unordered_map<std::string, std::shared_ptr<Function>> & functions)
 
 {
-     std::shared_ptr<Literal> value = scope->getVariable(_name);
+     std::shared_ptr<Literal> value = scope->getVariableValue(_name);
      if (value != nullptr)
          return value->makeCopy();
      else

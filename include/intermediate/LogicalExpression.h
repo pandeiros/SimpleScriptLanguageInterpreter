@@ -14,7 +14,6 @@
 
 namespace inter
 {
-    // TODO Change to LogicalExpression
     class LogicalExpression : public LogicalOperand
     {
     public:

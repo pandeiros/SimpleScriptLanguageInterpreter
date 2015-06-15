@@ -166,7 +166,7 @@ std::shared_ptr<inter::Block> SemanticChecker::checkBlock(inter::ScopePrototype 
                 auto node = static_cast<syntax::Assignment*>(instruction.get());
 
                 // Push assignment (checks assignment to constant).
-                block->_instructions.push_back(this->checkAssignment(block->_scopePrototype, *(node->_variable), *(node->_value)));
+                block->_instructions.push_back(this->checkAssignment(block->_scopePrototype, node->_variable, *(node->_value)));
                 break;
             }
             case syntax::Node::Type::ReturnStatement:
@@ -268,31 +268,31 @@ std::shared_ptr<inter::AssignmentInstr> SemanticChecker::checkAssignment(inter::
     return node;
 }
 
-std::shared_ptr<inter::AssignmentInstr> SemanticChecker::checkAssignment(inter::ScopePrototype & scopePrototype, syntax::Variable & variable, syntax::RValue & rvalue)
+std::shared_ptr<inter::AssignmentInstr> SemanticChecker::checkAssignment(inter::ScopePrototype & scopePrototype, std::shared_ptr<syntax::Variable> & variable, syntax::RValue & rvalue)
 {
     CHECK_FAIL(nullptr);
 
     std::shared_ptr<inter::AssignmentInstr> node = std::make_shared<inter::AssignmentInstr>();
 
     // Check whether variable is declared in scope.
-    if (!scopePrototype.hasVariable(variable._name))
+    if (!scopePrototype.hasVariable(variable->_name))
     {
-        MessageHandler::error(std::string("Cannot assign to undeclared variable: ").append(variable._name));
+        MessageHandler::error(std::string("Cannot assign to undeclared variable: ").append(variable->_name));
         FAIL;
         return nullptr;
     }
 
     // Check for constant.
-    if (scopePrototype.isConstant(variable._name))
+    if (scopePrototype.isConstant(variable->_name))
     {
-        MessageHandler::error(std::string("Cannot assign to constant: ").append(variable._name));
+        MessageHandler::error(std::string("Cannot assign to constant: ").append(variable->_name));
         FAIL;
         return nullptr;
     }
 
-    node->_variable->_name = variable._name;
-    node->_value = this->checkAssignable(scopePrototype, rvalue, scopePrototype.getType(variable._name));
-    scopePrototype.setVariableDefined(variable._name);
+    node->_variable->_name = variable->_name;
+    node->_value = this->checkAssignable(scopePrototype, rvalue, scopePrototype.getType(variable->_name));
+    scopePrototype.setVariableDefined(variable->_name);
 
     return node;
 }
