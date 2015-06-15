@@ -18,7 +18,7 @@ namespace syntax
             _value = rvalue;
         }
 
-        bool _isEmpty;
+        bool _isEmpty = false;
         std::shared_ptr<RValue> _value;
     };
 }

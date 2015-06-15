@@ -148,7 +148,15 @@ std::shared_ptr<syntax::FunctionDefinition> Parser::parseFunction()
     std::shared_ptr<syntax::FunctionDefinition> node = std::make_shared<syntax::FunctionDefinition>();
 
     // Main or other function keyword.
-    auto token = this->accept({TokenType::Program, TokenType::Function, TokenType::EndOfFile});
+    auto token = this->accept({TokenType::Program, TokenType::Function,
+                              TokenType::EndOfFile, TokenType::Comment});
+
+    while (token._type == TokenType::Comment)
+    {
+        token = this->accept({TokenType::Program, TokenType::Function,
+                             TokenType::EndOfFile, TokenType::Comment});
+    }
+
     if (token._type == TokenType::EndOfFile)
     {
         return nullptr;

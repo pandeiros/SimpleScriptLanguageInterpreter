@@ -77,6 +77,8 @@ program check (int arg)
 	return;
 }
 
+// KOMENTARZ POZA FUNKCJA
+
 function MyDivision (float x)
 {
 	const float result = x / 5;
